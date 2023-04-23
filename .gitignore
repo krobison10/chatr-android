@@ -83,3 +83,11 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+.idea/*
+/local.properties
+.DS_Store
+/build
+/captures
+.cxx
+/.gradle/

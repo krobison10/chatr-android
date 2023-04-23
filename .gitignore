@@ -88,6 +88,7 @@ lint/tmp/
 /local.properties
 .DS_Store
 /build
+*/build
 /captures
 .cxx
 /.gradle/

@@ -4,4 +4,12 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AuthActivity" />
+    tools:context=".AuthActivity" >
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/login_fragment_container"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.auth.login.LoginFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</FrameLayout>

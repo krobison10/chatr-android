@@ -5,5 +5,11 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
 
+    <string name="nav_weather">Weather</string>
+    <string name="nav_chat">Chat</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_contacts">Contacts</string>
+    <string name="nav_find">Find</string>
+
     <string name="hello_blank_fragment">Home Fragment</string>
 </resources>

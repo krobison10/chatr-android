@@ -5,6 +5,8 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
 
+    <string name="title_weather">Weather</string>
+
     <string name="nav_weather">Weather</string>
     <string name="nav_chat">Chat</string>
     <string name="nav_home">Home</string>

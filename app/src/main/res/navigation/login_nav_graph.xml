@@ -19,9 +19,9 @@
     </fragment>
     <activity
         android:id="@+id/homeActivity"
-        android:name="edu.uw.tcss450.kylerr10.chatapp.HomeActivity"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.MainActivity"
         android:label="activity_home"
-        tools:layout="@layout/activity_home" />
+        tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/registerFragment"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.register.RegisterFragment"

@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Helper method to set up the bottom navigation bar.
+     *
+     * @author Kyler Robison
      */
     private void initializeBottomNav() {
         BottomNavigationView navView = findViewById(R.id.nav_view);

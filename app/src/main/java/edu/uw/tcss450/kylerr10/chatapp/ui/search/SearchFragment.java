@@ -11,7 +11,8 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
 /**
- * create an instance of this fragment.
+ * create an instance of this fragment. Represents the page where the user
+ * searches for new contacts.
  *
  * @author Kyler Robison
  */

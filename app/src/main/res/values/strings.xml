@@ -11,7 +11,7 @@
     <string name="nav_chat">Chat</string>
     <string name="nav_home">Home</string>
     <string name="nav_contacts">Contacts</string>
-    <string name="nav_find">Find</string>
+    <string name="nav_search">Search</string>
 
     <string name="action_new_chat">NEW CHAT</string>
     <string name="chat_main_title"> Chat</string>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/conversation_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_chat_room_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:padding="8dp"
+        android:text="@string/chat_name"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list_of_chat_messages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/send_chat_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_chat_room_name" />
+
+    <LinearLayout
+        android:id="@+id/send_chat_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/edit_chat_input"
+            android:layout_width="302dp"
+            android:layout_height="63dp"
+            android:autofillHints=""
+            android:background="@null"
+            android:hint="@string/hint_type_chat"
+            android:inputType="textMultiLine"
+            android:maxLines="5" />
+
+        <Button
+            android:id="@+id/button_send_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="67dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/ic_chat_send_black_24"
+            android:contentDescription="@string/action_send_chat"
+            android:scaleX="0.65"
+            android:scaleY="0.75" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

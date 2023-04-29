@@ -17,7 +17,7 @@
         android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/nav_contacts" />
     <item
-        android:id="@+id/navigation_find"
+        android:id="@+id/navigation_search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:title="@string/nav_find" />
+        android:title="@string/nav_search" />
 </menu>

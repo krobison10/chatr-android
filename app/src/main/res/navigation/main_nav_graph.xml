@@ -25,4 +25,9 @@
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsFragment"
         android:label="fragment_contacts"
         tools:layout="@layout/fragment_contacts" />
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.search.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
 </navigation>

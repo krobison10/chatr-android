@@ -19,6 +19,14 @@
     <string name="hint_chat_name">Enter chat name</string>
     <string name="hint_add_contacts">Add member to the chat </string>
     <string name="action_create_chat">CREATE CHAT</string>
+    <string name="hint_type_chat">Type a message</string>
+    <string name="action_send_chat">Send</string>
+    <string name="chat_text">Can change text.Can change text.Can change text.Can change text.Can change text</string>
+    <string name="receiver_name">Receiver Name</string>
+    <string name="sender_name">Sender Name</string>
+    <string name="chat_time">9:00am</string>
+    <string name="image_user">image of user</string>
+    <string name="chat_name">Get chat name</string>
 
     <string name="hello_blank_fragment">Home Fragment</string>
 </resources>

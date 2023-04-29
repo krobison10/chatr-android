@@ -5,13 +5,24 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/navigation_home">
 
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_weather"-->
+<!--        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.weather.WeatherFragment"-->
+<!--        android:label="fragment_weather"-->
+<!--        tools:layout="@layout/fragment_weather" />-->
+    <fragment
+        android:id="@+id/navigation_chat"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatFragment"
+        android:label="navigation_chat"
+        tools:layout="@layout/fragment_chat"/>
     <fragment
         android:id="@+id/navigation_home"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/navigation_chat"
-        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatFragment"
-        android:label="navigation_chat" />
+        android:id="@+id/navigation_contacts"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsFragment"
+        android:label="fragment_contacts"
+        tools:layout="@layout/fragment_contacts" />
 </navigation>

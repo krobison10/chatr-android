@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/navigation_home">
 
     <fragment
-        android:id="@+id/homeFragment"
+        android:id="@+id/navigation_home"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
-        android:id="@+id/chatFragment"
+        android:id="@+id/navigation_chat"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatFragment"
-        android:label="ChatFragment" />
+        android:label="navigation_chat" />
 </navigation>

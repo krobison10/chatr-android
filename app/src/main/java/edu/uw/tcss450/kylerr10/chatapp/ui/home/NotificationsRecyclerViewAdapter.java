@@ -14,12 +14,15 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentNotificationBinding;
 
 /**
- * RecyclerView Adapter for the notifications on the home page.
+ * RecyclerView Adapter for the notifications view on the home page.
  *
  * @author Kyler Robison
  */
 public class NotificationsRecyclerViewAdapter extends
          RecyclerView.Adapter<NotificationsRecyclerViewAdapter.NotificationViewHolder> {
+    /**
+     * List of notifications
+     */
     private List<Notification> mNotifications;
 
     public NotificationsRecyclerViewAdapter(List<Notification> notifications) {
@@ -41,6 +44,7 @@ public class NotificationsRecyclerViewAdapter extends
 
     @Override
     public void onBindViewHolder(@NonNull NotificationViewHolder holder, int position) {
+        //Sets the notification for a notification view
         holder.setNotifcation(mNotifications.get(position));
     }
 
@@ -60,7 +64,7 @@ public class NotificationsRecyclerViewAdapter extends
         }
 
         public void setNotifcation(final Notification notifcation) {
-
+            // TODO: implement code to actually set values in the notification view
         }
 
     }

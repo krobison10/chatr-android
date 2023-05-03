@@ -11,14 +11,15 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
 /**
- * create an instance of this fragment.
+ * Fragment that represents a single notification in the homepage.
+ *
+ * @author Kyler Robison
  */
 public class NotificationFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override

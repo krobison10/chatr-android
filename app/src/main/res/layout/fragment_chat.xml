@@ -10,6 +10,7 @@
         android:id="@+id/title_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/teal_200"
         android:text="@string/chat_main_title"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -26,22 +27,28 @@
         android:elevation="2dp"
         android:padding="16dp"
         android:scrollbars="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_chat_room"
+        app:layout_constraintBottom_toTopOf="@+id/chat_button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_chat"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/title_chat" />
 
-    <Button
-        android:id="@+id/button_create_chat_room"
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/chat_button_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="16dp"
-        android:text="@string/action_new_chat"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/button_create_chat_room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/action_new_chat" />
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

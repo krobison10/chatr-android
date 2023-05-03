@@ -17,20 +17,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/sender_chat_text"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/sender_chat_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:maxWidth="250dp"
-        android:text="@string/chat_text"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+        android:layout_marginEnd="6dp"
+        app:cardBackgroundColor="@color/teal_200"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toStartOf="@+id/sender_user_image"
-        app:layout_constraintTop_toBottomOf="@id/sender_name"
-        app:layout_constraintWidth_max="0dp"
-        app:layout_constraintWidth_percent="0.5" />
+        app:layout_constraintTop_toBottomOf="@id/sender_name">
+
+        <TextView
+            android:id="@+id/sender_chat_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:maxWidth="250dp"
+            android:padding="6dp"
+            android:text="@string/chat_text"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </androidx.cardview.widget.CardView>
 
     <ImageView
         android:id="@+id/sender_user_image"
@@ -52,7 +62,6 @@
         android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sender_chat_text" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

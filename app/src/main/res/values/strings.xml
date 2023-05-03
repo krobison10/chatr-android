@@ -21,12 +21,15 @@
     <string name="action_create_chat">CREATE CHAT</string>
     <string name="hint_type_chat">Type a message</string>
     <string name="action_send_chat">Send</string>
-    <string name="chat_text">Can change text.Can change text.Can change text.Can change text.Can change text</string>
+    <string name="chat_text">Can change text.Can change text.Can change text.Can change text.Can change textCan change text.Can change text.Can change text.Can change text.Can change textCan change text.Can change text.Can change text.Can change text.Can change text</string>
     <string name="receiver_name">Receiver Name</string>
     <string name="sender_name">Sender Name</string>
     <string name="chat_time">9:00am</string>
     <string name="image_user">image of user</string>
     <string name="chat_name">Get chat name</string>
+    <string name="chat_members">chat members</string>
+    <string name="chat_room_name_default">CHAT ROOM</string>
+    <string name="chat_room_message_default">No message</string>
 
     <string name="hello_blank_fragment">Home Fragment</string>
 </resources>

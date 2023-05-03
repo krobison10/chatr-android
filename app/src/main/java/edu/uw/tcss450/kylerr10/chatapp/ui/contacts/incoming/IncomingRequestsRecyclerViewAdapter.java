@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.uw.tcss450.kylerr10.chatapp.CurrentContact;
 import edu.uw.tcss450.kylerr10.chatapp.IncomingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleIncomingRequestBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsRecyclerViewAdapter;
 
 public class IncomingRequestsRecyclerViewAdapter
     extends RecyclerView.Adapter<IncomingRequestsRecyclerViewAdapter.IncomingRequestViewHolder> {

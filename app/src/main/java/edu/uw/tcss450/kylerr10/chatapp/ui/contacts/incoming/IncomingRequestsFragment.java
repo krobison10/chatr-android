@@ -50,12 +50,12 @@ public class IncomingRequestsFragment extends Fragment {
         FragmentIncomingRequestsBinding binding = FragmentIncomingRequestsBinding.bind(getView());
 
         // Create a list of dummy notifications
-        ArrayList<IncomingContactRequest> contacts = new ArrayList<>();
+        ArrayList<IncomingContactRequest> requests = new ArrayList<>();
         for(int i = 0; i < 20; i++) {
-            contacts.add(new IncomingContactRequest());
+            requests.add(new IncomingContactRequest());
         }
         binding.recyclerViewIncomingRequests.setAdapter(
-                new IncomingRequestsRecyclerViewAdapter(contacts)
+                new IncomingRequestsRecyclerViewAdapter(requests)
         );
     }
 }

@@ -13,14 +13,13 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import edu.uw.tcss450.kylerr10.chatapp.AddContact;
-import edu.uw.tcss450.kylerr10.chatapp.CurrentContact;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentAddContactsBinding;
-import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsRecyclerViewAdapter;
 
 /**
- * create an instance of this fragment.
+ * Fragment where the user can add contacts.
+ *
+ * @author Kyler Robison
  */
 public class AddContactsFragment extends Fragment {
 
@@ -38,7 +37,7 @@ public class AddContactsFragment extends Fragment {
 
     /**
      * Events for when the fragment and its views are created.
-     * Also handles building of the RecyclerView that displays current contacts.
+     * Also handles building of the RecyclerView that displays contacts.
      *
      * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
      * @param savedInstanceState If non-null, this fragment is being re-constructed
@@ -49,7 +48,7 @@ public class AddContactsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FragmentAddContactsBinding binding = FragmentAddContactsBinding.bind(getView());
 
-        // Create a list of dummy notifications
+        // Create a list of dummy contacts
         ArrayList<AddContact> contacts = new ArrayList<>();
         for(int i = 0; i < 20; i++) {
             contacts.add(new AddContact());

@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
 /**
- * create an instance of this fragment.
+ * Fragment representing an individual outgoing contact request in the RecyclerView list.
+ *
+ * @author Kyler Robison
  */
 public class SingleOutgoingRequestFragment extends Fragment {
 

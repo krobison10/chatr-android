@@ -12,15 +12,14 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.IncomingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.OutgoingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.R;
-import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentIncomingRequestsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentOutgoingRequestsBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.incoming.IncomingRequestsRecyclerViewAdapter;
 
 /**
- * create an instance of this fragment.
+ * Fragment where the user can view outgoing contact requests.
+ *
+ * @author Kyler Robison
  */
 public class OutgoingRequestsFragment extends Fragment {
 

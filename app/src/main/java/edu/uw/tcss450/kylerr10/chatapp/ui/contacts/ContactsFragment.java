@@ -14,6 +14,8 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
 /**
+ * Represents the main root fragment of the contacts page, contains the tab layout.
+ *
  * @author Kyler Robison, Betty Abera
  */
 public class ContactsFragment extends Fragment {

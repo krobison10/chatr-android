@@ -13,6 +13,11 @@ import edu.uw.tcss450.kylerr10.chatapp.IncomingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleIncomingRequestBinding;
 
+/**
+ * RecyclerViewAdapter for the incoming contact requests list.
+ *
+ * @author Kyler Robison
+ */
 public class IncomingRequestsRecyclerViewAdapter
     extends RecyclerView.Adapter<IncomingRequestsRecyclerViewAdapter.IncomingRequestViewHolder> {
 

@@ -21,7 +21,7 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleAddContactBindi
 public class AddContactsRecyclerViewAdapter
         extends RecyclerView.Adapter<AddContactsRecyclerViewAdapter.AddContactViewHolder> {
     /**
-     * List of notifications
+     * List of AddContacts for the RecyclerView
      */
     private final List<AddContact> mContacts;
 

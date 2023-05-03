@@ -17,7 +17,9 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
 
 /**
- * create an instance of this fragment.
+ * Fragment where the user can view their current contacts in a list.
+ *
+ * @author Kyler Robison
  */
 public class CurrentContactsFragment extends Fragment {
 
@@ -46,7 +48,7 @@ public class CurrentContactsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         FragmentCurrentContactsBinding binding = FragmentCurrentContactsBinding.bind(getView());
 
-        // Create a list of dummy notifications
+        // Create a list of dummy contacts
         ArrayList<CurrentContact> contacts = new ArrayList<>();
         for(int i = 0; i < 20; i++) {
             contacts.add(new CurrentContact());

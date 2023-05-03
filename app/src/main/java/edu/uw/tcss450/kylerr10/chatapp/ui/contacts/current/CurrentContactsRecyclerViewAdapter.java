@@ -14,14 +14,14 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleCurrentContactBinding;
 
 /**
- * RecyclerView Adapter for the notifications view on the home page.
+ * RecyclerView Adapter for the list of current contacts.
  *
  * @author Kyler Robison
  */
 public class CurrentContactsRecyclerViewAdapter
         extends RecyclerView.Adapter<CurrentContactsRecyclerViewAdapter.CurrentContactViewHolder> {
     /**
-     * List of notifications
+     * List of CurrentContacts for the RecyclerView
      */
     private final List<CurrentContact> mContacts;
 

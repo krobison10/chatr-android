@@ -10,6 +10,11 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsFragme
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.incoming.IncomingRequestsFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsFragment;
 
+/**
+ * PagerAdapter for the tab layout of the contacts fragment.
+ *
+ * @author Kyler Robison
+ */
 public class ContactsPagerAdapter extends FragmentStateAdapter {
 
     public ContactsPagerAdapter(@NonNull FragmentActivity fragmentActivity) {

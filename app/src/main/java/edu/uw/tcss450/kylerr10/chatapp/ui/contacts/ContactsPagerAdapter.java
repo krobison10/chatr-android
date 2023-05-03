@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.add.SearchContactsFragment;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.add.AddContactsFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.incoming.IncomingRequestsFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsFragment;
@@ -23,7 +23,7 @@ public class ContactsPagerAdapter extends FragmentStateAdapter {
             case 0:
                 return new CurrentContactsFragment();
             case 1:
-                return new SearchContactsFragment();
+                return new AddContactsFragment();
             case 2:
                 return new IncomingRequestsFragment();
             case 3:

@@ -50,7 +50,7 @@ public class AddContactsFragment extends Fragment {
 
         // Create a list of dummy contacts
         ArrayList<AddContact> contacts = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i < 5; i++) {
             contacts.add(new AddContact());
         }
         binding.recyclerViewAddContacts.setAdapter(

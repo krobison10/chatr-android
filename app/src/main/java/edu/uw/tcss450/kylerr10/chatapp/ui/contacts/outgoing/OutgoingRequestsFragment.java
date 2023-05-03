@@ -51,7 +51,7 @@ public class OutgoingRequestsFragment extends Fragment {
 
         // Create a list of dummy notifications
         ArrayList<OutgoingContactRequest> requests = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i < 3; i++) {
             requests.add(new OutgoingContactRequest());
         }
         binding.recyclerViewOutgoingRequests.setAdapter(

@@ -50,7 +50,7 @@ public class IncomingRequestsFragment extends Fragment {
 
         // Create a list of dummy notifications
         ArrayList<IncomingContactRequest> requests = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i < 6; i++) {
             requests.add(new IncomingContactRequest());
         }
         binding.recyclerViewIncomingRequests.setAdapter(

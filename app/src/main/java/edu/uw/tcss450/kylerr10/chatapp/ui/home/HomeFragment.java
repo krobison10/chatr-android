@@ -2,13 +2,19 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.home;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
+import edu.uw.tcss450.kylerr10.chatapp.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentHomeBinding;
 
 /**
  * Fragment representing the main page of the Home activity for the app.
@@ -27,6 +33,20 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FragmentHomeBinding binding = FragmentHomeBinding.bind(getView());
+
+        ArrayList<Notification> notifications = new ArrayList<>();
+        for(int i = 0; i < 20; i++) {
+            notifications.add(new Notification());
+        }
+        binding.recyclerViewNotifications.setAdapter(
+                new NotificationsRecyclerViewAdapter(notifications)
+        );
     }
 
 }

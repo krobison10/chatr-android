@@ -8,7 +8,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <TextView
-        android:id="@+id/textView_greeting"
+        android:id="@+id/text_greeting"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -19,17 +19,19 @@
         app:layout_constraintStart_toStartOf="@+id/home_weather_card"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/home_weather_card"
         android:layout_width="0dp"
         android:layout_height="180dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="18dp"
         android:layout_marginEnd="18dp"
+        android:checkable="true"
+        app:cardUseCompatPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_greeting">
+        app:layout_constraintTop_toBottomOf="@+id/text_greeting">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_weather_home"
@@ -37,7 +39,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView_citystate_weather"
+                android:id="@+id/text_citystate_weather"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -46,22 +48,22 @@
                 android:text="Cupertino, CA"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/imageView_weathericon"
+                app:layout_constraintEnd_toStartOf="@+id/image_weathericon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView_locationtype"
+                android:id="@+id/text_locationtype"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Current Location"
                 android:textSize="12sp"
-                app:layout_constraintStart_toStartOf="@+id/textView_citystate_weather"
-                app:layout_constraintTop_toBottomOf="@+id/textView_citystate_weather" />
+                app:layout_constraintStart_toStartOf="@+id/text_citystate_weather"
+                app:layout_constraintTop_toBottomOf="@+id/text_citystate_weather" />
 
             <TextView
-                android:id="@+id/textView_temperature"
+                android:id="@+id/text_temperature"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -72,7 +74,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:id="@+id/imageView_weathericon"
+                android:id="@+id/image_weathericon"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="16dp"
@@ -82,20 +84,20 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView_weatherdescription"
+                android:id="@+id/text_weatherdescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Sunny"
                 android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="@+id/imageView_weathericon"
-                app:layout_constraintStart_toStartOf="@+id/imageView_weathericon"
-                app:layout_constraintTop_toBottomOf="@+id/imageView_weathericon" />
+                app:layout_constraintEnd_toEndOf="@+id/image_weathericon"
+                app:layout_constraintStart_toStartOf="@+id/image_weathericon"
+                app:layout_constraintTop_toBottomOf="@+id/image_weathericon" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/home_notif_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -112,7 +114,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/textView_notifications"
+                android:id="@+id/text_notifications"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -132,9 +134,9 @@
                 android:text="Clear All"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/textView_notifications"
+                app:layout_constraintBottom_toBottomOf="@+id/text_notifications"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView_notifications" />
+                app:layout_constraintTop_toTopOf="@+id/text_notifications" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_notifications"
@@ -147,9 +149,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_notifications" />
+                app:layout_constraintTop_toBottomOf="@+id/text_notifications"
+                app:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/fragment_notification"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

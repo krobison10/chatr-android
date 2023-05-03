@@ -27,32 +27,16 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/fragment_chat_room_card" />
 
-<!--        <androidx.cardview.widget.CardView-->
-<!--            android:id="@+id/chat_button_container"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:cardCornerRadius="20dp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent">-->
-
-<!--            <Button-->
-<!--                android:id="@+id/button_create_chat_room"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/action_new_chat" />-->
-
-<!--        </androidx.cardview.widget.CardView>-->
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/floating_action_button"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom|right"
-    android:layout_margin="16dp"
-    android:contentDescription="New Chat"
-    app:srcCompat="@drawable/ic_add_24dp"/>
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="16dp"
+        android:contentDescription="New Chat"
+        android:text="New Chat"
+        app:icon="@drawable/ic_add_24dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

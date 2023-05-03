@@ -40,17 +40,15 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
 
         // Create some mock data for the chat rooms
         mChatRooms = new ArrayList<>();
-        mChatRooms.add(new ChatRoom("Chat Room 1", "Last message in Chat Room 1"));
-        mChatRooms.add(new ChatRoom("Chat Room 2", "Last message in Chat Room 2"));
-        mChatRooms.add(new ChatRoom("Chat Room 3", "Last message in Chat Room 3"));
-        mChatRooms.add(new ChatRoom("Chat Room 4", "Last message in Chat Room 4"));
-        mChatRooms.add(new ChatRoom("Chat Room 5", "Last message in Chat Room 5"));
-        mChatRooms.add(new ChatRoom("Chat Room 6", "Last message in Chat Room 6"));
+
+        for(int i = 1; i <= 20; i++) {
+            mChatRooms.add(new ChatRoom("Chat Room " + i, "Last message in Chat Room " + i));
+
+        }
 
         // Create a new ChatRoomAdapter and set it on the RecyclerView
         mAdapter = new ChatRoomAdapter(mChatRooms);
         mAdapter.setOnChatRoomClickListener(this);
-
     }
 
     @Override

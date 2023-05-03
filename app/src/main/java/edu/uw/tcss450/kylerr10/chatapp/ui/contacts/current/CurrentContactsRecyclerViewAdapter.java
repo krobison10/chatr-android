@@ -44,7 +44,6 @@ public class CurrentContactsRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(CurrentContactViewHolder holder, int position) {
-        //Sets the notification for a notification view
         holder.setContact(mContacts.get(position));
     }
 

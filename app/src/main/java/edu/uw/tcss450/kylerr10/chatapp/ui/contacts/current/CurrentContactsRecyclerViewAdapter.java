@@ -38,7 +38,7 @@ public class CurrentContactsRecyclerViewAdapter
         return new CurrentContactViewHolder(
                 LayoutInflater
                         .from(parent.getContext())
-                        .inflate(R.layout.fragment_notification, parent, false)
+                        .inflate(R.layout.fragment_single_current_contact, parent, false)
         );
     }
 

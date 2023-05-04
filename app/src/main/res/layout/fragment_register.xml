@@ -9,27 +9,37 @@
     tools:layout_editor_absoluteX="0dp"
     tools:layout_editor_absoluteY="98dp">
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/logo_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_create_account"
         android:layout_width="210dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="18dp"
         android:text="Create Account"
-        android:textColor="@color/Light_blue"
+        android:textColor="@color/primary_text"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:id="@+id/textlayout1"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="32dp"
         android:hint="First name"
         app:layout_constraintEnd_toEndOf="parent"
@@ -41,8 +51,7 @@
             android:id="@+id/edit_first"
 
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -79,6 +88,7 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_email"
+            android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -125,11 +135,10 @@
         android:id="@+id/button_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:backgroundTint="#0288D1"
+        android:layout_marginBottom="48dp"
         android:text="@string/action_register_short"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-        android:textColor="@color/white"
+        android:textAppearance="@style/Widget.Material3.Button"
+        android:textSize="14sp"
         app:cornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/textlayout5" />
@@ -139,15 +148,13 @@
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="48dp"
         android:insetTop="6dp"
         android:insetBottom="6dp"
         android:text="Log in"
 
         android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-        android:textColor="@color/amber"
         android:textStyle="bold"
-        app:iconPadding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textlayout5" />
 

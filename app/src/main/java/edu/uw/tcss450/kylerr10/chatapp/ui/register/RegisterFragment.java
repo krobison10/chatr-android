@@ -32,17 +32,13 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
         mbinding.buttonRegister.setOnClickListener(button -> {
-            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_verifyEmailFragment);
 
         });
 
-        mbinding.buttonToLogin.setOnClickListener(button ->{
+        mbinding.buttonToLogin.setOnClickListener(button -> {
             Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
         });
 
     }
-
-
-    }
-
-
+}

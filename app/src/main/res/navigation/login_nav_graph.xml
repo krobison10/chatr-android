@@ -31,6 +31,18 @@
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_verifyEmailFragment"
+            app:destination="@id/verifyEmailFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/verifyEmailFragment"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.register.VerifyEmailFragment"
+        android:label="fragment_verify_email"
+        tools:layout="@layout/fragment_verify_email" >
+        <action
+            android:id="@+id/action_verifyEmailFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

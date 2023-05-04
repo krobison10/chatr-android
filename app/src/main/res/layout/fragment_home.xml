@@ -63,7 +63,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/text_citystate_weather" />
 
             <TextView
-                android:id="@+id/text_temperature"
+                android:id="@+id/text_temperature_high"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -129,7 +129,7 @@
                 android:id="@+id/button_clearall_notifications"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
                 android:layout_marginEnd="14dp"
                 android:text="Clear All"
                 android:textSize="12sp"
@@ -142,17 +142,14 @@
                 android:id="@+id/recyclerView_notifications"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginBottom="8dp"
+                app:layoutManager="LinearLayoutManager"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/text_notifications"
-                app:layoutManager="LinearLayoutManager"
-                tools:listitem="@layout/fragment_notification"
-                />
+                tools:listitem="@layout/fragment_notification" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

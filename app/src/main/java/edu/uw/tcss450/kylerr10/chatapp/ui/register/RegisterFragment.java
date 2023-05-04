@@ -17,25 +17,32 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterBinding;
  * @author Betlhem
  */
 public class RegisterFragment extends Fragment {
-    private FragmentRegisterBinding binding;
+    private FragmentRegisterBinding mbinding;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentRegisterBinding.inflate(inflater);
-        return  binding.getRoot();
+        mbinding = FragmentRegisterBinding.inflate(inflater);
+        return  mbinding.getRoot();
 
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        binding.buttonRegister.setOnClickListener(button -> {
-            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment2);
+        mbinding.buttonRegister.setOnClickListener(button -> {
+            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
+
+        });
+
+        mbinding.buttonToLogin.setOnClickListener(button ->{
+            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
         });
 
     }
 
 
-}
+    }
+
+

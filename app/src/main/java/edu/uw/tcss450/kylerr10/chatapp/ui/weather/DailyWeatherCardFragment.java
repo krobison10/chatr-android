@@ -1,7 +1,5 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,18 +12,15 @@ import android.view.ViewGroup;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
-public class WeatherDailyListFragment extends Fragment {
-
-    private WeatherDailyListViewModel mViewModel;
-
-    public static WeatherDailyListFragment newInstance() {
-        return new WeatherDailyListFragment();
-    }
+/**
+ * A simple {@link Fragment} subclass responsible for relaying daily forecast information to the user.
+ * @author Jasper Newkirk
+ */
+public class DailyWeatherCardFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_weather_daily_list, container, false);
+        return inflater.inflate(R.layout.fragment_daily_weather_card, container, false);
     }
-
 }

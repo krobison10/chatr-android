@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.search;
+package edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing;
 
 import android.os.Bundle;
 
@@ -11,13 +11,11 @@ import android.view.ViewGroup;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 
 /**
- * create an instance of this fragment. Represents the page where the user
- * searches for new contacts.
+ * Fragment representing an individual outgoing contact request in the RecyclerView list.
  *
  * @author Kyler Robison
  */
-public class SearchFragment extends Fragment {
-
+public class SingleOutgoingRequestFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +26,6 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        return inflater.inflate(R.layout.fragment_single_outgoing_request, container, false);
     }
 }

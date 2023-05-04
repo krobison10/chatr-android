@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.IncomingContactRequest;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.IncomingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentIncomingRequestsBinding;
 

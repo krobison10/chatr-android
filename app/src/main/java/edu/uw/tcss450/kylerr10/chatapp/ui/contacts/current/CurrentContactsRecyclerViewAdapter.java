@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.uw.tcss450.kylerr10.chatapp.CurrentContact;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.CurrentContact;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleCurrentContactBinding;
 

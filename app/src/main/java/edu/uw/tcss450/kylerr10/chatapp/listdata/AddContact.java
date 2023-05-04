@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp;
+package edu.uw.tcss450.kylerr10.chatapp.listdata;
 
 import java.io.Serializable;
 

@@ -24,7 +24,7 @@
         tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/registerFragment"
-        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.register.RegisterFragment"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.auth.register.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
 
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/verifyEmailFragment"
-        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.register.VerifyEmailFragment"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.auth.register.VerifyEmailFragment"
         android:label="fragment_verify_email"
         tools:layout="@layout/fragment_verify_email" >
         <action

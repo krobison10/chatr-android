@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.register;
+package edu.uw.tcss450.kylerr10.chatapp.ui.auth.register;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -19,8 +19,8 @@ import java.util.Locale;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.home.DailyWeatherCardRecyclerViewAdapter;
-import edu.uw.tcss450.kylerr10.chatapp.ui.home.HourlyWeatherCardRecyclerViewAdapter;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.DailyWeatherCardRecyclerViewAdapter;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyWeatherCardRecyclerViewAdapter;
 
 /**
  * A simple {@link Fragment} subclass responsible for relaying weather information to the user.
@@ -50,15 +50,6 @@ public class WeatherFragment extends Fragment {
         FragmentWeatherBinding binding = FragmentWeatherBinding.bind(requireView());
 
         // Create a list of dummy dailyForecasts and hourlyForecasts
-        ArrayList<DailyForecast> dailyForecasts = new ArrayList<>();
-        dailyForecasts.add(new DailyForecast("Today", 82, 71, "Sunny"));
-        dailyForecasts.add(new DailyForecast("Tomorrow", 76, 69, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Saturday", 75, 68, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Sunday", 76, 69, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Monday", 80, 72, "Sunny"));
-        dailyForecasts.add(new DailyForecast("Tuesday", 68, 60, "Cloudy"));
-        dailyForecasts.add(new DailyForecast("Wednesday", 81, 70, "Sunny"));
-
         ArrayList<HourlyForecast> hourlyForecasts = new ArrayList<>();
         hourlyForecasts.add(new HourlyForecast(9, 48, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(10, 48, "Sunny"));
@@ -75,11 +66,22 @@ public class WeatherFragment extends Fragment {
         hourlyForecasts.add(new HourlyForecast(21, 49, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(22, 48, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(23, 48, "Cloudy"));
-        binding.recyclerViewWeatherDaily.setAdapter(
-                new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
-        );
+
+        ArrayList<DailyForecast> dailyForecasts = new ArrayList<>();
+        dailyForecasts.add(new DailyForecast("Today", 82, 71, "Sunny"));
+        dailyForecasts.add(new DailyForecast("Tomorrow", 76, 69, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Saturday", 75, 68, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Sunday", 76, 69, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Monday", 80, 72, "Sunny"));
+        dailyForecasts.add(new DailyForecast("Tuesday", 68, 60, "Cloudy"));
+        dailyForecasts.add(new DailyForecast("Wednesday", 81, 70, "Sunny"));
+
         binding.recyclerViewWeatherHourly.setAdapter(
                 new HourlyWeatherCardRecyclerViewAdapter(hourlyForecasts)
+        );
+
+        binding.recyclerViewWeatherDaily.setAdapter(
+                new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
         );
 
 

@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.home;
+package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +68,8 @@ public class HourlyWeatherCardRecyclerViewAdapter extends
             // TODO: implement code to actually set values in the hourly forecast
             mBinding.textTemperature.setText(hourlyForecast.getTemperature());
             mBinding.imageWeatherPreview.setImageIcon(hourlyForecast.getCondition(mView));
-            mBinding.textTime.setText(hourlyForecast.getHour());
+            mBinding.textHour.setText(hourlyForecast.getHour());
+            mBinding.textMeridiem.setText(hourlyForecast.getMeridiem());
         }
 
     }

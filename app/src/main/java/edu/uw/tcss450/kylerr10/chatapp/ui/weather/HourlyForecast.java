@@ -16,16 +16,18 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
  */
 public class HourlyForecast implements Serializable {
     // Fields are temporary and unused.
-    private int hour = 12;
-    private int temperature = 99;
-    private String condition = "Sunny";
+    private int hour;
+    private int temperature;
+    private String condition;
 
     public String getHour() {
-        return hour == 12 ? "12 PM" : hour > 11 ? (hour - 12) + " PM" : hour + " AM";
+        return String.valueOf(hour % 12 == 0 ? 12 : hour % 12);
     }
-
+    public String getMeridiem() {
+        return hour > 11 ? "PM" : "AM";
+    }
     public String getTemperature() {
-        return temperature + "°F";
+        return temperature + "°";
     }
 
     public Icon getCondition(View view) {

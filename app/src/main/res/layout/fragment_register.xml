@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:text="Create Account"
-        android:textColor="@color/primary_text"
+        android:textColor="?colorOnBackground"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

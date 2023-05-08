@@ -14,7 +14,7 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterBinding;
 
 /**
- * @author Betlhem
+ * @author Kyler Robison, Betlhem Bada
  */
 public class RegisterFragment extends Fragment {
     private FragmentRegisterBinding mbinding;
@@ -25,20 +25,20 @@ public class RegisterFragment extends Fragment {
                              Bundle savedInstanceState) {
         mbinding = FragmentRegisterBinding.inflate(inflater);
         return  mbinding.getRoot();
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        mbinding.buttonRegister.setOnClickListener(button -> {
-            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_verifyEmailFragment);
+        mbinding.buttonNext.setOnClickListener(button -> {
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_registerFragment_to_registerPasswordFragment);
 
         });
 
         mbinding.buttonToLogin.setOnClickListener(button -> {
-            Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_registerFragment_to_loginFragment);
         });
-
     }
 }

@@ -1,20 +1,44 @@
 <resources>
     <string name="app_name">Chatr</string>
+
+    <!-- Login/Register -->
+    <string name="title_login">Log In</string>
     <string name="action_login_short">Log in</string>
     <string name="action_register_short">Register</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+
+    <string name="title_create_account">Create Account</string>
+    <string name="hint_first_name">First name</string>
+    <string name="hint_last_name">Last name</string>
+    <string name="hint_username">Username</string>
+
+    <string name="button_to_login">@string/action_login_short</string>
+    <string name="button_register_next">Next</string>
+
+    <string name="title_create_pass">Create a Password</string>
+    <string name="title_pass_reqs">Password Requirements</string>
+    <string name="label_pass_length">Length</string>
+    <string name="label_pass_lowercase">Lowercase letter</string>
+    <string name="label_pass_uppercase">Uppercase letter</string>
+    <string name="label_pass_number">Number</string>
+    <string name="label_pass_special">Special character</string>
+    <string name="label_pass_match">Passwords match</string>
+
+    <string name="hint_password_reenter">Re-enter password</string>
+    <string name="button_create_account">Create account</string>
+
 
     <string name="title_weather">Weather</string>
     <string name="title_daily_forecast">Daily Forecast</string>
     <string name="title_hourly_forecast">Hourly Forecast</string>
     <string name="title_current_location">Current Location</string>
 
+    <!-- Nav Destinations/Fragment names -->
     <string name="nav_weather">Weather</string>
     <string name="nav_chat">Chat</string>
     <string name="nav_home">Home</string>
     <string name="nav_contacts">Contacts</string>
-    <string name="nav_search">Search</string>
 
     <string name="action_new_chat">NEW CHAT</string>
     <string name="chat_main_title"> Chat</string>

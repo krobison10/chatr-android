@@ -13,6 +13,14 @@
     <string name="hint_last_name">Last name</string>
     <string name="hint_username">Username</string>
 
+    <string name="error_first_name">Please enter a valid name</string>
+    <string name="error_last_name">Please enter a valid name</string>
+    <string name="error_username">Please enter a valid username</string>
+    <string name="error_email">Please enter a valid email</string>
+
+    <string name="error_username_exists">Username is taken</string>
+    <string name="error_email_exists">Account already exists</string>
+
     <string name="button_to_login">@string/action_login_short</string>
     <string name="button_register_next">Next</string>
 

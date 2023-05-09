@@ -100,7 +100,7 @@ public class RegisterFragment extends Fragment {
 
         if(mBinding.editFirst.getText().toString().length() == 0) {
             mBinding.editFirstLayout.setErrorEnabled(true);
-            mBinding.editFirstLayout.setError("Please enter a valid first name");
+            mBinding.editFirstLayout.setError(getString(R.string.error_first_name));
             valid = false;
         } else {
             mBinding.editFirstLayout.setErrorEnabled(false);
@@ -108,7 +108,7 @@ public class RegisterFragment extends Fragment {
 
         if(mBinding.editLast.getText().toString().length() == 0) {
             mBinding.editLastLayout.setErrorEnabled(true);
-            mBinding.editLastLayout.setError("Please enter a valid last name");
+            mBinding.editLastLayout.setError(getString(R.string.error_last_name));
             valid = false;
         } else {
             mBinding.editLastLayout.setErrorEnabled(false);
@@ -116,12 +116,12 @@ public class RegisterFragment extends Fragment {
 
         if(mBinding.editUsername.getText().toString().length() == 0) {
             mBinding.editUsernameLayout.setErrorEnabled(true);
-            mBinding.editUsernameLayout.setError("Please enter a valid username");
+            mBinding.editUsernameLayout.setError(getString(R.string.error_username));
             valid = false;
         } else {
             if(usernameExists(mBinding.editUsername.getText().toString())) {
                 mBinding.editUsernameLayout.setErrorEnabled(true);
-                mBinding.editUsernameLayout.setError("Username is taken");
+                mBinding.editUsernameLayout.setError(getString(R.string.error_username_exists));
                 valid = false;
             } else {
                 mBinding.editUsernameLayout.setErrorEnabled(false);
@@ -131,12 +131,12 @@ public class RegisterFragment extends Fragment {
         String email = mBinding.editEmail.getText().toString();
         if(!(email.contains("@") && email.contains("."))) {
             mBinding.editEmailLayout.setErrorEnabled(true);
-            mBinding.editEmailLayout.setError("Please enter a valid email");
+            mBinding.editEmailLayout.setError(getString(R.string.error_email));
             valid = false;
         } else {
             if(emailExists(email)) {
                 mBinding.editEmailLayout.setErrorEnabled(true);
-                mBinding.editEmailLayout.setError("Account already exists");
+                mBinding.editEmailLayout.setError(getString(R.string.error_email_exists));
                 valid = false;
             } else {
                 mBinding.editEmailLayout.setErrorEnabled(false);

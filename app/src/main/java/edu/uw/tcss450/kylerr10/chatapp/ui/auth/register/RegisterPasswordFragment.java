@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +30,11 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterPasswordBindi
  */
 public class RegisterPasswordFragment extends Fragment {
 
-    public boolean debug = false;
+    /**
+     * Flag used to prevent the response handler from being called the first time it is set to
+     * observe the response.
+     */
+    private boolean observerCreated = false;
 
     private FragmentRegisterPasswordBinding mBinding;
 
@@ -78,12 +84,7 @@ public class RegisterPasswordFragment extends Fragment {
     }
 
     private void attemptRegister(View view) {
-        if(debug) {
-            Navigation.findNavController(getView())
-                    .navigate(R.id.action_registerPasswordFragment_to_loginFragment);
-        } else {
-            mViewModel.connect(mBinding.editPassword.getText().toString());
-        }
+        mViewModel.connect(mBinding.editPassword.getText().toString());
     }
 
     private void navigateToLogin() {
@@ -101,13 +102,21 @@ public class RegisterPasswordFragment extends Fragment {
      * @param response the Response from the server
      */
     private void observeResponse(final JSONObject response) {
+        if(!observerCreated) {
+            //Escape the method since it is only being called because the observer was added,
+            //and not because there was a response.
+            observerCreated = true;
+            return;
+        }
         if (response.length() > 0) {
             if (response.has("code")) {
                 try {
-                    Log.i("Register error",
-                            response.getJSONObject("data").getString("message"));
+                    showErrorNotification(
+                            "Error: " + response.getJSONObject("data")
+                                    .getString("message").toLowerCase());
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
+                    showErrorNotification("An error occurred");
                 }
             } else {
                 if(response.has("error")) {
@@ -117,13 +126,24 @@ public class RegisterPasswordFragment extends Fragment {
                     } catch (JSONException e) {
                         Log.e("JSON Parse Error", e.getMessage());
                     }
+                    showErrorNotification("An error occurred");
                 } else {
                     navigateToLogin();
                 }
             }
         } else {
             Log.d("JSON Response", "No Response");
+            showErrorNotification("An error occurred, try checking your connection");
         }
+    }
+
+    /**
+     * Displays an error notification to the user.
+     *
+     * @param message message to show.
+     */
+    private void showErrorNotification(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
 
     /**

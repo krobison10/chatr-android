@@ -19,6 +19,14 @@
         <action
             android:id="@+id/action_loginFragment_to_verifyEmailFragment"
             app:destination="@id/verifyEmailFragment" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="password"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
     <activity
         android:id="@+id/homeActivity"

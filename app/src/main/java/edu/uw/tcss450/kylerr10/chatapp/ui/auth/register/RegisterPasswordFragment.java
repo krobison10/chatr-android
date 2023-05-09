@@ -5,13 +5,18 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.regex.Pattern;
 
@@ -23,7 +28,17 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterPasswordBindi
  */
 public class RegisterPasswordFragment extends Fragment {
 
+    public boolean debug = false;
+
     private FragmentRegisterPasswordBinding mBinding;
+
+    private RegisterViewModel mViewModel;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = new ViewModelProvider(getActivity()).get(RegisterViewModel.class);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,14 +51,11 @@ public class RegisterPasswordFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        mBinding.buttonRegister.setOnClickListener(button -> {
-            Navigation.findNavController(getView())
-                    .navigate(R.id.action_registerPasswordFragment_to_loginFragment);
-
-        });
 
         // Start out with register button disabled
         mBinding.buttonRegister.setEnabled(false);
+        mBinding.buttonRegister.setOnClickListener(this::attemptRegister);
+        mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
         // Text watcher for password input listeners
         TextWatcher textWatcher = new TextWatcher() {
@@ -63,6 +75,55 @@ public class RegisterPasswordFragment extends Fragment {
         mBinding.editPassword.addTextChangedListener(textWatcher);
         mBinding.editPasswordreenter.addTextChangedListener(textWatcher);
 
+    }
+
+    private void attemptRegister(View view) {
+        if(debug) {
+            Navigation.findNavController(getView())
+                    .navigate(R.id.action_registerPasswordFragment_to_loginFragment);
+        } else {
+            mViewModel.connect(mBinding.editPassword.getText().toString());
+        }
+    }
+
+    private void navigateToLogin() {
+        RegisterPasswordFragmentDirections.ActionRegisterPasswordFragmentToLoginFragment directions
+                = RegisterPasswordFragmentDirections.actionRegisterPasswordFragmentToLoginFragment();
+        directions.setEmail(mViewModel.getUserEmail());
+        directions.setPassword(mBinding.editPassword.getText().toString());
+        Navigation.findNavController(getView()).navigate(directions);
+    }
+
+    /**
+     * An observer on the HTTP Response from the web server. This observer should be
+     * attached to SignInViewModel.
+     *
+     * @param response the Response from the server
+     */
+    private void observeResponse(final JSONObject response) {
+        if (response.length() > 0) {
+            if (response.has("code")) {
+                try {
+                    Log.i("Register error",
+                            response.getJSONObject("data").getString("message"));
+                } catch (JSONException e) {
+                    Log.e("JSON Parse Error", e.getMessage());
+                }
+            } else {
+                if(response.has("error")) {
+                    try {
+                        Log.e("JSON error",
+                                response.getJSONObject("data").getString("error"));
+                    } catch (JSONException e) {
+                        Log.e("JSON Parse Error", e.getMessage());
+                    }
+                } else {
+                    navigateToLogin();
+                }
+            }
+        } else {
+            Log.d("JSON Response", "No Response");
+        }
     }
 
     /**

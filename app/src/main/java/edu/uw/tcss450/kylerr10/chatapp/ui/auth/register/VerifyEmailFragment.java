@@ -42,9 +42,6 @@ public class VerifyEmailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mBinding.buttonVerify.setOnClickListener(button -> Navigation.findNavController(
-                        getView()).navigate(
-                        R.id.action_verifyEmailFragment_to_loginFragment
-                )
-        );
+                        getView()).navigate(R.id.action_verifyEmailFragment_to_homeActivity));
     }
 }

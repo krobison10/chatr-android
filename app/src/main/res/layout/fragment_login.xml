@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:startIconDrawable="@drawable/ic_email_grey_24dp">
+        app:startIconDrawable="@drawable/ic_mail_onsurface_24dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_email"
@@ -52,7 +52,7 @@
         app:layout_constraintEnd_toEndOf="@+id/email_layout"
         app:layout_constraintStart_toStartOf="@+id/email_layout"
         app:layout_constraintTop_toBottomOf="@+id/email_layout"
-        app:startIconDrawable="@drawable/ic_lock_grey_24dp">
+        app:startIconDrawable="@drawable/ic_lock_onsurface_24dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_password"
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="@string/title_login"
-        android:textColor="@color/primary_text"
+        android:textColor="?colorOnSurface"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView2"

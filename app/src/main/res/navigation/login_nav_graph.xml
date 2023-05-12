@@ -16,6 +16,17 @@
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_verifyEmailFragment"
+            app:destination="@id/verifyEmailFragment" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="password"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
     <activity
         android:id="@+id/homeActivity"
@@ -32,8 +43,8 @@
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
         <action
-            android:id="@+id/action_registerFragment_to_verifyEmailFragment"
-            app:destination="@id/verifyEmailFragment" />
+            android:id="@+id/action_registerFragment_to_registerPasswordFragment"
+            app:destination="@id/registerPasswordFragment" />
 
     </fragment>
     <fragment
@@ -42,7 +53,16 @@
         android:label="fragment_verify_email"
         tools:layout="@layout/fragment_verify_email" >
         <action
-            android:id="@+id/action_verifyEmailFragment_to_loginFragment"
+            android:id="@+id/action_verifyEmailFragment_to_homeActivity"
+            app:destination="@id/homeActivity" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerPasswordFragment"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.auth.register.RegisterPasswordFragment"
+        android:label="fragment_register_password"
+        tools:layout="@layout/fragment_register_password" >
+        <action
+            android:id="@+id/action_registerPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

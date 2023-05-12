@@ -59,6 +59,10 @@ public class LoginFragment extends Fragment {
 
         });
 
+        LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
+        mBinding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
+        mBinding.editPassword.setText(args.getPassword().equals("default") ? "" : args.getPassword());
+
     }
 
 }

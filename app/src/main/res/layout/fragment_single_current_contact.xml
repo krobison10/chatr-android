@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_account_circle_24dp" />
+        app:srcCompat="@drawable/ic_account_circle_onsurface_24dp" />
 
     <TextView
         android:id="@+id/textView"
@@ -43,7 +43,8 @@
         app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView">
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -53,7 +54,7 @@
                 android:id="@+id/imageView2"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/baseline_more_horiz_24dp"
+                android:src="@drawable/ic_morehoriz_onsurface_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -32,8 +32,8 @@ public class HourlyForecast implements Serializable {
 
     public Icon getCondition(View view) {
         return this.condition.contains("Cloudy")
-                ? Icon.createWithResource(view.getContext(), R.drawable.ic_cloud_black_24dp)
-                : Icon.createWithResource(view.getContext(), R.drawable.ic_sunny_black_24dp);
+                ? Icon.createWithResource(view.getContext(), R.drawable.ic_cloudy_onsecondarycontainer_24dp)
+                : Icon.createWithResource(view.getContext(), R.drawable.ic_sunny_onsecondarycontainer_24dp);
     }
 
     public HourlyForecast(int hour, int temperature, String condition) {

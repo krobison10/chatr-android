@@ -8,14 +8,12 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
  */
 
 public class ChatRoom {
-    /**
-     * The name of the chat room.
-     */
+
+    //The name of the chat room.
     private String mName;
 
-    /**
-     * The last message sent in the chat room.
-     */
+
+    //The last message sent in the chat room.
     private String mLastMessage;
 
     /**
@@ -55,7 +53,7 @@ public class ChatRoom {
 
     /**
      * Sets the last message sent in the chat room.
-     * @param lastMessage the last message sent in the chat roo
+     * @param lastMessage the last message sent in the chat room
      */
     public void setLastMessage(String lastMessage) {
         this.mLastMessage = lastMessage;

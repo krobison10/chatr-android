@@ -10,19 +10,15 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 import java.util.List;
 
 /**
- * Adapter class for the RecyclerView that displays a list of chat rooms.
+ * RecyclerView Adapter that displays a list of chat rooms.
  * @author Leyla Ahmed
  */
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
 
-    /**
-     * The list of ChatRooms to display in the RecyclerView.
-     */
+    //The list of ChatRooms to display in the RecyclerView
     private List<ChatRoom> mChatRooms;
 
-    /**
-     * The listener to handle click events on the items in the RecyclerView.
-     */
+    //The listener to handle click events on the items in the RecyclerView
     private OnChatRoomClickListener mListener;
 
 
@@ -73,14 +69,12 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        /**
-         * The TextView that displays the name of the chat room in the ConversationActivity layout.
-         */
+        //The TextView that displays the name of the chat room in the ConversationActivity layout.
+
         private TextView mRoomNameTextView;
 
-        /**
-         * The TextView that displays the last message sent in the chat room in the ConversationActivity layout.
-         */
+        //The TextView that displays the last message sent in the chat room in the ConversationActivity layout.
+
         private TextView mLastMessageTextView;
 
 

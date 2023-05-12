@@ -39,6 +39,6 @@
         android:layout_margin="16dp"
         android:contentDescription="New Chat"
         android:text="New Chat"
-        app:icon="@drawable/ic_add_24dp"/>
+        app:icon="@drawable/ic_add_onsurface_24dp"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

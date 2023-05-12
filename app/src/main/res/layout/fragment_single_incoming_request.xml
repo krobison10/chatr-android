@@ -17,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_account_circle_24dp" />
+        app:srcCompat="@drawable/ic_account_circle_onsurface_24dp" />
 
     <TextView
         android:id="@+id/textView"
@@ -40,10 +40,11 @@
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="24dp"
-        app:cardElevation="2dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toStartOf="@id/materialCardView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView">
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -53,7 +54,7 @@
                 android:id="@+id/ic_decline"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_close_24dp"
+                android:src="@drawable/ic_close_onsurface_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,10 +71,11 @@
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="24dp"
-        app:cardElevation="2dp"
+        app:cardElevation="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView">
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -83,7 +85,7 @@
                 android:id="@+id/ic_accept"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_check_24dp"
+                android:src="@drawable/ic_check_onsurface_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

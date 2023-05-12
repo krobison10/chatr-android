@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_home_onsurface_24dp"
         android:title="@string/nav_home" />
 
     <item
         android:id="@+id/navigation_contacts"
-        android:icon="@drawable/ic_person_black_24dp"
+        android:icon="@drawable/ic_person_onsurface_24dp"
         android:title="@string/nav_contacts" />
 
 
     <item
         android:id="@+id/navigation_chat"
-        android:icon="@drawable/ic_chat_black_24dp"
+        android:icon="@drawable/ic_chat_onsurface_24dp"
         android:title="@string/nav_chat" />
 
     <item
         android:id="@+id/navigation_weather"
-        android:icon="@drawable/ic_sunny_black_24dp"
+        android:icon="@drawable/ic_sunny_onsecondarycontainer_24dp"
         android:title="@string/nav_weather" />
 
 

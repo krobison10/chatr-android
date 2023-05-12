@@ -68,26 +68,36 @@ public class LoginFragment extends Fragment {
                     LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
             ));
 
-        mBinding.buttonLogin.setEnabled(false);
-        mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
+        //TODO: don't do this. But set debug to false for now to test log in logic.
+        boolean debug = true;
+        if(!debug) {
+            mBinding.buttonLogin.setEnabled(false);
+            mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
 
-        mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+            mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
-        //Universal handler for change of all input fields
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void afterTextChanged(Editable editable) {
-                //validateInputs() is a side-effecting method call
-                mBinding.buttonLogin.setEnabled(validateInputs());
-            }
-        };
+            //Universal handler for change of all input fields
+            TextWatcher textWatcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    //validateInputs() is a side-effecting method call
+                    mBinding.buttonLogin.setEnabled(validateInputs());
+                }
+            };
 
-        mBinding.editEmail.addTextChangedListener(textWatcher);
-        mBinding.editPassword.addTextChangedListener(textWatcher);
+            mBinding.editEmail.addTextChangedListener(textWatcher);
+            mBinding.editPassword.addTextChangedListener(textWatcher);
+
+        } else {
+            mBinding.buttonLogin.setOnClickListener(button ->
+                    Navigation.findNavController(getView()).navigate(
+                            LoginFragmentDirections.actionLoginFragmentToHomeActivity("", "")
+                    ));
+        }
 
         LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
         mBinding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());

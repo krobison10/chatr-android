@@ -45,7 +45,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/text_hour"
-            app:srcCompat="@drawable/ic_sunny_black_24dp" />
+            app:srcCompat="@drawable/ic_sunny_onsecondarycontainer_24dp" />
 
         <TextView
             android:id="@+id/text_temperature"

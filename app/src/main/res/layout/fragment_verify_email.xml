@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
         android:text="Verify your email address"
-        android:textColor="@color/primary_text"
+        android:textColor="?colorOnSurface"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/image_logo"

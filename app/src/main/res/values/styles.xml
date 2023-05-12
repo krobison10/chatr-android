@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NoUnderlineSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:queryBackground">@android:color/transparent</item>
+    </style>
+</resources>

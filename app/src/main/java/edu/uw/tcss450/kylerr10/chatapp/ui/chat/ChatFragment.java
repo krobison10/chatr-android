@@ -3,14 +3,13 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
-
 import java.util.ArrayList;
 import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.ConversationActivity;
@@ -62,6 +61,11 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         RecyclerView recyclerView = view.findViewById(R.id.list_chat_room);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mAdapter);
+
+        //Attach a swipe-to-delete callback to the RecyclerView using an ItemTouchHelper.
+        ChatRoomDelete swipeToDeleteCallback = new ChatRoomDelete(mAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         // Find the ExtendedFloatingActionButton view and set a click listener on it
         ExtendedFloatingActionButton fab = view.findViewById(R.id.floating_action_button);

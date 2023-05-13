@@ -106,4 +106,13 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             });
         }
     }
+
+    /**
+     * Removes an item from the adapter's list and notifies the RecyclerView of the change.
+     * @param position The position of the item to remove.
+     */
+    public void removeItem(int position) {
+        mChatRooms.remove(position);
+        notifyItemRemoved(position);
+    }
 }

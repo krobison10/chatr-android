@@ -1,26 +1,23 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
 import android.os.Bundle;
-import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.weather.DailyWeatherCardRecyclerViewAdapter;
-import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyWeatherCardRecyclerViewAdapter;
 
 /**
  * A simple {@link Fragment} subclass responsible for relaying weather information to the user.
@@ -29,6 +26,13 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyWeatherCardRecyclerViewA
 public class WeatherFragment extends Fragment {
 
     private WeatherViewModel mViewModel;
+    private LocationFragment mLocationFragment;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLocationFragment = new LocationFragment();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -83,7 +87,46 @@ public class WeatherFragment extends Fragment {
         binding.recyclerViewWeatherDaily.setAdapter(
                 new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
         );
+        binding.openLocationButton.setOnClickListener(this::openLocationDialog);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideLocationDialog();
+    }
 
+    public void openLocationDialog(View view) {
+        FloatingActionButton button = (FloatingActionButton) view;
+        // The device is smaller, so show the fragment fullscreen
+        showLocationDialog(button);
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                hideLocationDialog();
+                button.show();
+            }
+        });
+    }
+
+    private void showLocationDialog(FloatingActionButton button) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .add(R.id.weather_root, mLocationFragment)
+            .setReorderingAllowed(true)
+            .addToBackStack(null)
+            .commit();
+        button.hide();
+    }
+
+    private void hideLocationDialog() {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+            .remove(mLocationFragment)
+            .setReorderingAllowed(true)
+            .commit();
+        //mLocationFragment.dismiss();
     }
 }

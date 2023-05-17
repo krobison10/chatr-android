@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_PERMISSIONS_LOCATIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -162,11 +162,16 @@ public class MainActivity extends AppCompatActivity {
             Log.e("LOCATION", "Necessary permissions not granted.");
         } else {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, Objects.requireNonNull(location -> {
-                Log.d("LOCATION", location.toString());
-                if (mLocationModel == null) {
-                    mLocationModel = new ViewModelProvider(MainActivity.this).get(LocationViewModel.class);
+                if (location != null) {
+                    Log.d("LOCATION", location.toString());
+                    if (mLocationModel == null) {
+                        mLocationModel = new ViewModelProvider(MainActivity.this)
+                                .get(LocationViewModel.class);
+                    }
+                    mLocationModel.setLocation(location);
+                } else {
+                    Log.d("LOCATION", "No Location retrieved.");
                 }
-                mLocationModel.setLocation(location);
             }));
         }
     }

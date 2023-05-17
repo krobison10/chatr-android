@@ -19,6 +19,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.util.Log;
 
+import com.auth0.android.jwt.JWT;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -27,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutFragment;
 
 import java.util.Objects;
@@ -39,24 +41,24 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
  * @author Kyler Robison
  */
 public class MainActivity extends AppCompatActivity {
-        /**
-         * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-         */
-        public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-        /**
-         * The fastest rate for active location updates. Exact. Updates will never be more frequent
-         * than this value.
-         */
-        public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
-        // A constant int for the permissions request code. Must be a 16 bit number
-        private static final int MY_PERMISSIONS_LOCATIONS = 8414;
-        private LocationRequest mLocationRequest;
-        //Use a FusedLocationProviderClient to request the location
-        private FusedLocationProviderClient mFusedLocationClient;
-        // Will use this call back to decide what to do when a location change is detected
-        private LocationCallback mLocationCallback;
-        //The ViewModel that will store the current location
-        private LocationViewModel mLocationModel;
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    // A constant int for the permissions request code. Must be a 16 bit number
+    private static final int MY_PERMISSIONS_LOCATIONS = 8414;
+    private LocationRequest mLocationRequest;
+    //Use a FusedLocationProviderClient to request the location
+    private FusedLocationProviderClient mFusedLocationClient;
+    // Will use this call back to decide what to do when a location change is detected
+    private LocationCallback mLocationCallback;
+    //The ViewModel that will store the current location
+    private LocationViewModel mLocationModel;
     /**
      * Bottom navigation
      */
@@ -65,6 +67,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
+        JWT jwt = new JWT(args.getJwt());
+
+        if(!jwt.isExpired(0)) {
+            UserInfoViewModel model = new ViewModelProvider(this).get(UserInfoViewModel.class);
+            model.setToken(jwt);
+        } else {
+            throw new IllegalStateException("JWT is expired!");
+            //TODO: Navigate back to login and show error message
+        }
+
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.app_toolbar));
         initializeBottomNav();
@@ -138,8 +152,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {

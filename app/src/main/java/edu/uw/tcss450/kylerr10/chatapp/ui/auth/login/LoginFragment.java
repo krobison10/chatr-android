@@ -68,8 +68,8 @@ public class LoginFragment extends Fragment {
                     LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
             ));
 
-        //TODO: don't do this. But set debug to false for now to test log in logic.
-        boolean debug = true;
+        //TODO: get rid of this. But set debug to false for now to test login logic.
+        boolean debug = false;
         if(!debug) {
             mBinding.buttonLogin.setEnabled(false);
             mBinding.buttonLogin.setOnClickListener(this::attemptLogin);

@@ -30,4 +30,10 @@ public class ChatMember {
     public void setSelected(boolean selected) {
         mSelected = selected;
     }
+
+    @Override
+    public String toString() {
+        return mName;
+    }
+
 }

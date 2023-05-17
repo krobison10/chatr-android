@@ -3,6 +3,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +31,7 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     //The ChatRoomAdapter instance used to populate the RecyclerView with chat room data
     private ChatRoomAdapter mAdapter;
 
-
+    private ChatViewModel mViewModel;
     public ChatFragment() {
         // Required empty public constructor
     }
@@ -38,6 +39,7 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mViewModel = new ViewModelProvider(getActivity()).get(ChatViewModel.class);
 
         // Create some mock data for the chat rooms
         mChatRooms = new ArrayList<>();
@@ -81,9 +83,16 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
                         chatRoom.setSelectedMembers(selectedMembers);
                         // Add the new chat room to the list and notify the adapter
                         mChatRooms.add(chatRoom);
-
+                        mAdapter.updateSelectedMembers(selectedMembers);
                         mAdapter.notifyDataSetChanged();
 
+                        // Update the members' list in the RecyclerView of the new chat
+                        ChatRoomMemberAdapter chatRoomMemberAdapter = chatRoom.getMemberAdapter();
+                        if (chatRoomMemberAdapter != null) {
+                            chatRoomMemberAdapter.setMembers(selectedMembers);
+                        }
+                        // Call the createChatRoom method of ChatViewModel
+                        mViewModel.createChatRoom(chatRoom.getRoomName());
                     }
                 });
                 dialog.show(getParentFragmentManager(), "CreateChatDialog");

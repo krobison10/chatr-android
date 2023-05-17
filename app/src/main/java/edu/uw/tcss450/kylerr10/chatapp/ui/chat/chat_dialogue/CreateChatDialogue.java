@@ -1,5 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -12,15 +13,14 @@ import androidx.appcompat.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 
 import org.jetbrains.annotations.Nullable;
@@ -28,10 +28,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatRoom;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMemberAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatSelectedMembersAdapter;
@@ -48,6 +52,14 @@ public class CreateChatDialogue extends DialogFragment {
     private OnCreateChatRoomListener mListener;
     private ChatMemberAdapter adapter;
     private ChatSelectedMembersAdapter selectedMembersAdapter;
+
+    private ChatViewModel mViewModel;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
+    }
 
     public interface OnCreateChatRoomListener {
         void onCreateChatRoom(ChatRoom chatRoom, List<ChatMember> selectedMembers);
@@ -147,6 +159,7 @@ public class CreateChatDialogue extends DialogFragment {
                 // Create the new chat room
                 String chatRoomName = chatRoomNameInput.getText().toString();
                 List<ChatMember> selectedMembers = getSelectedMembers();
+
                 int chatid = 2;
                 ChatRoom chatRoom = new ChatRoom(chatid++, chatRoomName);
 
@@ -154,7 +167,7 @@ public class CreateChatDialogue extends DialogFragment {
                 if (mListener != null) {
                     mListener.onCreateChatRoom(chatRoom, selectedMembers);
                 }
-                createChatRoomOnServer(chatRoomName);
+                mViewModel.createChatRoom(chatRoomName);
                 // Dismiss the dialog
                 dismiss();
             }
@@ -194,49 +207,5 @@ public class CreateChatDialogue extends DialogFragment {
     private List<ChatMember> getSelectedMembers() {
         return selectedMembers;
     }
-
-    private void createChatRoomOnServer(String chatRoomName) {
-        // Create a JSON object with the chat room name
-        JSONObject jsonParams = new JSONObject();
-        try {
-            jsonParams.put("name", chatRoomName);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // Create a request queue
-        RequestQueue queue = Volley.newRequestQueue(requireContext());
-
-        // Make a POST request to the backend API
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, "http://localhost:5000/chats", jsonParams,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        // Handle the response from the server
-                        try {
-                            boolean success = response.getBoolean("success");
-                            if (success) {
-                                int chatID = response.getInt("chatID");
-                                // Chat room created successfully with the provided chatID
-                            } else {
-                                // Chat room creation failed
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            // Error parsing the response JSON
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Handle the error response
-                    }
-                });
-
-        // Add the request to the request queue
-        queue.add(request);
-    }
-
 
 }

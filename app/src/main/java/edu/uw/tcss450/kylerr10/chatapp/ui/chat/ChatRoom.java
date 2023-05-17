@@ -14,37 +14,58 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 public class ChatRoom {
 
-    //The name of the chat room.
+    //The name of the chat room
     private String mName;
 
 
-    //The last message sent in the chat room.
+    //The last message sent in the chat room
     private String mLastMessage;
 
-    private static int nextId = 1;
+    private static int mNextId = 1;
+    private ChatRoomMemberAdapter mMemberAdapter;
 
-    private int chatId;
+    private int mChatId;
 
     private List<ChatMember> mMemberId;
-    private List<ChatMember> selectedMembers;
+    private List<ChatMember> mSelectedMembers;
 
-    public List<ChatMember> getSelectedMembers() {
-        return selectedMembers;
+
+    /**
+     * Constructs a new ChatRoom object with the given chat ID and name.
+     * @param chatId The ID of the chat room.
+     * @param name   The name of the chat room.
+     */
+    public ChatRoom(int chatId, String name) {
+        this.mChatId = mNextId++;
+        this.mName = name;
+
     }
+
     /**
      * Constructs a new ChatRoom object with the given name and last message.
      * @param name the name of the chat room
+     * @param lastMessage the last message in chat
      */
-    public ChatRoom(int chatId, String name) {
+    public ChatRoom(String name, String lastMessage) {
         this.mName = name;
-        this.chatId = nextId++;
+        this.mLastMessage = mLastMessage;
     }
+
+    /**
+     * Constructs a new ChatRoom object with the given name and member IDs.
+     * @param name     The name of the chat room.
+     * @param memberId The list of member IDs in the chat room.
+     */
     public ChatRoom(String name, List<ChatMember> memberId){
         this.mName = name;
         this.mMemberId = memberId;
     }
+    /**
+     * Returns the chat ID of the chat room.
+     * @return The chat ID.
+     */
     public int getId() {
-        return chatId;
+        return mChatId;
     }
 
     /**
@@ -79,8 +100,25 @@ public class ChatRoom {
     public void setLastMessage(String lastMessage) {
         this.mLastMessage = lastMessage;
     }
+
+    /**
+     * Sets the list of selected members for the chat room.
+     * @param selectedMembers The list of selected chat members
+     */
     public void setSelectedMembers(List<ChatMember> selectedMembers) {
-        this.selectedMembers = selectedMembers;
+        this.mSelectedMembers = selectedMembers;
+    }
+
+    public List<ChatMember> getSelectedMembers() {
+        return mSelectedMembers;
+    }
+
+    /**
+     * Returns the adapter for the chat room's member list.
+     * @return The ChatRoomMemberAdapter
+     */
+    public ChatRoomMemberAdapter getMemberAdapter() {
+        return mMemberAdapter;
     }
 
 }

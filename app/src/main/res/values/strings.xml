@@ -68,4 +68,10 @@
     <string name="chat_room_message_default">No message</string>
 
     <string name="hello_blank_fragment">Home Fragment</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="hint_location">Search location</string>
+    <string name="hint_save_location">Save Location</string>
+    <string name="hint_list_locations">List saved locations</string>
+    <string name="hint_open_location">Open location search</string>
+    <string name="hint_current_location">View current location</string>
 </resources>

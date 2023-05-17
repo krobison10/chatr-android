@@ -1,26 +1,23 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
 import android.os.Bundle;
-import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
-import edu.uw.tcss450.kylerr10.chatapp.ui.home.DailyWeatherCardRecyclerViewAdapter;
-import edu.uw.tcss450.kylerr10.chatapp.ui.home.HourlyWeatherCardRecyclerViewAdapter;
 
 /**
  * A simple {@link Fragment} subclass responsible for relaying weather information to the user.
@@ -29,6 +26,13 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.home.HourlyWeatherCardRecyclerViewAdap
 public class WeatherFragment extends Fragment {
 
     private WeatherViewModel mViewModel;
+    private LocationFragment mLocationFragment;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mLocationFragment = new LocationFragment();
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -50,15 +54,6 @@ public class WeatherFragment extends Fragment {
         FragmentWeatherBinding binding = FragmentWeatherBinding.bind(requireView());
 
         // Create a list of dummy dailyForecasts and hourlyForecasts
-        ArrayList<DailyForecast> dailyForecasts = new ArrayList<>();
-        dailyForecasts.add(new DailyForecast("Today", 82, 71, "Sunny"));
-        dailyForecasts.add(new DailyForecast("Tomorrow", 76, 69, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Saturday", 75, 68, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Sunday", 76, 69, "Partly Cloudy"));
-        dailyForecasts.add(new DailyForecast("Monday", 80, 72, "Sunny"));
-        dailyForecasts.add(new DailyForecast("Tuesday", 68, 60, "Cloudy"));
-        dailyForecasts.add(new DailyForecast("Wednesday", 81, 70, "Sunny"));
-
         ArrayList<HourlyForecast> hourlyForecasts = new ArrayList<>();
         hourlyForecasts.add(new HourlyForecast(9, 48, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(10, 48, "Sunny"));
@@ -75,13 +70,63 @@ public class WeatherFragment extends Fragment {
         hourlyForecasts.add(new HourlyForecast(21, 49, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(22, 48, "Cloudy"));
         hourlyForecasts.add(new HourlyForecast(23, 48, "Cloudy"));
-        binding.recyclerViewWeatherDaily.setAdapter(
-                new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
-        );
+
+        ArrayList<DailyForecast> dailyForecasts = new ArrayList<>();
+        dailyForecasts.add(new DailyForecast("Today", 82, 71, "Sunny"));
+        dailyForecasts.add(new DailyForecast("Tomorrow", 76, 69, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Saturday", 75, 68, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Sunday", 76, 69, "Partly Cloudy"));
+        dailyForecasts.add(new DailyForecast("Monday", 80, 72, "Sunny"));
+        dailyForecasts.add(new DailyForecast("Tuesday", 68, 60, "Cloudy"));
+        dailyForecasts.add(new DailyForecast("Wednesday", 81, 70, "Sunny"));
+
         binding.recyclerViewWeatherHourly.setAdapter(
                 new HourlyWeatherCardRecyclerViewAdapter(hourlyForecasts)
         );
 
+        binding.recyclerViewWeatherDaily.setAdapter(
+                new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
+        );
+        binding.openLocationButton.setOnClickListener(this::openLocationDialog);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        hideLocationDialog();
+    }
+
+    public void openLocationDialog(View view) {
+        FloatingActionButton button = (FloatingActionButton) view;
+        // The device is smaller, so show the fragment fullscreen
+        showLocationDialog(button);
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                hideLocationDialog();
+                button.show();
+            }
+        });
+    }
+
+    private void showLocationDialog(FloatingActionButton button) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            .add(R.id.weather_root, mLocationFragment)
+            .setReorderingAllowed(true)
+            .addToBackStack(null)
+            .commit();
+        button.hide();
+    }
+
+    private void hideLocationDialog() {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+            .remove(mLocationFragment)
+            .setReorderingAllowed(true)
+            .commit();
+        //mLocationFragment.dismiss();
     }
 }

@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.home;
+package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,7 +54,7 @@ public class DailyWeatherCardRecyclerViewAdapter extends
         return mDailyForecasts.size();
     }
 
-    public class DailyWeatherCardViewHolder extends RecyclerView.ViewHolder {
+    public static class DailyWeatherCardViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public FragmentDailyWeatherCardBinding mBinding;
 

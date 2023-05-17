@@ -26,11 +26,11 @@ public class DailyForecast implements Serializable {
     }
 
     public String getTemperatureHigh() {
-        return temperatureHigh + "°F";
+        return temperatureHigh + "°";
     }
 
     public String getTemperatureLow() {
-        return temperatureLow + "°F";
+        return temperatureLow + "°";
     }
 
     public Icon getCondition(View view) {

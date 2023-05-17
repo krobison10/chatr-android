@@ -90,7 +90,7 @@ public class LocationFragment extends DialogFragment {
                     binding.mapSearchView.hide();
                     if (!query.equals("")) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            mGeocoder.getFromLocationName(query, 5, addresses -> {
+                            mGeocoder.getFromLocationName(query, 1, addresses -> {
                                 mAddressList = addresses;
                                 Log.d("GEOCODER", "Updating address lists.");
                             });

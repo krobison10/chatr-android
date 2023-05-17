@@ -3,6 +3,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,9 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     //The listener to handle click events on the items in the RecyclerView
     private OnChatRoomClickListener mListener;
 
+    static RecyclerView recyclerViewMembers;
 
+    private static boolean isMemberRecyclerViewVisible = false;
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -89,6 +92,32 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
 
             // TextView used to display the last message sent in the chat room.
             mLastMessageTextView = itemView.findViewById(R.id.chat_last_message);
+
+            ImageButton buttonMore = itemView.findViewById(R.id.button_more);
+
+            buttonMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    toggleMemberRecyclerView();
+                }
+
+                private void toggleMemberRecyclerView() {
+                    recyclerViewMembers = itemView.findViewById(R.id.recyclerView_members); // Replace with your RecyclerView ID
+                    TextView memberTextView = itemView.findViewById(R.id.chat_room_members);
+                    if (recyclerViewMembers.getVisibility() == View.VISIBLE) {
+                        recyclerViewMembers.setVisibility(View.GONE);
+                        memberTextView.setVisibility(View.GONE);
+                        buttonMore.setImageResource(R.drawable.ic_chat_less_black_24dp);
+                        isMemberRecyclerViewVisible = false;
+                    } else {
+                        recyclerViewMembers.setVisibility(View.VISIBLE);
+                        memberTextView.setVisibility(View.VISIBLE);
+                        buttonMore.setImageResource(R.drawable.ic_chat_more_black_24dp);
+                        isMemberRecyclerViewVisible = true;
+                    }
+                }
+            });
+
         }
 
         /**

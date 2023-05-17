@@ -59,15 +59,15 @@ public class ConversationFragment extends Fragment {
     private void addMockData() {
         // Create a conversation between sender with ID 1 and receiver with ID 2
         Conversation conversation = new Conversation(1, "Sender", 2, "Receiver");
-
+        int conversationId = Conversation.generateConversationId();
         // Create 10 mock messages alternating between sender and receiver
         for (int i = 0; i < 10; i++) {
             if (i % 2 == 0) {
                 // Add a message from the sender
-                conversation.addMessage(1, "Sender", 2, "Receiver", "Sender message #" + (i + 1), System.currentTimeMillis());
+                conversation.addMessage(conversationId, 1, "Sender", 2, "Receiver", "Sender message #" + (i + 1), System.currentTimeMillis());
             } else {
                 // Add a message from the receiver
-                conversation.addMessage(2, "Receiver", 1, "Sender", "Receiver message #" + (i + 1), System.currentTimeMillis());
+                conversation.addMessage(conversationId, 2, "Receiver", 1, "Sender", "Receiver message #" + (i + 1), System.currentTimeMillis());
             }
         }
 

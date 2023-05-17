@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Conversation {
 
+    // Unique ID of the conversation
+    private int mConversationId;
+
     // List of messages in the conversation
     private List<Conversation> mMessages;
 
@@ -32,12 +35,15 @@ public class Conversation {
     // Timestamp of the message
     private long mTimestamp;
 
+    private static int mConversationIdCounter = 0;
+
     public Conversation() {
         // Required empty public constructor
     }
 
     /**
-     * Constructs a new Conversation object with the given sender and receiver IDs and names.
+     * Constructs a new Conversation object with the given conversation ID, sender and receiver IDs and names.
+     * @param conversationId the ID of the conversation
      * @param senderId   the ID of the message's sender
      * @param senderName the name of the message's sender
      * @param receiverId the ID of the message's receiver
@@ -45,7 +51,8 @@ public class Conversation {
      * @param content    the content of the message
      * @param timestamp  the timestamp of the message
      */
-    public Conversation(int senderId, String senderName, int receiverId, String receiverName, String content, long timestamp) {
+    public Conversation(int conversationId, int senderId, String senderName, int receiverId, String receiverName, String content, long timestamp) {
+        this.mConversationId = conversationId;
         this.mSenderId = senderId;
         this.mSenderName = senderName;
         this.mReceiverId = receiverId;
@@ -67,6 +74,18 @@ public class Conversation {
         this.mSenderId = senderId;
         this.mReceiverId = receiverId;
         mMessages = new ArrayList<>();
+    }
+
+    public static int generateConversationId() {
+        return ++mConversationIdCounter;
+    }
+
+    /**
+     * Returns the ID of the conversation.
+     * @return the conversation ID
+     */
+    public int getConversationId() {
+        return mConversationId;
     }
 
     /**
@@ -110,8 +129,8 @@ public class Conversation {
      * @param content    the content of the message
      * @param timestamp  the timestamp of the message
      */
-    public void addMessage(int senderId, String senderName, int receiverId, String receiverName, String content, long timestamp) {
-        Conversation message = new Conversation(senderId, senderName, receiverId, receiverName, content, timestamp);
+    public void addMessage(int conversationId, int senderId, String senderName, int receiverId, String receiverName, String content, long timestamp) {
+        Conversation message = new Conversation(conversationId, senderId, senderName, receiverId, receiverName, content, timestamp);
         mMessages.add(message);
     }
 
@@ -148,4 +167,5 @@ public class Conversation {
     public boolean isFromSender(int userId) {
         return this.mSenderId == userId;
     }
+
 }

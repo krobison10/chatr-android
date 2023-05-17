@@ -1,6 +1,11 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 
 
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 /**
  * Represents a chat room with a name and last message
@@ -16,14 +21,30 @@ public class ChatRoom {
     //The last message sent in the chat room.
     private String mLastMessage;
 
+    private static int nextId = 1;
+
+    private int chatId;
+
+    private List<ChatMember> mMemberId;
+    private List<ChatMember> selectedMembers;
+
+    public List<ChatMember> getSelectedMembers() {
+        return selectedMembers;
+    }
     /**
      * Constructs a new ChatRoom object with the given name and last message.
      * @param name the name of the chat room
-     * @param lastMessage the last message sent in the chat room
      */
-    public ChatRoom(String name, String lastMessage) {
+    public ChatRoom(int chatId, String name) {
         this.mName = name;
-        this.mLastMessage = lastMessage;
+        this.chatId = nextId++;
+    }
+    public ChatRoom(String name, List<ChatMember> memberId){
+        this.mName = name;
+        this.mMemberId = memberId;
+    }
+    public int getId() {
+        return chatId;
     }
 
     /**
@@ -57,6 +78,9 @@ public class ChatRoom {
      */
     public void setLastMessage(String lastMessage) {
         this.mLastMessage = lastMessage;
+    }
+    public void setSelectedMembers(List<ChatMember> selectedMembers) {
+        this.selectedMembers = selectedMembers;
     }
 
 }

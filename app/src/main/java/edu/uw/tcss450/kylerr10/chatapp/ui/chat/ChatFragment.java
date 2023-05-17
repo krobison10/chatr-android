@@ -15,6 +15,7 @@ import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.ConversationActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue.CreateChatDialogue;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 /**
  * A simple {@link Fragment} subclass. This fragment displays a list of chat rooms
@@ -42,7 +43,8 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         mChatRooms = new ArrayList<>();
 
         for(int i = 1; i <= 20; i++) {
-            mChatRooms.add(new ChatRoom("Chat Room " + i, "Last message in Chat Room " + i));
+            int count = 0;
+            mChatRooms.add(new ChatRoom(count++,"Chat Room " + i));
 
         }
 
@@ -75,10 +77,13 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
                 CreateChatDialogue dialog = new CreateChatDialogue();
                 dialog.setOnCreateChatRoomListener(new CreateChatDialogue.OnCreateChatRoomListener() {
                     @Override
-                    public void onCreateChatRoom(ChatRoom chatRoom) {
+                    public void onCreateChatRoom(ChatRoom chatRoom, List<ChatMember> selectedMembers) {
+                        chatRoom.setSelectedMembers(selectedMembers);
                         // Add the new chat room to the list and notify the adapter
                         mChatRooms.add(chatRoom);
+
                         mAdapter.notifyDataSetChanged();
+
                     }
                 });
                 dialog.show(getParentFragmentManager(), "CreateChatDialog");

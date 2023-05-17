@@ -21,6 +21,8 @@ import android.widget.EditText;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.util.List;
@@ -73,7 +75,14 @@ public class LocationFragment extends DialogFragment {
         mMapFragment = binding.mapContainer.getFragment();
         binding.saveLocationButton.setOnClickListener(v -> {
             Marker marker = mMapFragment.getMarker();
-            if (marker == null) return;
+            if (marker == null) {
+                Snackbar.make(
+                    requireView(),
+                "Place a marker to save a location.",
+                    BaseTransientBottomBar.LENGTH_SHORT
+                ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
+                return;
+            }
             // TODO: Add a location object, myLocation, with a name alias and latlng object
             String locationAlias = openCustomLocationNameDialog(marker); // update custom location name with dialog
 

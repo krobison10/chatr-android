@@ -73,4 +73,5 @@
     <string name="hint_save_location">Save Location</string>
     <string name="hint_list_locations">List saved locations</string>
     <string name="hint_open_location">Open location search</string>
+    <string name="hint_current_location">View current location</string>
 </resources>

@@ -78,6 +78,9 @@ public class LocationFragment extends DialogFragment {
             String locationAlias = openCustomLocationNameDialog(marker); // update custom location name with dialog
 
         });
+        binding.currentLocationButton.setOnClickListener(v -> {
+            ((MapFragment) binding.mapContainer.getFragment()).panCameraToCurrentLocation();
+        });
         binding.mapSearchView.getEditText()
                 .setOnEditorActionListener((v, actionId, event) -> {
                     // Carry over the search text to the SearchBar

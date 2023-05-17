@@ -32,7 +32,14 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener {
     private GoogleMap mMap;
+    /**
+     * Holds the current location selected on the {@link MapFragment#mMap}.
+     */
     private Marker mMarker;
+    /**
+     * Holds the current latitude and longitude of the user's device.
+     */
+    private LatLng mLatLng;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,8 +76,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             } catch (SecurityException e) { // Should never happen (checks done in main activity)
                 Log.e("LOCATION", "Necessary permissions not granted.");
             }
-            final LatLng c = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(c, 15.0f));
+            mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            panCameraToCurrentLocation();
         }));
         mMap.setOnMapClickListener(this);
     }
@@ -132,5 +139,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
      */
     Marker getMarker() {
         return mMarker;
+    }
+
+    void panCameraToCurrentLocation() {
+        if (mMap != null && mLatLng != null) {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15.0f));
+        }
     }
 }

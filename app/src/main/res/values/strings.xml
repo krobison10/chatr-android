@@ -17,6 +17,7 @@
     <string name="error_last_name">Please enter a valid name</string>
     <string name="error_username">Please enter a valid username</string>
     <string name="error_email">Please enter a valid email</string>
+    <string name="error_password">Please enter a valid password</string>
 
     <string name="error_username_exists">Username is taken</string>
     <string name="error_email_exists">Account already exists</string>

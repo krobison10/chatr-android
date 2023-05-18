@@ -24,12 +24,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @param jwt the token to set to.
      */
     public void setToken(JWT jwt) {
-        if(mJwt == null) {
-            mJwt = jwt;
-        }
-        else {
-            throw new RuntimeException("JWT already set");
-        }
+        mJwt = jwt;
     }
 
     /**

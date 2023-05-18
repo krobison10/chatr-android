@@ -29,16 +29,22 @@ public class ContactsViewModel extends AndroidViewModel {
     //TODO: Encapsulate
     public JWT mJWT;
 
+    private final MutableLiveData<String> searchText;
+
     private final MutableLiveData<JSONObject> mGetCurResponse;
 
     private final MutableLiveData<JSONObject> mGetOutgoingResponse;
 
     private final MutableLiveData<JSONObject> mGetIncomingResponse;
 
+    private final MutableLiveData<JSONObject> mGetSearchResponse;
+
 
 
     public ContactsViewModel(@NonNull Application application) {
         super(application);
+
+        searchText = new MutableLiveData<>();
 
         mGetCurResponse = new MutableLiveData<>();
         mGetCurResponse.setValue(new JSONObject());
@@ -48,6 +54,17 @@ public class ContactsViewModel extends AndroidViewModel {
 
         mGetIncomingResponse = new MutableLiveData<>();
         mGetIncomingResponse.setValue(new JSONObject());
+
+        mGetSearchResponse = new MutableLiveData<>();
+        mGetSearchResponse.setValue(new JSONObject());
+    }
+
+    public MutableLiveData<String> getSearchText() {
+        return searchText;
+    }
+
+    public void setSearchText(String text) {
+        searchText.setValue(text);
     }
 
     public void addGetCurResponseObserver(@NonNull LifecycleOwner owner,
@@ -75,6 +92,15 @@ public class ContactsViewModel extends AndroidViewModel {
 
     public void connectGetIncoming() {
         connect("/contacts/incoming", Request.Method.GET, mGetIncomingResponse);
+    }
+
+    public void addGetSearchResponseObserver(@NonNull LifecycleOwner owner,
+                                               @NonNull Observer<? super JSONObject> observer) {
+        mGetSearchResponse.observe(owner, observer);
+    }
+
+    public void connectGetSearch(String query) {
+        connect("/search/" + query, Request.Method.GET, mGetSearchResponse);
     }
 
 

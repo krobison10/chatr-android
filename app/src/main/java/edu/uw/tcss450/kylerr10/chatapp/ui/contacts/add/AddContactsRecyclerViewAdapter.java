@@ -64,7 +64,7 @@ public class AddContactsRecyclerViewAdapter
         }
 
         public void setContact(final Contact contact) {
-            // TODO: implement code to actually set values
+            mBinding.textMain.setText(contact.mUsername);
         }
     }
 }

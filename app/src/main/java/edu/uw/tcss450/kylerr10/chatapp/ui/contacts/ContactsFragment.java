@@ -4,7 +4,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
@@ -14,6 +17,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentContactsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
 /**
@@ -23,13 +27,15 @@ import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
  */
 public class ContactsFragment extends Fragment {
 
+    private ContactsViewModel mViewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContactsViewModel viewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+        mViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
 
         JWT jwt = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getJWT();
-        viewModel.mJWT = jwt;
+        mViewModel.mJWT = jwt;
     }
 
     @Override
@@ -69,5 +75,26 @@ public class ContactsFragment extends Fragment {
         ).attach();
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        FragmentContactsBinding.bind(view).searchViewContacts.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        mViewModel.setSearchText(s);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        mViewModel.setSearchText(s);
+                        return false;
+                    }
+                }
+        );
+
     }
 }

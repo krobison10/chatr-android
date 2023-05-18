@@ -33,6 +33,7 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutFragment;
 
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
 
 /**
@@ -57,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     // Will use this call back to decide what to do when a location change is detected
     private LocationCallback mLocationCallback;
-    //The ViewModel that will store the current location
+    // The ViewModel that will store the current location
     private LocationViewModel mLocationModel;
+    // The ViewModel that will store the forecast data
+    private ForecastViewModel mForecastModel;
     /**
      * Bottom navigation
      */
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         JWT jwt = new JWT(args.getJwt());
 
-        if(!jwt.isExpired(0)) {
+        if(!jwt.isExpired(999999999)) {
             UserInfoViewModel model = new ViewModelProvider(this).get(UserInfoViewModel.class);
             model.setToken(jwt);
         } else {
@@ -166,6 +169,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Helper method to create a location request.
+     */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -181,6 +187,8 @@ public class MainActivity extends AppCompatActivity {
                                 .get(LocationViewModel.class);
                     }
                     mLocationModel.setLocation(location);
+                    mForecastModel = new ViewModelProvider(MainActivity.this).get(ForecastViewModel.class);
+                    mForecastModel.connectGet(MainActivity.this, location);
                 } else {
                     Log.d("LOCATION", "No Location retrieved.");
                 }

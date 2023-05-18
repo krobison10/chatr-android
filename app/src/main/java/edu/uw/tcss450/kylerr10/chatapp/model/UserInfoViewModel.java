@@ -24,12 +24,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @param jwt the token to set to.
      */
     public void setToken(JWT jwt) {
-        if(mJwt == null) {
-            mJwt = jwt;
-        }
-        else {
-            throw new RuntimeException("JWT already set");
-        }
+        mJwt = jwt;
     }
 
     /**
@@ -39,7 +34,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @throws IllegalStateException when the JWT stored in this ViewModel is expired
      */
     public String getEmail() {
-        if (!mJwt.isExpired(0)) {
+        if (!mJwt.isExpired(999999999)) {
             return mJwt.getClaim("email").asString();
         } else {
             throw new IllegalStateException("JWT is expired!");
@@ -51,7 +46,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @throws IllegalStateException when the JWT stored in this ViewModel is expired.
      */
     public JWT getJWT() {
-        if (!mJwt.isExpired(0)) {
+        if (!mJwt.isExpired(999999999)) {
             return mJwt;
         } else {
             throw new IllegalStateException("JWT is expired!");

@@ -52,9 +52,8 @@ public class AddContactsRecyclerViewAdapter
         //Sets the notification for a notification view
         holder.setContact(mContacts.get(position));
 
-        holder.button.setOnClickListener(view -> {
-            mContactsViewModel.connectCreateContact(mContacts.get(position).mEmail);
-        });
+        holder.addButton.setOnClickListener(view ->
+                mContactsViewModel.connectCreateContact(mContacts.get(position).mEmail));
 
     }
 
@@ -68,13 +67,13 @@ public class AddContactsRecyclerViewAdapter
 
         public FragmentSingleAddContactBinding mBinding;
 
-        public MaterialCardView button;
+        public MaterialCardView addButton;
 
         public AddContactViewHolder(@NonNull View itemView) {
             super(itemView);
             mView = itemView;
             mBinding = FragmentSingleAddContactBinding.bind(itemView);
-            button = mBinding.btnAdd;
+            addButton = mBinding.btnAdd;
         }
 
         public void setContact(final Contact contact) {

@@ -72,6 +72,9 @@ public class OutgoingRequestsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mContactsViewModel.addDeleteContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
         mContactsViewModel.addGetOutgoingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
     }
 
@@ -122,7 +125,7 @@ public class OutgoingRequestsFragment extends Fragment {
         }
 
         mBinding.recyclerViewOutgoingRequests.setAdapter(
-                new OutgoingRequestsRecyclerViewAdapter(contactsList)
+                new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
     }
 

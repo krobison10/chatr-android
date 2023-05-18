@@ -26,14 +26,14 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:text="Name"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/icon_contact"
-        app:layout_constraintEnd_toStartOf="@+id/materialCardView3"
+        app:layout_constraintEnd_toStartOf="@+id/btn_cancel"
         app:layout_constraintStart_toEndOf="@+id/icon_contact"
         app:layout_constraintTop_toTopOf="@+id/icon_contact" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView3"
+        android:id="@+id/btn_cancel"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="24dp"

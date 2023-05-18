@@ -39,7 +39,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @throws IllegalStateException when the JWT stored in this ViewModel is expired
      */
     public String getEmail() {
-        if (!mJwt.isExpired(0)) {
+        if (!mJwt.isExpired(999999999)) {
             return mJwt.getClaim("email").asString();
         } else {
             throw new IllegalStateException("JWT is expired!");
@@ -51,7 +51,7 @@ public class UserInfoViewModel extends AndroidViewModel {
      * @throws IllegalStateException when the JWT stored in this ViewModel is expired.
      */
     public JWT getJWT() {
-        if (!mJwt.isExpired(0)) {
+        if (!mJwt.isExpired(999999999)) {
             return mJwt;
         } else {
             throw new IllegalStateException("JWT is expired!");

@@ -72,6 +72,12 @@ public class IncomingRequestsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mContactsViewModel.addAcceptContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
+        mContactsViewModel.addDeleteContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
         mContactsViewModel.addGetIncomingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
     }
 
@@ -121,7 +127,7 @@ public class IncomingRequestsFragment extends Fragment {
         }
 
         mBinding.recyclerViewIncomingRequests.setAdapter(
-                new IncomingRequestsRecyclerViewAdapter(contactsList)
+                new IncomingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
     }
 

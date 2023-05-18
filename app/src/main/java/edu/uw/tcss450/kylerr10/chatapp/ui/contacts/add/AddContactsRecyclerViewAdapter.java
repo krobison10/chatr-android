@@ -25,7 +25,7 @@ public class AddContactsRecyclerViewAdapter
         extends RecyclerView.Adapter<AddContactsRecyclerViewAdapter.AddContactViewHolder> {
     private ContactsViewModel mContactsViewModel;
     /**
-     * List of AddContacts for the RecyclerView
+     * List of Contacts for the RecyclerView
      */
     private final List<Contact> mContacts;
 

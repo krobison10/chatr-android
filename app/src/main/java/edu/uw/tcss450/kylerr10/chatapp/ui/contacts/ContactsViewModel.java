@@ -41,6 +41,10 @@ public class ContactsViewModel extends AndroidViewModel {
 
     private final MutableLiveData<JSONObject> mCreateContactResponse;
 
+    private final MutableLiveData<JSONObject> mDeleteContactResponse;
+
+    private final MutableLiveData<JSONObject> mAcceptContactResponse;
+
 
 
     public ContactsViewModel(@NonNull Application application) {
@@ -62,6 +66,12 @@ public class ContactsViewModel extends AndroidViewModel {
 
         mCreateContactResponse = new MutableLiveData<>();
         mCreateContactResponse.setValue(new JSONObject());
+
+        mDeleteContactResponse = new MutableLiveData<>();
+        mDeleteContactResponse.setValue(new JSONObject());
+
+        mAcceptContactResponse = new MutableLiveData<>();
+        mAcceptContactResponse.setValue(new JSONObject());
     }
 
     public MutableLiveData<String> getSearchText() {
@@ -115,6 +125,24 @@ public class ContactsViewModel extends AndroidViewModel {
 
     public void connectCreateContact(String email) {
         connect("/contacts/" + email, Request.Method.POST, mCreateContactResponse);
+    }
+
+    public void addDeleteContactResponseObserver(@NonNull LifecycleOwner owner,
+                                                 @NonNull Observer<? super JSONObject> observer) {
+        mDeleteContactResponse.observe(owner, observer);
+    }
+
+    public void connectDeleteContact(int connId) {
+        connect("/contacts/" + connId, Request.Method.DELETE, mDeleteContactResponse);
+    }
+
+    public void addAcceptContactResponseObserver(@NonNull LifecycleOwner owner,
+                                                 @NonNull Observer<? super JSONObject> observer) {
+        mAcceptContactResponse.observe(owner, observer);
+    }
+
+    public void connectAcceptContact(int connId) {
+        connect("/contacts/accept/" + connId, Request.Method.PUT, mDeleteContactResponse);
     }
 
     public void updateContacts() {

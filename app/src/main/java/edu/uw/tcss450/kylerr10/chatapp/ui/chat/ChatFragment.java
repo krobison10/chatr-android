@@ -37,6 +37,8 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     //The ViewModel associated with the chat.
     private ChatViewModel mViewModel;
 
+    private ChatRoom mChatRoom;
+
 
     public ChatFragment() {
         // Required empty public constructor
@@ -52,14 +54,16 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         // Create some mock data for the chat rooms
         for(int i = 1; i <= 20; i++) {
             int count = 0;
-            mChatRooms.add(new ChatRoom("Chat Room " + i, "Last message in Chat Room " + i));
+            mChatRooms.add(new ChatRoom(i,"Chat Room " + i, "Last message in Chat Room " + i));
         }
 
         //Access JWT
         UserInfoViewModel model = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
         String jwt = model.getJWT().toString();
-        Log.i("JWT", jwt);
 
+        mViewModel.setJWT(jwt);
+
+        mViewModel.getChatRooms();
         // Create a new ChatRoomAdapter and set it on the RecyclerView
         mAdapter = new ChatRoomAdapter(mChatRooms);
         mAdapter.setOnChatRoomClickListener(this);

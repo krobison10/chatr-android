@@ -58,7 +58,6 @@ public class CreateChatDialogue extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
     }
 
     public interface OnCreateChatRoomListener {
@@ -72,7 +71,9 @@ public class CreateChatDialogue extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        return inflater.inflate(R.layout.fragment_create_chat, container, false);
+        View view = inflater.inflate(R.layout.fragment_create_chat, container, false);
+        mViewModel = new ViewModelProvider(requireActivity()).get(ChatViewModel.class);
+        return view;
     }
 
     @Override
@@ -167,7 +168,7 @@ public class CreateChatDialogue extends DialogFragment {
                 if (mListener != null) {
                     mListener.onCreateChatRoom(chatRoom, selectedMembers);
                 }
-                mViewModel.createChatRoom(chatRoomName);
+
                 // Dismiss the dialog
                 dismiss();
             }

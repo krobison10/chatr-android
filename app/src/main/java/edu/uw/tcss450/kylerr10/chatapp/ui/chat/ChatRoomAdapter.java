@@ -201,6 +201,17 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         notifyItemRemoved(position);
     }
 
+    public ChatRoom getItem(int position) {
+        return mChatRooms.get(position);
+    }
+
+    public String getChatRoomId(int position) {
+        if (position >= 0 && position < mChatRooms.size()) {
+            ChatRoom chatRoom = mChatRooms.get(position);
+            return String.valueOf(chatRoom.getId());
+        }
+        return null;
+    }
 
     /**
      * Updates the selected members in the ViewHolder and notifies the adapter of the changes.

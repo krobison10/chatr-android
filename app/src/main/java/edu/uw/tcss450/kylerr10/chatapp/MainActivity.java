@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         JWT jwt = new JWT(args.getJwt());
 
-        if(!jwt.isExpired(0)) {
+        if(!jwt.isExpired(999999999)) {
             UserInfoViewModel model = new ViewModelProvider(this).get(UserInfoViewModel.class);
             model.setToken(jwt);
         } else {

@@ -54,6 +54,12 @@ public class CurrentContactsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContactsViewModel.connectGetCur();
+    }
+
     /**
      * Events for when the fragment and its views are created.
      * Also handles building of the RecyclerView that displays current contacts.
@@ -67,7 +73,6 @@ public class CurrentContactsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mContactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), this::observeResponse);
-        mContactsViewModel.connectGetCur();
     }
 
     /**

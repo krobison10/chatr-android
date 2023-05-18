@@ -54,6 +54,12 @@ public class OutgoingRequestsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContactsViewModel.connectGetOutgoing();
+    }
+
     /**
      * Events for when the fragment and its views are created.
      * Also handles building of the RecyclerView that displays current contacts.
@@ -67,7 +73,6 @@ public class OutgoingRequestsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mContactsViewModel.addGetOutgoingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
-        mContactsViewModel.connectGetOutgoing();
     }
 
     /**

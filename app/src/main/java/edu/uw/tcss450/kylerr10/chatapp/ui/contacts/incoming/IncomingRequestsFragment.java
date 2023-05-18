@@ -54,6 +54,12 @@ public class IncomingRequestsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContactsViewModel.connectGetIncoming();
+    }
+
     /**
      * Events for when the fragment and its views are created.
      * Also handles building of the RecyclerView that displays current contacts.
@@ -67,7 +73,6 @@ public class IncomingRequestsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mContactsViewModel.addGetIncomingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
-        mContactsViewModel.connectGetIncoming();
     }
 
     /**

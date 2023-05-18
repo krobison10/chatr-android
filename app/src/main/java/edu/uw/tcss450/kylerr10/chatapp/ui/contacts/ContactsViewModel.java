@@ -39,6 +39,8 @@ public class ContactsViewModel extends AndroidViewModel {
 
     private final MutableLiveData<JSONObject> mGetSearchResponse;
 
+    private final MutableLiveData<JSONObject> mCreateContactResponse;
+
 
 
     public ContactsViewModel(@NonNull Application application) {
@@ -57,6 +59,9 @@ public class ContactsViewModel extends AndroidViewModel {
 
         mGetSearchResponse = new MutableLiveData<>();
         mGetSearchResponse.setValue(new JSONObject());
+
+        mCreateContactResponse = new MutableLiveData<>();
+        mCreateContactResponse.setValue(new JSONObject());
     }
 
     public MutableLiveData<String> getSearchText() {
@@ -103,6 +108,20 @@ public class ContactsViewModel extends AndroidViewModel {
         connect("/search/" + query, Request.Method.GET, mGetSearchResponse);
     }
 
+    public void addCreateContactResponseObserver(@NonNull LifecycleOwner owner,
+                                             @NonNull Observer<? super JSONObject> observer) {
+        mCreateContactResponse.observe(owner, observer);
+    }
+
+    public void connectCreateContact(String email) {
+        connect("/contacts/" + email, Request.Method.POST, mCreateContactResponse);
+    }
+
+    public void updateContacts() {
+        connectGetCur();
+        connectGetIncoming();
+        connectGetOutgoing();
+    }
 
     public void connect(String endpoint, int method, MutableLiveData<JSONObject> responseDestination) {
         String url = "http://10.0.2.2:5000" + endpoint;

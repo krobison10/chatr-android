@@ -67,6 +67,9 @@ public class AddContactsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mContactsViewModel.addCreateContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
         mContactsViewModel.addGetSearchResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
         mContactsViewModel.getSearchText().observe(getViewLifecycleOwner(), query -> {
@@ -123,7 +126,7 @@ public class AddContactsFragment extends Fragment {
         }
 
         mBinding.recyclerViewAddContacts.setAdapter(
-                new AddContactsRecyclerViewAdapter(contactsList)
+                new AddContactsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
     }
 

@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.AddContact;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentAddContactsBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 
 /**
  * Fragment where the user can add contacts.
@@ -49,9 +49,9 @@ public class AddContactsFragment extends Fragment {
         FragmentAddContactsBinding binding = FragmentAddContactsBinding.bind(getView());
 
         // Create a list of dummy contacts
-        ArrayList<AddContact> contacts = new ArrayList<>();
+        ArrayList<Contact> contacts = new ArrayList<>();
         for(int i = 0; i < 5; i++) {
-            contacts.add(new AddContact());
+            contacts.add(new Contact(0,"","","", ""));
         }
         binding.recyclerViewAddContacts.setAdapter(
                 new AddContactsRecyclerViewAdapter(contacts)

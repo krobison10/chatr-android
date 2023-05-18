@@ -1,7 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.contacts;
 
 import android.app.Application;
-import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -30,32 +29,66 @@ public class ContactsViewModel extends AndroidViewModel {
     //TODO: Encapsulate
     public JWT mJWT;
 
-    private MutableLiveData<JSONObject> mGetCurContactsResponse;
+    private final MutableLiveData<JSONObject> mGetCurResponse;
+
+    private final MutableLiveData<JSONObject> mGetOutgoingResponse;
+
+    private final MutableLiveData<JSONObject> mGetIncomingResponse;
+
+
 
     public ContactsViewModel(@NonNull Application application) {
         super(application);
 
-        mGetCurContactsResponse = new MutableLiveData<>();
-        mGetCurContactsResponse.setValue(new JSONObject());
+        mGetCurResponse = new MutableLiveData<>();
+        mGetCurResponse.setValue(new JSONObject());
+
+        mGetOutgoingResponse = new MutableLiveData<>();
+        mGetOutgoingResponse.setValue(new JSONObject());
+
+        mGetIncomingResponse = new MutableLiveData<>();
+        mGetIncomingResponse.setValue(new JSONObject());
     }
 
-    public void addResponseObserver(@NonNull LifecycleOwner owner,
-                                    @NonNull Observer<? super JSONObject> observer) {
-        mGetCurContactsResponse.observe(owner, observer);
+    public void addGetCurResponseObserver(@NonNull LifecycleOwner owner,
+                                          @NonNull Observer<? super JSONObject> observer) {
+        mGetCurResponse.observe(owner, observer);
     }
 
-    public void connectGetCurContacts() {
-        String url = "http://10.0.2.2:5000/contacts/current";
+    public void connectGetCur() {
+        connect("/contacts/current", Request.Method.GET, mGetCurResponse);
+    }
+
+    public void addGetOutgoingResponseObserver(@NonNull LifecycleOwner owner,
+                                          @NonNull Observer<? super JSONObject> observer) {
+        mGetOutgoingResponse.observe(owner, observer);
+    }
+
+    public void connectGetOutgoing() {
+        connect("/contacts/outgoing", Request.Method.GET, mGetOutgoingResponse);
+    }
+
+    public void addGetIncomingResponseObserver(@NonNull LifecycleOwner owner,
+                                               @NonNull Observer<? super JSONObject> observer) {
+        mGetIncomingResponse.observe(owner, observer);
+    }
+
+    public void connectGetIncoming() {
+        connect("/contacts/incoming", Request.Method.GET, mGetIncomingResponse);
+    }
+
+
+    public void connect(String endpoint, int method, MutableLiveData<JSONObject> responseDestination) {
+        String url = "http://10.0.2.2:5000" + endpoint;
         Request request = new JsonObjectRequest(
-                Request.Method.GET,
+                method,
                 url,
-                null, //no body for this get request
-                mGetCurContactsResponse::setValue,
-                this::handleGetError) {
+                null, //no body for this request
+                responseDestination::setValue,
+                error -> handleError(error, responseDestination)) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
                 headers.put("Authorization", mJWT.toString());
                 return headers;
             }
@@ -64,15 +97,14 @@ public class ContactsViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        //Instantiate the RequestQueue and add the request to the queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
     }
 
-    private void handleGetError(final VolleyError error) {
+    private void handleError(final VolleyError error, MutableLiveData<JSONObject> responseData) {
         if (Objects.isNull(error.networkResponse)) {
             try {
-                mGetCurContactsResponse.setValue(new JSONObject("{" +
+                responseData.setValue(new JSONObject("{" +
                         "error:\"" + error.getMessage() +
                         "\"}"));
             } catch (JSONException e) {
@@ -86,7 +118,7 @@ public class ContactsViewModel extends AndroidViewModel {
                 JSONObject response = new JSONObject();
                 response.put("code", error.networkResponse.statusCode);
                 response.put("data", new JSONObject(data));
-                mGetCurContactsResponse.setValue(response);
+                responseData.setValue(response);
             } catch (JSONException e) {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }

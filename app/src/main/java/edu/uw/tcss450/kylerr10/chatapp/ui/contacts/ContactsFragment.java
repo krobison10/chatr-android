@@ -6,12 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
 /**
  * Represents the main root fragment of the contacts page, contains the tab layout.
@@ -19,6 +22,15 @@ import edu.uw.tcss450.kylerr10.chatapp.R;
  * @author Kyler Robison, Betty Abera
  */
 public class ContactsFragment extends Fragment {
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ContactsViewModel viewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
+
+        JWT jwt = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getJWT();
+        viewModel.mJWT = jwt;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

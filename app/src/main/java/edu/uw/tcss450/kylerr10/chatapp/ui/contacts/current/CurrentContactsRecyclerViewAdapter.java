@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.CurrentContact;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleCurrentContactBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 
 /**
  * RecyclerView Adapter for the list of current contacts.
@@ -23,9 +23,9 @@ public class CurrentContactsRecyclerViewAdapter
     /**
      * List of CurrentContacts for the RecyclerView
      */
-    private final List<CurrentContact> mContacts;
+    private final List<Contact> mContacts;
 
-    public CurrentContactsRecyclerViewAdapter(List<CurrentContact> currentContacts) {
+    public CurrentContactsRecyclerViewAdapter(List<Contact> currentContacts) {
         mContacts = currentContacts;
     }
 
@@ -62,7 +62,7 @@ public class CurrentContactsRecyclerViewAdapter
             mBinding = FragmentSingleCurrentContactBinding.bind(itemView);
         }
 
-        public void setContact(final CurrentContact contact) {
+        public void setContact(final Contact contact) {
             mBinding.textMain.setText(contact.mUsername);
         }
     }

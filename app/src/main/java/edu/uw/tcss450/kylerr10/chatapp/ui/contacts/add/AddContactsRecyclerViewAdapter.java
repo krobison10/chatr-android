@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.AddContact;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleAddContactBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 
 /**
  * RecyclerView Adapter for the add contacts list of the add contacts page in contacts.
@@ -23,9 +23,9 @@ public class AddContactsRecyclerViewAdapter
     /**
      * List of AddContacts for the RecyclerView
      */
-    private final List<AddContact> mContacts;
+    private final List<Contact> mContacts;
 
-    public AddContactsRecyclerViewAdapter(List<AddContact> addContacts) {
+    public AddContactsRecyclerViewAdapter(List<Contact> addContacts) {
         mContacts = addContacts;
     }
 
@@ -63,7 +63,7 @@ public class AddContactsRecyclerViewAdapter
             mBinding = FragmentSingleAddContactBinding.bind(itemView);
         }
 
-        public void setContact(final AddContact contact) {
+        public void setContact(final Contact contact) {
             // TODO: implement code to actually set values
         }
     }

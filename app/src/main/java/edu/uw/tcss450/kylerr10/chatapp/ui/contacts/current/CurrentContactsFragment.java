@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.auth0.android.jwt.JWT;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
@@ -21,11 +20,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLoginBinding;
-import edu.uw.tcss450.kylerr10.chatapp.listdata.CurrentContact;
-import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
-import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 
 /**
@@ -48,9 +44,6 @@ public class CurrentContactsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
-
-        JWT jwt = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getJWT();
-        mContactsViewModel.mJWT = jwt;
     }
 
     @Override
@@ -73,41 +66,8 @@ public class CurrentContactsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ArrayList<CurrentContact> contacts = new ArrayList<>();
-//        for(int i = 0; i < 50; i++) {
-//            contacts.add(new CurrentContact(
-//                    "First",
-//                    "Last",
-//                    "email@email.com",
-//                    "username"));
-//        }
-//        binding.recyclerViewCurrentContacts.setAdapter(
-//                new CurrentContactsRecyclerViewAdapter(contacts)
-//        );
-        mContactsViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
-        mContactsViewModel.connectGetCurContacts();
-    }
-
-    private void processResponse(final JSONObject response) throws JSONException {
-        ArrayList<CurrentContact> contactsList = new ArrayList<>();
-
-        JSONArray contactsArray = response.getJSONArray("contacts");
-        for(int i = 0; i < contactsArray.length(); i++) {
-            JSONObject contactObject = contactsArray.getJSONObject(i);
-
-            int connectionId = contactObject.getInt("connectionid");
-            String username = contactObject.getString("username");
-            String email = contactObject.getString("email");
-            String firstName = contactObject.getString("firstname");
-            String lastName = contactObject.getString("lastname");
-
-            CurrentContact c = new CurrentContact(connectionId, username, email, firstName, lastName);
-            contactsList.add(c);
-        }
-
-        mBinding.recyclerViewCurrentContacts.setAdapter(
-                new CurrentContactsRecyclerViewAdapter(contactsList)
-        );
+        mContactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+        mContactsViewModel.connectGetCur();
     }
 
     /**
@@ -136,6 +96,28 @@ public class CurrentContactsFragment extends Fragment {
             Log.d("JSON Response", "No Response");
             showErrorNotification("An error occurred");
         }
+    }
+
+    private void processResponse(final JSONObject response) throws JSONException {
+        ArrayList<Contact> contactsList = new ArrayList<>();
+
+        JSONArray contactsArray = response.getJSONArray("contacts");
+        for(int i = 0; i < contactsArray.length(); i++) {
+            JSONObject contactObject = contactsArray.getJSONObject(i);
+
+            int connectionId = contactObject.getInt("connectionid");
+            String username = contactObject.getString("username");
+            String email = contactObject.getString("email");
+            String firstName = contactObject.getString("firstname");
+            String lastName = contactObject.getString("lastname");
+
+            Contact c = new Contact(connectionId, username, email, firstName, lastName);
+            contactsList.add(c);
+        }
+
+        mBinding.recyclerViewCurrentContacts.setAdapter(
+                new CurrentContactsRecyclerViewAdapter(contactsList)
+        );
     }
 
     /**

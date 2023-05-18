@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.IncomingContactRequest;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleIncomingRequestBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 
 /**
  * RecyclerViewAdapter for the incoming contact requests list.
@@ -21,9 +21,9 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSingleIncomingRequest
 public class IncomingRequestsRecyclerViewAdapter
     extends RecyclerView.Adapter<IncomingRequestsRecyclerViewAdapter.IncomingRequestViewHolder> {
 
-    private final List<IncomingContactRequest> mRequests;
+    private final List<Contact> mRequests;
 
-    public IncomingRequestsRecyclerViewAdapter(List<IncomingContactRequest> requests) {
+    public IncomingRequestsRecyclerViewAdapter(List<Contact> requests) {
         mRequests = requests;
     }
 
@@ -57,8 +57,8 @@ public class IncomingRequestsRecyclerViewAdapter
             mBinding = FragmentSingleIncomingRequestBinding.bind(itemView);
         }
 
-        public void setRequest(final IncomingContactRequest contact) {
-            // TODO: implement code to actually set values
+        public void setRequest(final Contact contact) {
+            mBinding.textMain.setText(contact.mUsername);
         }
 
     }

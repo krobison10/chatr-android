@@ -36,7 +36,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     /**
      * Set the conversation data in the adapter.
-     * @param conversation the conversation to set.
+     * @param conversation the conversation to set
      */
     public void setConversation(Conversation conversation) {
         this.mConversation = conversation;
@@ -147,7 +147,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Constructor for the ViewHolder.
-         * @param itemView the item view to be held by the ViewHolder.
+         * @param itemView the item view to be held by the ViewHolder
          */
         ReceiverViewHolder(View itemView) {
             super(itemView);
@@ -160,7 +160,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Bind data to the ViewHolder.
-         * @param message the message data to bind.
+         * @param message the message data to bind
          */
         void bind(Conversation message) {
 

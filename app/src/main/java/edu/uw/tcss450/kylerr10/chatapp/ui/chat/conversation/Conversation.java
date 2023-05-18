@@ -35,8 +35,12 @@ public class Conversation {
     // Timestamp of the message
     private long mTimestamp;
 
+    //Counter for generating conversation IDs
     private static int mConversationIdCounter = 0;
 
+    /**
+     * Constructs a new Conversation object.
+     */
     public Conversation() {
         // Required empty public constructor
     }
@@ -76,6 +80,10 @@ public class Conversation {
         mMessages = new ArrayList<>();
     }
 
+    /**
+     * Generates a unique conversation ID.
+     * @return The generated conversation ID.
+     */
     public static int generateConversationId() {
         return ++mConversationIdCounter;
     }

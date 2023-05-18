@@ -161,7 +161,7 @@ public class CreateChatDialogue extends DialogFragment {
                 List<ChatMember> selectedMembers = getSelectedMembers();
 
                 int chatid = 2;
-                ChatRoom chatRoom = new ChatRoom(chatid++, chatRoomName);
+                ChatRoom chatRoom = new ChatRoom(chatid++, chatRoomName, "Last message in Chat Room " + chatRoomName);
 
                 // Call the listener to add the new chat room to the list
                 if (mListener != null) {

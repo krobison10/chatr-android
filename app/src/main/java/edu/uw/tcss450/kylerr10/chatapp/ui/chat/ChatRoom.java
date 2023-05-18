@@ -1,10 +1,8 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 
 
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 /**
@@ -17,29 +15,37 @@ public class ChatRoom {
     //The name of the chat room
     private String mName;
 
-
     //The last message sent in the chat room
     private String mLastMessage;
 
+    //The next available ID for the chat room
     private static int mNextId = 1;
-    private ChatRoomMemberAdapter mMemberAdapter;
 
+    //The ID of the chat room
     private int mChatId;
 
-    private List<ChatMember> mMemberId;
+    //The list of chat members in the chat room
+    private List<ChatMember> mMembers;
+
+    //The list of selected chat members
     private List<ChatMember> mSelectedMembers;
+
+    //The adapter used for managing chat room members
+    private ChatRoomMemberAdapter mMemberAdapter;
 
 
     /**
      * Constructs a new ChatRoom object with the given chat ID and name.
-     * @param chatId The ID of the chat room.
-     * @param name   The name of the chat room.
+     * @param chatId The ID of the chat room
+     * @param name   The name of the chat room
      */
-    public ChatRoom(int chatId, String name) {
+    public ChatRoom(int chatId, String name, String mLastMessage) {
         this.mChatId = mNextId++;
         this.mName = name;
+        this.mLastMessage = mLastMessage;
 
     }
+
 
     /**
      * Constructs a new ChatRoom object with the given name and last message.
@@ -51,15 +57,18 @@ public class ChatRoom {
         this.mLastMessage = mLastMessage;
     }
 
+
     /**
      * Constructs a new ChatRoom object with the given name and member IDs.
-     * @param name     The name of the chat room.
-     * @param memberId The list of member IDs in the chat room.
+     * @param name     The name of the chat room
+     * @param members The list of member IDs in the chat room
      */
-    public ChatRoom(String name, List<ChatMember> memberId){
+    public ChatRoom(String name, List<ChatMember> members){
         this.mName = name;
-        this.mMemberId = memberId;
+        this.mMembers = members;
     }
+
+
     /**
      * Returns the chat ID of the chat room.
      * @return The chat ID.
@@ -67,6 +76,7 @@ public class ChatRoom {
     public int getId() {
         return mChatId;
     }
+
 
     /**
      * Returns the name of the chat room.
@@ -76,6 +86,7 @@ public class ChatRoom {
         return mName;
     }
 
+
     /**
      * Returns the last message sent in the chat room.
      * @return the last message sent in the chat room
@@ -83,6 +94,7 @@ public class ChatRoom {
     public String getLastMessage() {
         return mLastMessage;
     }
+
 
     /**
      * Sets the name of the chat room.
@@ -93,6 +105,7 @@ public class ChatRoom {
         this.mName = name;
     }
 
+
     /**
      * Sets the last message sent in the chat room.
      * @param lastMessage the last message sent in the chat room
@@ -100,6 +113,7 @@ public class ChatRoom {
     public void setLastMessage(String lastMessage) {
         this.mLastMessage = lastMessage;
     }
+
 
     /**
      * Sets the list of selected members for the chat room.
@@ -109,9 +123,15 @@ public class ChatRoom {
         this.mSelectedMembers = selectedMembers;
     }
 
+
+    /**
+     * Retrieves the list of selected chat members.
+     * @return The list of selected chat members
+     */
     public List<ChatMember> getSelectedMembers() {
         return mSelectedMembers;
     }
+
 
     /**
      * Returns the adapter for the chat room's member list.

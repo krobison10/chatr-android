@@ -12,10 +12,12 @@ import java.util.List;
 
 
 /**
- * Adapter class for displaying selected chat members in a RecyclerView.
- *
+ * Adapter class for displaying selected chat members in the CreateChatDialogue added_members RecyclerView.
+ * @author Leyla Ahmed
  */
 public class ChatSelectedMembersAdapter extends RecyclerView.Adapter<ChatSelectedMembersAdapter.SelectedMemberViewHolder> {
+
+    //The list of selected chat members
     private List<ChatMember> mSelectedMembers;
 
     /**
@@ -29,21 +31,21 @@ public class ChatSelectedMembersAdapter extends RecyclerView.Adapter<ChatSelecte
     @NonNull
     @Override
     public SelectedMemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the layout for each item in the RecyclerView.
+        // Inflate the layout for each item in the RecyclerView
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_chat_remove_member, parent, false);
         return new SelectedMemberViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SelectedMemberViewHolder holder, int position) {
-        // Bind the data to the ViewHolder at the specified position.
+        // Bind the data to the ViewHolder at the specified position
         ChatMember member = mSelectedMembers.get(position);
         holder.bind(member);
     }
 
     @Override
     public int getItemCount() {
-        // Returns the total number of selected members.
+        // Returns the total number of selected members
         return mSelectedMembers.size();
     }
     /**

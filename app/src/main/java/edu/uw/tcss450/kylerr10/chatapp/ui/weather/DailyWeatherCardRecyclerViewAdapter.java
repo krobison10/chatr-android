@@ -81,6 +81,7 @@ public class DailyWeatherCardRecyclerViewAdapter extends
             mBinding.textTemperatureHigh.setText(dailyForecast.getTemperatureHigh());
             mBinding.textTemperatureLow.setText(dailyForecast.getTemperatureLow());
             mBinding.imageWeatherPreview.setImageIcon(dailyForecast.getForecastIcon(mView));
+            mBinding.imageWeatherPreview.setVisibility(View.VISIBLE);
             mBinding.textDay.setText(dailyForecast.getDay());
         }
 

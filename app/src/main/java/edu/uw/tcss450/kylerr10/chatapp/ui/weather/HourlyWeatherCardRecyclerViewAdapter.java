@@ -89,6 +89,7 @@ public class HourlyWeatherCardRecyclerViewAdapter extends
             // TODO: implement code to actually set values in the hourly forecast
             mBinding.textTemperature.setText(hourlyForecast.getTemperature());
             mBinding.imageWeatherPreview.setImageIcon(hourlyForecast.getForecastIcon(mView));
+            mBinding.imageWeatherPreview.setVisibility(View.VISIBLE);
             mBinding.textHour.setText(hourlyForecast.getHour());
             mBinding.textMeridiem.setText(hourlyForecast.getMeridiem());
         }

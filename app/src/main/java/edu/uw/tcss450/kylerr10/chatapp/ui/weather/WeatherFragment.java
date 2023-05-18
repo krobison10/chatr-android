@@ -64,45 +64,14 @@ public class WeatherFragment extends Fragment {
             } else Log.e("FORECASTINFO", "Daily forecast list is empty.");
             if (!forecast.getHourlyList().isEmpty()) {
                 binding.textCurrentTemperature.setText(forecast.getHourlyList().get(0).getTemperature());
+                binding.textWeatherDescription.setText(forecast.getHourlyList().get(0).getForecast());
+                binding.imageWeathericon.setVisibility(View.VISIBLE);
                 binding.recyclerViewWeatherHourly.setAdapter(
                         new HourlyWeatherCardRecyclerViewAdapter(forecast.getHourlyList())
                 );
             } else Log.e("FORECASTINFO", "Hourly forecast list is empty.");
         });
-        // Create a list of dummy dailyForecasts and hourlyForecasts
-//        ArrayList<HourlyForecast> hourlyForecasts = mViewModel
-//        hourlyForecasts.add(new HourlyForecast(9, 48, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(10, 48, "Sunny"));
-//        hourlyForecasts.add(new HourlyForecast(11, 50, "Sunny"));
-//        hourlyForecasts.add(new HourlyForecast(12, 50, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(13, 52, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(14, 53, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(15, 54, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(16, 55, "Sunny"));
-//        hourlyForecasts.add(new HourlyForecast(17, 54, "Sunny"));
-//        hourlyForecasts.add(new HourlyForecast(18, 52, "Sunny"));
-//        hourlyForecasts.add(new HourlyForecast(19, 51, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(20, 50, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(21, 49, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(22, 48, "Cloudy"));
-//        hourlyForecasts.add(new HourlyForecast(23, 48, "Cloudy"));
 
-//        ArrayList<DailyForecast> dailyForecasts = new ArrayList<>();
-//        dailyForecasts.add(new DailyForecast("Today", 82, 71, mTemperatureUnit, "Sunny"));
-//        dailyForecasts.add(new DailyForecast("Tomorrow", 76, 69, mTemperatureUnit, "Partly Cloudy"));
-//        dailyForecasts.add(new DailyForecast("Saturday", 75, 68, mTemperatureUnit, "Partly Cloudy"));
-//        dailyForecasts.add(new DailyForecast("Sunday", 76, 69, mTemperatureUnit, "Partly Cloudy"));
-//        dailyForecasts.add(new DailyForecast("Monday", 80, 72, mTemperatureUnit, "Sunny"));
-//        dailyForecasts.add(new DailyForecast("Tuesday", 68, 60, mTemperatureUnit, "Cloudy"));
-//        dailyForecasts.add(new DailyForecast("Wednesday", 81, 70, mTemperatureUnit, "Sunny"));
-
-//        binding.recyclerViewWeatherHourly.setAdapter(
-//                new HourlyWeatherCardRecyclerViewAdapter(hourlyForecasts)
-//        );
-//
-//        binding.recyclerViewWeatherDaily.setAdapter(
-//                new DailyWeatherCardRecyclerViewAdapter(dailyForecasts)
-//        );
         binding.openLocationButton.setOnClickListener(this::openLocationDialog);
     }
 

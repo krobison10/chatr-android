@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment {
                     binding.textWeatherdescription.setText(currentForecast.getForecast());
                     binding.textTemperatureHigh.setText(currentForecast.getTemperature());
                     binding.imageWeathericon.setImageIcon(currentForecast.getForecastIcon(binding.homeWeatherCard));
-                    binding.homeWeatherWait.setVisibility(View.GONE);
+                    binding.imageWeathericon.setVisibility(View.VISIBLE);
                 } else Log.e("FORECASTINFO", "Hourly forecast list is empty.");
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
         });

@@ -72,6 +72,9 @@ public class CurrentContactsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mContactsViewModel.addDeleteContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
         mContactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), this::observeResponse);
     }
 
@@ -121,7 +124,7 @@ public class CurrentContactsFragment extends Fragment {
         }
 
         mBinding.recyclerViewCurrentContacts.setAdapter(
-                new CurrentContactsRecyclerViewAdapter(contactsList)
+                new CurrentContactsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
     }
 

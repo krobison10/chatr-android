@@ -41,7 +41,7 @@ public class ForecastViewModel extends AndroidViewModel {
     /**
      * The forecast data.
      */
-    private MutableLiveData<Forecast> mForecast;
+    private final MutableLiveData<Forecast> mForecast;
 
     /**
      * The ViewModel's constructor.
@@ -110,7 +110,7 @@ public class ForecastViewModel extends AndroidViewModel {
                             )
                         );
                     } else {
-                        Log.e("JSONERROR", "daily forecast has invalid format");
+                        Log.e("JSON_PARSE_ERROR", "daily forecast has invalid format");
                     }
                 }
                 JSONArray hourlyForecast = root.getJSONArray(getString.apply(R.string.keys_json_forecast_hourly));
@@ -133,16 +133,17 @@ public class ForecastViewModel extends AndroidViewModel {
                             )
                         );
                     } else {
-                        Log.e("JSONERROR", "hourly forecast has invalid format");
+                        Log.e("JSON_PARSE_ERROR", "hourly forecast has invalid format");
                     }
                 }
             } else {
-                Log.e("JSONERROR", "forecast GET response has invalid format");
+                Log.e("JSON_PARSE_ERROR", "forecast GET response has invalid format");
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e("JSONERROR", e.getMessage());
+            Log.e("JSON_PARSE_ERROR", e.getMessage());
         }
+        mForecast.setValue(mForecast.getValue()); // necessary to trigger observers to update
     }
 
     /**
@@ -159,11 +160,7 @@ public class ForecastViewModel extends AndroidViewModel {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 UserInfoViewModel model = new ViewModelProvider(activity).get(UserInfoViewModel.class);
-                String jwt = model.getJWT().toString();
-                headers.put( //
-                        "Authorization",
-                        jwt
-                );
+                headers.put("Authorization", model.getJWT().toString()); // JSON request body
                 return headers;
             }
         };

@@ -1,6 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.model;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -26,9 +27,8 @@ public class UserInfoViewModel extends AndroidViewModel {
     public void setToken(JWT jwt) {
         if(mJwt == null) {
             mJwt = jwt;
-        }
-        else {
-            throw new RuntimeException("JWT already set");
+        } else {
+            Log.d("JWT", "Attempted to set nonnull JWT.");
         }
     }
 

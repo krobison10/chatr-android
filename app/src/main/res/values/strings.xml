@@ -74,4 +74,18 @@
     <string name="hint_list_locations">List saved locations</string>
     <string name="hint_open_location">Open location search</string>
     <string name="hint_current_location">View current location</string>
+    <string name="keys_json_forecast_state">state</string>
+    <string name="keys_json_forecast_forecast">forecast</string>
+    <string name="keys_json_forecast_daily">forecast</string>
+    <string name="keys_json_forecast_hourly">hourlyForecast</string>
+    <string name="keys_json_forecast_daily_day">day</string>
+    <string name="keys_json_forecast_daily_temperature_high">temperatureHigh</string>
+    <string name="keys_json_forecast_daily_temperature_low">temperatureLow</string>
+    <string name="keys_json_forecast_daily_temperature_unit">temperatureUnit</string>
+    <string name="keys_json_forecast_daily_short_forecast">shortForecast</string>
+    <string name="keys_json_forecast_hourly_time">time</string>
+    <string name="keys_json_forecast_hourly_is_daytime">isDaytime</string>
+    <string name="keys_json_forecast_hourly_temperature">temperature</string>
+    <string name="keys_json_forecast_hourly_temperature_unit">temperatureUnit</string>
+    <string name="keys_json_forecast_hourly_short_forecast">shortForecast</string>
 </resources>

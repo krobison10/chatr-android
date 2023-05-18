@@ -63,8 +63,7 @@ public class CurrentContactsRecyclerViewAdapter
         }
 
         public void setContact(final CurrentContact contact) {
-            // TODO: implement code to actually set values
+            mBinding.textMain.setText(contact.mUsername);
         }
-
     }
 }

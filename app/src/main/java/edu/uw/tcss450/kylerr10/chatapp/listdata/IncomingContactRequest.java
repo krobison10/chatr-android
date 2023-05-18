@@ -9,6 +9,17 @@ import java.io.Serializable;
  * @author Kyler Robison
  */
 public class IncomingContactRequest implements Serializable {
-    //Temporary
-    public String name = "Name";
+    public final int mConnectionId;
+    public final String mFName;
+    public final String mLName;
+    public final String mEmail;
+    public final String mUsername;
+
+    public IncomingContactRequest(int connectionId, String username, String email, String fName, String lName) {
+        mConnectionId = connectionId;
+        mFName = fName;
+        mLName = lName;
+        mEmail = email;
+        mUsername = username;
+    }
 }

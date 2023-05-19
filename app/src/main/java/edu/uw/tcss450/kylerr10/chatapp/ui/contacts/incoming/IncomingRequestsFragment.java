@@ -109,6 +109,11 @@ public class IncomingRequestsFragment extends Fragment {
         }
     }
 
+    /**
+     * Processes the response JSON, repopulates recyclerview.
+     * @param response
+     * @throws JSONException
+     */
     private void processResponse(final JSONObject response) throws JSONException {
         ArrayList<Contact> contactsList = new ArrayList<>();
 

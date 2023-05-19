@@ -25,24 +25,49 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
+/**
+ * ViewModel for all contacts functionality
+ *
+ * @author Kyler Robison
+ */
 public class ContactsViewModel extends AndroidViewModel {
     //TODO: Encapsulate
+    /**
+     * JWT for the logged in user
+     */
     public JWT mJWT;
 
+    /**
+     * Represents the text currently entered in the search bar of the parent contacts fragment.
+     */
     private final MutableLiveData<String> searchText;
-
+    /**
+     * The response from the endpoint to get all current contacts.
+     */
     private final MutableLiveData<JSONObject> mGetCurResponse;
-
+    /**
+     * The response from the endpoint to get all outgoing contact requests.
+     */
     private final MutableLiveData<JSONObject> mGetOutgoingResponse;
-
+    /**
+     * The response from the endpoint to get all incoming contact requests.
+     */
     private final MutableLiveData<JSONObject> mGetIncomingResponse;
-
+    /**
+     * The response from the endpoint to get all users given a search query.
+     */
     private final MutableLiveData<JSONObject> mGetSearchResponse;
-
+    /**
+     * The response from the endpoint to create a contact request.
+     */
     private final MutableLiveData<JSONObject> mCreateContactResponse;
-
+    /**
+     * The response from the endpoint to delete a contact/request.
+     */
     private final MutableLiveData<JSONObject> mDeleteContactResponse;
-
+    /**
+     * The response from the endpoint to accept a contact request.
+     */
     private final MutableLiveData<JSONObject> mAcceptContactResponse;
 
 
@@ -74,10 +99,17 @@ public class ContactsViewModel extends AndroidViewModel {
         mAcceptContactResponse.setValue(new JSONObject());
     }
 
+    /**
+     * @return the current text in the search bar.
+     */
     public MutableLiveData<String> getSearchText() {
         return searchText;
     }
 
+    /**
+     * Sets the value of the search text for the ViewModel.
+     * @param text
+     */
     public void setSearchText(String text) {
         searchText.setValue(text);
     }
@@ -87,6 +119,9 @@ public class ContactsViewModel extends AndroidViewModel {
         mGetCurResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes api call to get current contacts.
+     */
     public void connectGetCur() {
         connect("/contacts/current", Request.Method.GET, mGetCurResponse);
     }
@@ -96,6 +131,9 @@ public class ContactsViewModel extends AndroidViewModel {
         mGetOutgoingResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes api call to get outgoing contact requests.
+     */
     public void connectGetOutgoing() {
         connect("/contacts/outgoing", Request.Method.GET, mGetOutgoingResponse);
     }
@@ -105,6 +143,9 @@ public class ContactsViewModel extends AndroidViewModel {
         mGetIncomingResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes the api call to get outgoing contact requests.
+     */
     public void connectGetIncoming() {
         connect("/contacts/incoming", Request.Method.GET, mGetIncomingResponse);
     }
@@ -114,6 +155,10 @@ public class ContactsViewModel extends AndroidViewModel {
         mGetSearchResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes the api call to search for users given a query.
+     * @param query the string used to search with.
+     */
     public void connectGetSearch(String query) {
         connect("/search/" + query, Request.Method.GET, mGetSearchResponse);
     }
@@ -123,6 +168,10 @@ public class ContactsViewModel extends AndroidViewModel {
         mCreateContactResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes the api call to request to create a contact request.
+     * @param email the email of the user to send the request to.
+     */
     public void connectCreateContact(String email) {
         connect("/contacts/" + email, Request.Method.POST, mCreateContactResponse);
     }
@@ -132,6 +181,10 @@ public class ContactsViewModel extends AndroidViewModel {
         mDeleteContactResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes the api call to request to remove a contact or request.
+     * @param connId the id of the connection to delete.
+     */
     public void connectDeleteContact(int connId) {
         connect("/contacts/" + connId, Request.Method.DELETE, mDeleteContactResponse);
     }
@@ -141,10 +194,17 @@ public class ContactsViewModel extends AndroidViewModel {
         mAcceptContactResponse.observe(owner, observer);
     }
 
+    /**
+     * Makes the api call to accept a contact request.
+     * @param connId the id of the request to accept.
+     */
     public void connectAcceptContact(int connId) {
         connect("/contacts/accept/" + connId, Request.Method.PUT, mDeleteContactResponse);
     }
 
+    /**
+     * Makes get api calls to update the lists in all tabs of contacts
+     */
     public void updateContacts() {
         connectGetCur();
         connectGetSearch(searchText.getValue());
@@ -152,6 +212,12 @@ public class ContactsViewModel extends AndroidViewModel {
         connectGetOutgoing();
     }
 
+    /**
+     * Sends a body-less request to base url of the web service.
+     * @param endpoint the endpoint of the destination. Should start with a "/".
+     * @param method the http method to use.
+     * @param responseDestination the MutableLiveData to store the response in.
+     */
     public void connect(String endpoint, int method, MutableLiveData<JSONObject> responseDestination) {
         String url = "http://10.0.2.2:5000" + endpoint;
         Request request = new JsonObjectRequest(
@@ -175,10 +241,15 @@ public class ContactsViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
-    private void handleError(final VolleyError error, MutableLiveData<JSONObject> responseData) {
+    /**
+     * Handles request error
+     * @param error error.
+     * @param responseDestination destination of the response.
+     */
+    private void handleError(final VolleyError error, MutableLiveData<JSONObject> responseDestination) {
         if (Objects.isNull(error.networkResponse)) {
             try {
-                responseData.setValue(new JSONObject("{" +
+                responseDestination.setValue(new JSONObject("{" +
                         "error:\"" + error.getMessage() +
                         "\"}"));
             } catch (JSONException e) {
@@ -192,7 +263,7 @@ public class ContactsViewModel extends AndroidViewModel {
                 JSONObject response = new JSONObject();
                 response.put("code", error.networkResponse.statusCode);
                 response.put("data", new JSONObject(data));
-                responseData.setValue(response);
+                responseDestination.setValue(response);
             } catch (JSONException e) {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }

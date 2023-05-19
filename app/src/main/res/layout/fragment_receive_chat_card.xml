@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="@string/receiver_name"
-        android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
-        app:cardBackgroundColor="@color/teal_200"
+        app:cardBackgroundColor="?colorSecondary"
         app:cardCornerRadius="16dp"
         app:cardElevation="2dp"
         app:layout_constraintStart_toEndOf="@+id/receiver_user_image"
@@ -37,7 +36,7 @@
             android:layout_margin="8dp"
             android:padding="6dp"
             android:maxWidth="250dp"
-            android:textColor="@color/black"
+            android:textColor="?colorOnSecondary"
             android:textSize="16sp" />
     </androidx.cardview.widget.CardView>
 
@@ -57,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/chat_time"
-        android:textColor="@color/black"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

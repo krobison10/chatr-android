@@ -122,12 +122,12 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                     if (recyclerViewMembers.getVisibility() == View.VISIBLE) {
                         recyclerViewMembers.setVisibility(View.GONE);
                         memberTextView.setVisibility(View.GONE);
-                        buttonMore.setImageResource(R.drawable.ic_chat_less_black_24dp);
+                        buttonMore.setImageResource(R.drawable.ic_chat_more_onsurface_24dp);
                         mIsMemberRecyclerViewVisible = false;
                     } else {
                         recyclerViewMembers.setVisibility(View.VISIBLE);
                         memberTextView.setVisibility(View.VISIBLE);
-                        buttonMore.setImageResource(R.drawable.ic_chat_more_black_24dp);
+                        buttonMore.setImageResource(R.drawable.ic_chat_less_onsurface_24dp);
                         mIsMemberRecyclerViewVisible = true;
                     }
                 }

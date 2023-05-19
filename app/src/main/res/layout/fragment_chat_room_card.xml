@@ -79,8 +79,8 @@
             tools:layout_conversion_absoluteHeight="22dp"
             tools:layout_conversion_absoluteWidth="363dp" />
 
-        <ListView
-            android:id="@+id/listView_members"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView_members"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"

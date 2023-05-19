@@ -73,8 +73,15 @@ public class ChatRoom {
      * Returns the chat ID of the chat room.
      * @return The chat ID.
      */
-    public int getId() {
+    public int getChatId() {
         return mChatId;
+    }
+
+    /**
+     * Sets the chat ID of the chat room.
+     */
+    public void setChatId(int chatId) {
+        this.mChatId = chatId;
     }
 
 

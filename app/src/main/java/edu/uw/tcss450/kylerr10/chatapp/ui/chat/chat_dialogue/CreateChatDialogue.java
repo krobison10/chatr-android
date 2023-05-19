@@ -1,6 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue;
 
-import android.content.Context;
+
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -9,31 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import androidx.appcompat.widget.SearchView;
-
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.button.MaterialButton;
-
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import edu.uw.tcss450.kylerr10.chatapp.R;
-import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatRoom;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
@@ -92,9 +77,9 @@ public class CreateChatDialogue extends DialogFragment {
 
 
         // Create a list of all chat members
-        allMembers.add(new ChatMember(1, "John Doe"));
-        allMembers.add(new ChatMember(2, "Jane Smith"));
-        allMembers.add(new ChatMember(3, "David Johnson"));
+        allMembers.add(new ChatMember(10, "Petra"));
+        allMembers.add(new ChatMember(8, "test2First"));
+        allMembers.add(new ChatMember(5, "Aubree"));
         // Add more members as needed
 
         // Create an empty list for filtered members
@@ -168,7 +153,6 @@ public class CreateChatDialogue extends DialogFragment {
                 if (mListener != null) {
                     mListener.onCreateChatRoom(chatRoom, selectedMembers);
                 }
-
                 // Dismiss the dialog
                 dismiss();
             }

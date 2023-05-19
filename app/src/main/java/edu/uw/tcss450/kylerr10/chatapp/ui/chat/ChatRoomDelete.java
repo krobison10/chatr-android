@@ -35,5 +35,7 @@ public class ChatRoomDelete extends ItemTouchHelper.SimpleCallback {
         int position = viewHolder.getAdapterPosition();
         // Remove the item from the adapter
         mAdapter.removeItem(position);
+
+
     }
 }

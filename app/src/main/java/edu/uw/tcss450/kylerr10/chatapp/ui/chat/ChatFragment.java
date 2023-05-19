@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +35,6 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     //The ViewModel associated with the chat.
     private ChatViewModel mViewModel;
 
-    private ChatRoom mChatRoom;
 
 
     public ChatFragment() {
@@ -62,7 +59,6 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         String jwt = model.getJWT().toString();
 
         mViewModel.setJWT(jwt);
-
         mViewModel.getChatRooms();
         // Create a new ChatRoomAdapter and set it on the RecyclerView
         mAdapter = new ChatRoomAdapter(mChatRooms);

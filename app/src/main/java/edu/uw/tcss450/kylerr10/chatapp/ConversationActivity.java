@@ -1,9 +1,14 @@
 package edu.uw.tcss450.kylerr10.chatapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * An activity that displays the conversation between users in a chat room.
+ * @author Leyla Ahmed
+ */
 
 public class ConversationActivity extends AppCompatActivity {
 
@@ -12,11 +17,12 @@ public class ConversationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 
-        // Get the chat room name from the intent
+        // Get the chat room name from the intent extra
         String chatRoomName = getIntent().getStringExtra("chatRoomName");
 
-        // Set the chat room name as the title of the activity
-        TextView titleTextView = findViewById(R.id.title_chat_room_name);
-        titleTextView.setText(chatRoomName);
+        // Set the conversation name to the chat room name
+        @SuppressLint({"MissingInflatedId", "LocalSuppress"})
+        TextView conversationNameTextView = findViewById(R.id.title_chat_room_name);
+        conversationNameTextView.setText(chatRoomName);
     }
 }

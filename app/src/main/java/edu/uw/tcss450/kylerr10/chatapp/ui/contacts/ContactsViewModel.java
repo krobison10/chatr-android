@@ -147,6 +147,7 @@ public class ContactsViewModel extends AndroidViewModel {
 
     public void updateContacts() {
         connectGetCur();
+        connectGetSearch(searchText.getValue());
         connectGetIncoming();
         connectGetOutgoing();
     }

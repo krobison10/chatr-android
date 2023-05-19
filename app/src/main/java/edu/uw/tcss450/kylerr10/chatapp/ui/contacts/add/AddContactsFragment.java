@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentAddContactsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsRecyclerViewAdapter;
 
 /**
  * Fragment where the user can add contacts.
@@ -80,7 +79,6 @@ public class AddContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("QUERY", mContactsViewModel.getSearchText().getValue());
         mContactsViewModel.connectGetSearch(mContactsViewModel.getSearchText().getValue());
     }
 

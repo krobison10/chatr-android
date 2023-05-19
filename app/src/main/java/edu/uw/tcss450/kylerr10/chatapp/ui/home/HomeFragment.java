@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentHomeBinding;
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyForecast;
 
@@ -76,6 +77,9 @@ public class HomeFragment extends Fragment {
         binding.recyclerViewNotifications.setAdapter(
                 new NotificationsRecyclerViewAdapter(notifications)
         );
+
+        String email = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getEmail();
+        FragmentHomeBinding.bind(getView()).textGreeting.setText("Hello, " + email);
     }
 
 }

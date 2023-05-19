@@ -3,37 +3,32 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
-import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMemberAdapter;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * RecyclerView Adapter that displays a list of chat rooms.
+ * Adapter class for displaying chat rooms in a RecyclerView.
+ * As well as the members in each chat room.
  * @author Leyla Ahmed
  */
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
-
-    // The list of ChatRooms to display in the RecyclerView
+    //List of chat rooms used by the ChatRoomAdapter
     private List<ChatRoom> mChatRooms;
-
-    // The list of selected members
+    //List of selected members for the chat room
     private static List<ChatMember> mSelectedMembers = new ArrayList<>();
 
-    // The listener to handle click events on the items in the RecyclerView
+    //Listener interface to handle click events on chat rooms
     private OnChatRoomClickListener mListener;
 
-    // Indicates whether the member list view is visible
-    private static boolean mIsMemberListViewVisible = false;
+    //Flag indicating whether the member RecyclerView is visible or not
+    private static boolean mIsMemberRecyclerViewVisible = false;
 
     @NonNull
     @Override
@@ -41,6 +36,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_chat_room_card, parent, false);
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -63,8 +59,8 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
 
     /**
      * Constructs a ChatRoomAdapter with the provided list of ChatRooms and selected members.
-     * @param chatRooms        The list of ChatRooms to display
-     * @param selectedMembers  The list of selected members
+     * @param chatRooms The list of ChatRooms to display
+     * @param selectedMembers The list of selected members
      */
     public ChatRoomAdapter(List<ChatRoom> chatRooms, List<ChatMember> selectedMembers) {
         mChatRooms = chatRooms;
@@ -74,7 +70,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
 
     /**
      * Constructs a ChatRoomAdapter with the provided list of ChatRooms.
-     * @param chatRooms  The list of ChatRooms to display
+     * @param chatRooms The list of ChatRooms to display
      */
     public ChatRoomAdapter(List<ChatRoom> chatRooms) {
         mChatRooms = chatRooms;
@@ -94,30 +90,22 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
      * ViewHolder class for the adapter.
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        //The TextView that displays the name of the chat room in the ConversationActivity layout
-
         private TextView mRoomNameTextView;
-
-        //The TextView that displays the last message sent in the chat room in the ConversationActivity layout
-
         private TextView mLastMessageTextView;
+        private ImageButton buttonMore;
+        private RecyclerView recyclerViewMembers;
 
 
         /**
-         * Constructor for the ViewHolder.
-         *
-         * @param itemView The View for the ViewHolder
+         * Constructs a ViewHolder for a chat room item view.
+         * @param itemView The item view for the chat room
          */
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            // TextView used to display the name of the chat room
             mRoomNameTextView = itemView.findViewById(R.id.chat_room_name);
-
-            // TextView used to display the last message sent in the chat room
             mLastMessageTextView = itemView.findViewById(R.id.chat_last_message);
-
-            ImageButton buttonMore = itemView.findViewById(R.id.button_more);
+            buttonMore = itemView.findViewById(R.id.button_more);
+            recyclerViewMembers = itemView.findViewById(R.id.recyclerView_members);
 
             buttonMore.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -126,30 +114,24 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
                 }
 
                 /**
-                 * Toggles the visibility of the member list RecyclerView and updates the UI accordingly.
+                 * Toggles the visibility of the member RecyclerView and updates the UI accordingly.
                  */
                 private void toggleMemberRecyclerView() {
-
-                    // Retrieve the necessary UI components
-                    ListView listViewMembers = itemView.findViewById(R.id.listView_members);
                     TextView memberTextView = itemView.findViewById(R.id.chat_room_members);
 
-                    // Toggle the visibility of the member list and update the UI components
-                    if (listViewMembers.getVisibility() == View.VISIBLE) {
-                        listViewMembers.setVisibility(View.GONE);
+                    if (recyclerViewMembers.getVisibility() == View.VISIBLE) {
+                        recyclerViewMembers.setVisibility(View.GONE);
                         memberTextView.setVisibility(View.GONE);
                         buttonMore.setImageResource(R.drawable.ic_chat_less_black_24dp);
-                        mIsMemberListViewVisible = false;
+                        mIsMemberRecyclerViewVisible = false;
                     } else {
-                        listViewMembers.setVisibility(View.VISIBLE);
+                        recyclerViewMembers.setVisibility(View.VISIBLE);
                         memberTextView.setVisibility(View.VISIBLE);
                         buttonMore.setImageResource(R.drawable.ic_chat_more_black_24dp);
-                        mIsMemberListViewVisible = true;
+                        mIsMemberRecyclerViewVisible = true;
                     }
                 }
-
             });
-
         }
 
         /**
@@ -158,35 +140,24 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
          * @param listener The listener for chat room clicks
          */
         public void bind(final ChatRoom chatRoom, final OnChatRoomClickListener listener) {
-            // Bind the chat room data to the UI components
             mRoomNameTextView.setText(chatRoom.getRoomName());
             mLastMessageTextView.setText(chatRoom.getLastMessage());
-
-            // Retrieve the selected members for the current chat room
             List<ChatMember> selectedMembers = chatRoom.getSelectedMembers();
 
             if (selectedMembers != null && !selectedMembers.isEmpty()) {
-                // Create an ArrayAdapter to display the selected members in the ListView
-                ArrayAdapter<ChatMember> adapter = new ArrayAdapter<>(itemView.getContext(), android.R.layout.simple_list_item_1, selectedMembers);
-                ListView listViewMembers = itemView.findViewById(R.id.listView_members);
-                listViewMembers.setAdapter(adapter);
-
-                // Calculate the total height of the ListView and set its layout params accordingly
-                int totalHeight = 0;
-                for (int i = 0; i < adapter.getCount(); i++) {
-                    View listItem = adapter.getView(i, null, listViewMembers);
-                    listItem.measure(0, 0);
-                    totalHeight += listItem.getMeasuredHeight();
-                }
-                ViewGroup.LayoutParams params = listViewMembers.getLayoutParams();
-                params.height = totalHeight + (listViewMembers.getDividerHeight() * (adapter.getCount() - 1));
-                listViewMembers.setLayoutParams(params);
+                ChatRoomMemberAdapter mAdapter = new ChatRoomMemberAdapter(selectedMembers);
+                recyclerViewMembers.setAdapter(mAdapter);
+                recyclerViewMembers.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+            } else {
+                recyclerViewMembers.setVisibility(View.GONE); // Hide the RecyclerView if there are no selected members
             }
 
-            // Set the click listener for the ViewHolder
-            itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onChatRoomClick(chatRoom);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        listener.onChatRoomClick(chatRoom);
+                    }
                 }
             });
         }
@@ -201,14 +172,26 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         notifyItemRemoved(position);
     }
 
+    /**
+     * Retrieves the ChatRoom item at the specified position.
+     * @param position The position of the item to retrieve
+     * @return The ChatRoom item at the specified position
+     */
     public ChatRoom getItem(int position) {
         return mChatRooms.get(position);
     }
 
+
+    /**
+     * Retrieves the ID of the ChatRoom at the specified position.
+     * @param position The position of the ChatRoom
+     * @return The ID of the ChatRoom at the specified position
+     * or null if the position is out of range
+     */
     public String getChatRoomId(int position) {
         if (position >= 0 && position < mChatRooms.size()) {
             ChatRoom chatRoom = mChatRooms.get(position);
-            return String.valueOf(chatRoom.getId());
+            return String.valueOf(chatRoom.getChatId());
         }
         return null;
     }

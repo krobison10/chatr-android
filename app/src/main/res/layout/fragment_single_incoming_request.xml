@@ -8,7 +8,7 @@
     tools:context=".ui.contacts.incoming.SingleIncomingRequestFragment">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/icon_contact"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -20,30 +20,31 @@
         app:srcCompat="@drawable/ic_account_circle_onsurface_24dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/text_main"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:gravity="center|left"
         android:text="Name"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@+id/materialCardView1"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/icon_contact"
+        app:layout_constraintEnd_toStartOf="@+id/btn_accept"
+        app:layout_constraintStart_toEndOf="@+id/icon_contact"
+        app:layout_constraintTop_toTopOf="@+id/icon_contact" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView1"
+        android:id="@+id/btn_reject"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@id/materialCardView2"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintBottom_toBottomOf="@+id/icon_contact"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/icon_contact"
         app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,17 +65,17 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/materialCardView2"
+        android:id="@+id/btn_accept"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:clickable="true"
         android:focusable="true"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintBottom_toBottomOf="@+id/icon_contact"
+        app:layout_constraintEnd_toStartOf="@+id/btn_reject"
+        app:layout_constraintTop_toTopOf="@+id/icon_contact"
         app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout

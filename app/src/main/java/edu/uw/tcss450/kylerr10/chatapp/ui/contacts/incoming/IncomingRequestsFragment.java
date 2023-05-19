@@ -5,16 +5,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.IncomingContactRequest;
-import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentIncomingRequestsBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 
 /**
  * Fragment where the user can view incoming contact requests.
@@ -22,17 +30,34 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentIncomingRequestsBindi
  * @author Kyler Robison
  */
 public class IncomingRequestsFragment extends Fragment {
+    /**
+     * Flag used to prevent the response handler from being called the first time it is set to
+     * observe the response.
+     */
+    private boolean observerCreated = false;
+
+    private FragmentIncomingRequestsBinding mBinding;
+
+    private ContactsViewModel mContactsViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContactsViewModel = new ViewModelProvider(getActivity()).get(ContactsViewModel.class);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_incoming_requests, container, false);
+        mBinding = FragmentIncomingRequestsBinding.inflate(inflater);
+        return mBinding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mContactsViewModel.connectGetIncoming();
     }
 
     /**
@@ -46,15 +71,72 @@ public class IncomingRequestsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FragmentIncomingRequestsBinding binding = FragmentIncomingRequestsBinding.bind(getView());
 
-        // Create a list of dummy notifications
-        ArrayList<IncomingContactRequest> requests = new ArrayList<>();
-        for(int i = 0; i < 6; i++) {
-            requests.add(new IncomingContactRequest());
+        mContactsViewModel.addAcceptContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
+        mContactsViewModel.addDeleteContactResponseObserver(getViewLifecycleOwner(),
+                response -> mContactsViewModel.updateContacts());
+
+        mContactsViewModel.addGetIncomingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+    }
+
+    /**
+     * An observer on the HTTP Response from the web server. This observer should be
+     * attached to the ViewModel.
+     *
+     * @param response the Response from the server
+     */
+    private void observeResponse(final JSONObject response) {
+        if(!observerCreated) { //Prevents method from executing just because the observer is added
+            observerCreated = true;
+            return;
         }
-        binding.recyclerViewIncomingRequests.setAdapter(
-                new IncomingRequestsRecyclerViewAdapter(requests)
+        if (response.length() > 0) {
+            if (response.has("code")) {
+                showErrorNotification("An error occurred");
+            } else {
+                try {
+                    processResponse(response);
+                } catch (JSONException e) {
+                    Log.e("JSON Parse Error", e.getMessage());
+                    showErrorNotification("An error occurred");
+                }
+            }
+        } else {
+            Log.d("JSON Response", "No Response");
+            showErrorNotification("An error occurred");
+        }
+    }
+
+    private void processResponse(final JSONObject response) throws JSONException {
+        ArrayList<Contact> contactsList = new ArrayList<>();
+
+        JSONArray contactsArray = response.getJSONArray("contacts");
+        for(int i = 0; i < contactsArray.length(); i++) {
+            JSONObject contactObject = contactsArray.getJSONObject(i);
+
+            int connectionId = contactObject.getInt("connectionid");
+            String username = contactObject.getString("username");
+            String email = contactObject.getString("email");
+            String firstName = contactObject.getString("firstname");
+            String lastName = contactObject.getString("lastname");
+
+            Contact c = new Contact(connectionId, username, email, firstName, lastName);
+            contactsList.add(c);
+        }
+
+        mBinding.recyclerViewIncomingRequests.setAdapter(
+                new IncomingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
+    }
+
+    /**
+     * Displays an error notification to the user.
+     *
+     * @param message message to show.
+     */
+    private void showErrorNotification(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
     }
 }

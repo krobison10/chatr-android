@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/conversation_nav_graph"
+    android:label="conversation_fragment"
+    app:startDestination="@id/conversationFragment">
+
+    <fragment
+        android:id="@+id/conversationFragment"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationFragment"
+        android:label="fragment_conversation" />
+</navigation>

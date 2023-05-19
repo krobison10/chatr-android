@@ -4,16 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ConversationActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
-import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue.CreateChatDialogue;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 /**
  * A simple {@link Fragment} subclass. This fragment displays a list of chat rooms
@@ -22,15 +26,16 @@ import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
  */
 public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoomClickListener {
 
-    /**
-     * List of chat rooms used by the ChatRoomAdapter to display the list of chat rooms in a RecyclerView.
-     */
+    //List of chat rooms used by the ChatRoomAdapter to display the list of chat rooms in a RecyclerView
     private List<ChatRoom> mChatRooms;
 
-    /**
-     * The ChatRoomAdapter instance used to populate the RecyclerView with chat room data.
-     */
+    //The ChatRoomAdapter instance used to populate the RecyclerView with chat room data
     private ChatRoomAdapter mAdapter;
+
+    //The ViewModel associated with the chat.
+    private ChatViewModel mViewModel;
+
+
 
     public ChatFragment() {
         // Required empty public constructor
@@ -40,18 +45,21 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create some mock data for the chat rooms
+        mViewModel = new ViewModelProvider(getActivity()).get(ChatViewModel.class);
         mChatRooms = new ArrayList<>();
 
+        // Create some mock data for the chat rooms
         for(int i = 1; i <= 20; i++) {
-            mChatRooms.add(new ChatRoom("Chat Room " + i, "Last message in Chat Room " + i));
-
+            int count = 0;
+            mChatRooms.add(new ChatRoom(i,"Chat Room " + i, "Last message in Chat Room " + i));
         }
+
         //Access JWT
         UserInfoViewModel model = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
         String jwt = model.getJWT().toString();
-        //Log.i("JWT", jwt);
 
+        mViewModel.setJWT(jwt);
+        mViewModel.getChatRooms();
         // Create a new ChatRoomAdapter and set it on the RecyclerView
         mAdapter = new ChatRoomAdapter(mChatRooms);
         mAdapter.setOnChatRoomClickListener(this);
@@ -68,6 +76,39 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(mAdapter);
 
+        //Attach a swipe-to-delete callback to the RecyclerView using an ItemTouchHelper.
+        ChatRoomDelete swipeToDeleteCallback = new ChatRoomDelete(mAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        // Find the ExtendedFloatingActionButton view and set a click listener on it
+        ExtendedFloatingActionButton fab = view.findViewById(R.id.floating_action_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CreateChatDialogue dialog = new CreateChatDialogue();
+                dialog.setOnCreateChatRoomListener(new CreateChatDialogue.OnCreateChatRoomListener() {
+                    @Override
+                    public void onCreateChatRoom(ChatRoom chatRoom, List<ChatMember> selectedMembers) {
+                        chatRoom.setSelectedMembers(selectedMembers);
+                        // Add the new chat room to the list and notify the adapter
+                        mChatRooms.add(chatRoom);
+                        mAdapter.updateSelectedMembers(selectedMembers);
+                        mAdapter.notifyDataSetChanged();
+
+                        // Update the members' list in the RecyclerView of the new chat
+                        ChatRoomMemberAdapter chatRoomMemberAdapter = chatRoom.getMemberAdapter();
+                        if (chatRoomMemberAdapter != null) {
+                            chatRoomMemberAdapter.setMembers(selectedMembers);
+                        }
+                        // Call the createChatRoom method of ChatViewModel
+                        mViewModel.createChatRoom(chatRoom.getRoomName());
+                    }
+                });
+                dialog.show(getParentFragmentManager(), "CreateChatDialog");
+            }
+        });
+
         return view;
     }
 
@@ -77,8 +118,6 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         Intent intent = new Intent(getActivity(), ConversationActivity.class);
         intent.putExtra("chatRoomName", chatRoom.getRoomName());
         startActivity(intent);
-
-
     }
 
 }

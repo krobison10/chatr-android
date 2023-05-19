@@ -80,7 +80,8 @@ public class AddContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mContactsViewModel.connectGetSearch(mContactsViewModel.getSearchText().toString());
+        Log.e("QUERY", mContactsViewModel.getSearchText().getValue());
+        mContactsViewModel.connectGetSearch(mContactsViewModel.getSearchText().getValue());
     }
 
     /**

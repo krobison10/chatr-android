@@ -29,7 +29,7 @@ import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
-import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutFragment;
+import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
 import java.util.Objects;
 
@@ -147,8 +147,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.about:
-                AboutFragment aboutDialog = new AboutFragment();
-                aboutDialog.show(getSupportFragmentManager(), "about_dialog");
+                new AboutDialog(this).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

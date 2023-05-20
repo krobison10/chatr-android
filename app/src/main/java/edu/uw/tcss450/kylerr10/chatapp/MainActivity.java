@@ -149,10 +149,25 @@ public class MainActivity extends AppCompatActivity {
             case R.id.about:
                 new AboutDialog(this).show();
                 return true;
+            case R.id.settings:
+                if (findViewById(R.id.settings_root) == null) {
+                    Navigation.findNavController(this, R.id.nav_host_fragment)
+                            .navigate(R.id.navigation_settings);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    /**
+     * Allows the title bar back button to navigate up the navigation stack.
+     * @return true if the navigation was successful.
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp();
     }
 
     @Override

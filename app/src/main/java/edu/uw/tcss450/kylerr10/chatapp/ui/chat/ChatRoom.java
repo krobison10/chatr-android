@@ -40,7 +40,7 @@ public class ChatRoom {
      * @param name   The name of the chat room
      */
     public ChatRoom(int chatId, String name, String mLastMessage) {
-        this.mChatId = mNextId++;
+        this.mChatId = chatId;
         this.mName = name;
         this.mLastMessage = mLastMessage;
 
@@ -139,6 +139,20 @@ public class ChatRoom {
         return mSelectedMembers;
     }
 
+    /**
+     * Add selected members to the list.
+     * @param selectedMembers The list of selected chat members
+     */
+    public void addSelectedMembers(List<ChatMember> selectedMembers) {
+        mSelectedMembers.addAll(selectedMembers);
+    }
+    /**
+     * Add selected member to the list.
+     * @param selectedMember The selected chat member
+     */
+    public void addSelectedMember(ChatMember selectedMember) {
+        mSelectedMembers.add(selectedMember);
+    }
 
     /**
      * Returns the adapter for the chat room's member list.
@@ -148,4 +162,8 @@ public class ChatRoom {
         return mMemberAdapter;
     }
 
+    public void setName(String name) {
+
+        this.mName = name;
+    }
 }

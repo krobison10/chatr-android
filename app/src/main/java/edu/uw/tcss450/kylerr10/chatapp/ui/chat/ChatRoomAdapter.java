@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
     //List of chat rooms used by the ChatRoomAdapter
-    private List<ChatRoom> mChatRooms;
+    private List<ChatRoom> mChatRooms = new ArrayList<>();
     //List of selected members for the chat room
     private static List<ChatMember> mSelectedMembers = new ArrayList<>();
 
@@ -29,6 +29,10 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
 
     //Flag indicating whether the member RecyclerView is visible or not
     private static boolean mIsMemberRecyclerViewVisible = false;
+
+    public ChatRoomAdapter() {
+
+    }
 
     @NonNull
     @Override
@@ -48,6 +52,8 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     public int getItemCount() {
         return mChatRooms.size();
     }
+
+
 
     /**
      * Interface to handle clicks on chat rooms.
@@ -73,10 +79,12 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
      * @param chatRooms The list of ChatRooms to display
      */
     public ChatRoomAdapter(List<ChatRoom> chatRooms) {
-        mChatRooms = chatRooms;
-
+        mChatRooms = chatRooms != null ? chatRooms : new ArrayList<>();
     }
 
+    public void setChatRooms(List<ChatRoom> chatRooms) {
+        this.mChatRooms = chatRooms;
+    }
 
     /**
      * Sets the listener for chat room clicks.
@@ -168,8 +176,10 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
      * @param position The position of the item to remove
      */
     public void removeItem(int position) {
-        mChatRooms.remove(position);
-        notifyItemRemoved(position);
+        if (position >= 0 && position < mChatRooms.size()) {
+            mChatRooms.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     /**
@@ -204,4 +214,5 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         mSelectedMembers = selectedMembers;
         notifyDataSetChanged();
     }
+
 }

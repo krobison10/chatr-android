@@ -3,6 +3,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,36 +51,26 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         mViewModel = new ViewModelProvider(getActivity()).get(ChatViewModel.class);
         mChatRooms = new ArrayList<>();
 
-        // Create some mock data for the chat rooms
-        for(int i = 1; i <= 20; i++) {
-            int count = 0;
-            mChatRooms.add(new ChatRoom(i,"Chat Room " + i, "Last message in Chat Room " + i));
-        }
-
         //Access JWT
         UserInfoViewModel model = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
         String jwt = model.getJWT().toString();
-
         mViewModel.setJWT(jwt);
-        mViewModel.getChatRooms();
-        // Create a new ChatRoomAdapter and set it on the RecyclerView
-        mAdapter = new ChatRoomAdapter(mChatRooms);
-        mAdapter.setOnChatRoomClickListener(this);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         // Set up the RecyclerView with the chat rooms
         RecyclerView recyclerView = view.findViewById(R.id.list_chat_room);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mAdapter = new ChatRoomAdapter(mChatRooms);
         recyclerView.setAdapter(mAdapter);
 
         //Attach a swipe-to-delete callback to the RecyclerView using an ItemTouchHelper.
-        ChatRoomDelete swipeToDeleteCallback = new ChatRoomDelete(mAdapter);
+
+        ChatRoomDelete swipeToDeleteCallback = new ChatRoomDelete(mAdapter, mViewModel);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeToDeleteCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
@@ -101,17 +94,39 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
                         if (chatRoomMemberAdapter != null) {
                             chatRoomMemberAdapter.setMembers(selectedMembers);
                         }
+
+                        // Get the chat room name and convert selectedMembers to a list of emails
+                        String chatRoomName = chatRoom.getRoomName();
+                        List<String> emails = new ArrayList<>();
+                        for (ChatMember member : selectedMembers) {
+                            String email = member.getName();
+                            emails.add(email);
+                        }
+
                         // Call the createChatRoom method of ChatViewModel
-                        mViewModel.createChatRoom(chatRoom.getRoomName());
+                        mViewModel.createChatRoom(chatRoomName, emails);
                     }
                 });
                 dialog.show(getParentFragmentManager(), "CreateChatDialog");
             }
         });
+        // Observe the chatRoomsLiveData and update the adapter when the data changes
 
+        mViewModel.getChatRoomsLiveData().observe(getViewLifecycleOwner(), new Observer<List<ChatRoom>>() {
+            @Override
+            public void onChanged(List<ChatRoom> chatRooms) {
+                if (chatRooms.size() != mChatRooms.size()) {
+                    mChatRooms.clear();
+                    mChatRooms.addAll(chatRooms);
+                    mAdapter.notifyDataSetChanged();
+                    mViewModel.getChatRooms();
+                }
+            }
+        });
+
+        mAdapter.setOnChatRoomClickListener(this);
         return view;
     }
-
     @Override
     public void onChatRoomClick(ChatRoom chatRoom) {
         // Handle the click event for the chat room

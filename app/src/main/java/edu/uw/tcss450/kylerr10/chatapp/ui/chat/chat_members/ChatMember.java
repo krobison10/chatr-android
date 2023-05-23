@@ -25,6 +25,10 @@ public class ChatMember {
         this.mSelected = false;
     }
 
+    public ChatMember(String name) {
+        this.mName = name;
+    }
+
 
     /**
      * Returns the ID of the chat member.

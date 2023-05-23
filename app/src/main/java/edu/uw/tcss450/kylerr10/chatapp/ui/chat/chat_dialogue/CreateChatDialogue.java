@@ -4,6 +4,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,9 +79,9 @@ public class CreateChatDialogue extends DialogFragment {
 
 
         // Create a list of all chat members
-        allMembers.add(new ChatMember(10, "Petra"));
-        allMembers.add(new ChatMember(8, "test2First"));
-        allMembers.add(new ChatMember(5, "Aubree"));
+        allMembers.add(new ChatMember("test1@test.com "));
+        allMembers.add(new ChatMember("test2@test.com"));
+        allMembers.add(new ChatMember("test3@test.com"));
         // Add more members as needed
 
         // Create an empty list for filtered members
@@ -139,6 +141,7 @@ public class CreateChatDialogue extends DialogFragment {
             }
         });
 
+// OnClickListener for the createButton
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,18 +149,40 @@ public class CreateChatDialogue extends DialogFragment {
                 String chatRoomName = chatRoomNameInput.getText().toString();
                 List<ChatMember> selectedMembers = getSelectedMembers();
 
-                int chatid = 2;
-                ChatRoom chatRoom = new ChatRoom(chatid++, chatRoomName, "Last message in Chat Room " + chatRoomName);
-
-                // Call the listener to add the new chat room to the list
-                if (mListener != null) {
-                    mListener.onCreateChatRoom(chatRoom, selectedMembers);
+                // Extract emails from selected members
+                List<String> emails = new ArrayList<>();
+                for (ChatMember member : selectedMembers) {
+                    String email = member.getName();
+                    emails.add(email);
                 }
+
+                // Call the createChatRoom method of ChatViewModel
+                mViewModel.createChatRoom(chatRoomName, emails);
+
+                // Observe the chatIdLiveData
+                mViewModel.getChatIdLiveData().observe(getViewLifecycleOwner(), new Observer<String>() {
+                    @Override
+                    public void onChanged(String chatId) {
+                        if (chatId != null) {
+                            // Add selected members to the chat room
+                            for (ChatMember member : selectedMembers) {
+                                String email = member.getName();
+                                mViewModel.addUserToChat(chatId, email);
+                                Log.d("CreateChatRoom", "Added user " + email + " to chat ID: " + chatId);
+
+                            }
+                        } else {
+                            // Handle the case when the chatId is null or not available
+                            Log.e("CreateChatRoom", "Failed to retrieve chatId from server");
+                            // Show an error message or take appropriate action
+                        }
+                    }
+                });
                 // Dismiss the dialog
                 dismiss();
             }
-        });
 
+        });
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

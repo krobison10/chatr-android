@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ThemeManager.applyTheme(this);
+        ThemeManager.applyTheme(this); // Required to apply user's chosen theme to activity
         super.onCreate(savedInstanceState);
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         JWT jwt = new JWT(args.getJwt());

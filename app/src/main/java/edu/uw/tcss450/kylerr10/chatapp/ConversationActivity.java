@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+
 /**
  * An activity that displays the conversation between users in a chat room.
  * @author Leyla Ahmed
@@ -14,6 +16,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeManager.applyTheme(this); // Required to apply user's chosen theme to activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 

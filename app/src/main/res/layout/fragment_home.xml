@@ -12,7 +12,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Hello, Charles"
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="@+id/home_weather_card"

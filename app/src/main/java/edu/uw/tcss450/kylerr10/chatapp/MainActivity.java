@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp;
 
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +31,7 @@ import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
 import java.util.Objects;
@@ -69,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeManager.applyTheme(this);
         super.onCreate(savedInstanceState);
-
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         JWT jwt = new JWT(args.getJwt());
 

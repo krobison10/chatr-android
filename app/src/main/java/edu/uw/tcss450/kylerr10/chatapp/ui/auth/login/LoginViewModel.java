@@ -29,12 +29,19 @@ import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 /**
  * A simple {@link ViewModel} subclass responsible for handling HTTP requests regarding user
  * credentials.
+ *
  * @author Kyler Robison
  */
 public class LoginViewModel extends AndroidViewModel {
 
+    /**
+     * Email of the user.
+     */
     private String mUserEmail;
 
+    /**
+     * Password of the user.
+     */
     private String mUserPassword;
 
     private MutableLiveData<JSONObject> mResponse;
@@ -50,18 +57,32 @@ public class LoginViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Sets the email of the user.
+     * @param email the new email.
+     */
     public void setUserEmail(String email) {
         mUserEmail = email;
     }
 
+    /**
+     * @return the user's email.
+     */
     public String getUserEmail() {
         return mUserEmail;
     }
 
+    /**
+     * Sets the password of the user.
+     * @param password the new password.
+     */
     public void setUserPassword(String password) {
         mUserPassword = password;
     }
 
+    /**
+     * Makes the api call to log in the user using the credentials currently stored in this object.
+     */
     public void connect() {
         String url = "http://10.0.2.2:5000/auth";
         Request<JSONObject> request = new JsonObjectRequest(
@@ -91,6 +112,9 @@ public class LoginViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Handles errors from the login request.
+     */
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
             try {

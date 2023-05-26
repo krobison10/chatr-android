@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,9 +61,7 @@ public class VerifyEmailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout using the binding object
         mBinding = FragmentVerifyEmailBinding.inflate(inflater, container, false);
-        // Return the root view from the binding object
         return mBinding.getRoot();
     }
 
@@ -74,6 +74,7 @@ public class VerifyEmailFragment extends Fragment {
                 mBinding.editCode.getText().toString().trim()
         ));
 
+        // Send simple request for sending a code
         mBinding.buttonResend.setOnClickListener(button -> {
             Request<JSONObject> request = new JsonObjectRequest(
                     Request.Method.POST,
@@ -85,6 +86,19 @@ public class VerifyEmailFragment extends Fragment {
             RequestQueueSingleton.getInstance(getActivity().getApplication().getApplicationContext())
                     .addToRequestQueue(request);
         });
+
+        TextWatcher enterCodeWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mBinding.codeLayout.setErrorEnabled(false);
+            }
+        };
+
+        mBinding.editCode.addTextChangedListener(enterCodeWatcher);
 
         mVerifyViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeVerifyResponse);
         mLoginViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeLoginResponse);
@@ -110,8 +124,11 @@ public class VerifyEmailFragment extends Fragment {
                     Log.e("JSON Parse Error", e.getMessage());
                     showErrorNotification("An error occurred");
                 }
-            } else {
+            } else if (response.has("success")) {
                 sendLoginRequest();
+            }
+            else {
+                showErrorNotification("An error occurred");
             }
         } else {
             Log.d("JSON Response", "No Response");
@@ -119,13 +136,15 @@ public class VerifyEmailFragment extends Fragment {
         }
     }
 
+    /**
+     * Sends an http request to log in the user
+     */
     private void sendLoginRequest() {
         mLoginViewModel.connect();
     }
 
     /**
-     * An observer on the HTTP Response from the web server. This observer should be
-     * attached to the ViewModel.
+     * An observer for the login response from the server.
      *
      * @param response the Response from the server
      */
@@ -153,6 +172,11 @@ public class VerifyEmailFragment extends Fragment {
         }
     }
 
+    /**
+     * Navigates to the main activity.
+     * @param email the user's email
+     * @param jwt the jwt obtained upon login
+     */
     private void navigateToSuccess(String email, String jwt) {
         getActivity().finish();
         Navigation.findNavController(getView()).navigate(
@@ -160,6 +184,9 @@ public class VerifyEmailFragment extends Fragment {
         );
     }
 
+    /**
+     * Navigates back to the login fragment
+     */
     private void navigateToLogin() {
         Navigation.findNavController(getView()).navigate(
                 VerifyEmailFragmentDirections.actionVerifyEmailFragmentToLoginFragment()

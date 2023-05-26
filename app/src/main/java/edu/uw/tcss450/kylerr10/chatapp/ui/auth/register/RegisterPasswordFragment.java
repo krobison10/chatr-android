@@ -86,10 +86,16 @@ public class RegisterPasswordFragment extends Fragment {
 
     }
 
+    /**
+     * Makes api call to attempt user registration.
+     */
     private void attemptRegister(View view) {
         mViewModel.connect(mBinding.editPassword.getText().toString());
     }
 
+    /**
+     * Handles a successful registration request.
+     */
     private void handleRegisterSuccess() {
         Request<JSONObject> request = new JsonObjectRequest(
                 Request.Method.POST,

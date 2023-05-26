@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/text_desc"
-        style="@style/TextAppearance.Material3.LabelLarge"
+        style="@style/TextAppearance.AppCompat.Body1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

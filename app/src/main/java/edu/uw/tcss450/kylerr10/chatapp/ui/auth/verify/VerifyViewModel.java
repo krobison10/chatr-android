@@ -25,6 +25,11 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
+/**
+ * ViewModel for verification of a user's email.
+ *
+ * @author Kyler Robison
+ */
 public class VerifyViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
@@ -40,6 +45,12 @@ public class VerifyViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
+    /**
+     * Connects to the endpoint to verify the user's email.
+     *
+     * @param email the user's email.
+     * @param code the verification code entered by the user.
+     */
     public void connect(final String email, final String code) {
         String url = "http://10.0.2.2:5000/verify/" + email;
         JSONObject body = new JSONObject();
@@ -68,6 +79,11 @@ public class VerifyViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Handles errors from the verify request.
+     *
+     * @param error
+     */
     private void handleError(final VolleyError error) {
         if (Objects.isNull(error.networkResponse)) {
             try {

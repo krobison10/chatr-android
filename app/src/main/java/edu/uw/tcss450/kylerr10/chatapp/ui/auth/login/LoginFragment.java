@@ -144,9 +144,9 @@ public class LoginFragment extends Fragment {
      * Makes an async call to the API for login using the current values of the input fields.
      */
     private void verifyAuthWithServer() {
-        mViewModel.connect(
-                mBinding.editEmail.getText().toString(),
-                mBinding.editPassword.getText().toString());
+        mViewModel.setUserEmail(mBinding.editEmail.getText().toString());
+        mViewModel.setUserPassword(mBinding.editPassword.getText().toString());
+        mViewModel.connect();
     }
 
     /**
@@ -159,6 +159,12 @@ public class LoginFragment extends Fragment {
                 .navigate(LoginFragmentDirections
                         .actionLoginFragmentToHomeActivity(email, jwt));
         getActivity().finish();
+    }
+
+    private void navigateToVerify() {
+        Navigation.findNavController(getView())
+                .navigate(LoginFragmentDirections
+                        .actionLoginFragmentToVerifyEmailFragment());
     }
 
     /**
@@ -175,10 +181,13 @@ public class LoginFragment extends Fragment {
         if (response.length() > 0) {
             if (response.has("code")) {
                 try {
-                    String message = response.getJSONObject("data").getString("message");
-                    mBinding.emailLayout.setError("Error: " + message);
-                    //showErrorNotification("Error: " + message.toLowerCase());
-
+                    if(response.getInt("code") == 300) {
+                        navigateToVerify();
+                    }
+                    else {
+                        String message = response.getJSONObject("data").getString("message");
+                        mBinding.emailLayout.setError("Error: " + message);
+                    }
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                     showErrorNotification("An error occurred");

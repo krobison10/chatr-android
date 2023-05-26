@@ -15,6 +15,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -24,6 +26,7 @@ import java.util.regex.Pattern;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterPasswordBinding;
+import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
 /**
  * create an instance of this fragment.
@@ -87,7 +90,17 @@ public class RegisterPasswordFragment extends Fragment {
         mViewModel.connect(mBinding.editPassword.getText().toString());
     }
 
-    private void navigateToLogin() {
+    private void handleRegisterSuccess() {
+        Request<JSONObject> request = new JsonObjectRequest(
+                Request.Method.POST,
+                "http://10.0.2.2:5000/verify/" + mViewModel.getUserEmail(),
+                null,
+                response -> {},
+                error -> showErrorNotification("An error occurred")
+        );
+        RequestQueueSingleton.getInstance(getActivity().getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+
         RegisterPasswordFragmentDirections.ActionRegisterPasswordFragmentToLoginFragment directions
                 = RegisterPasswordFragmentDirections.actionRegisterPasswordFragmentToLoginFragment();
         directions.setEmail(mViewModel.getUserEmail());
@@ -128,7 +141,7 @@ public class RegisterPasswordFragment extends Fragment {
                     }
                     showErrorNotification("An error occurred");
                 } else {
-                    navigateToLogin();
+                    handleRegisterSuccess();
                 }
             }
         } else {

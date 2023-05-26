@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.auth.login;
+package edu.uw.tcss450.kylerr10.chatapp.ui.auth.verify;
 
 import android.app.Application;
 import android.util.Base64;
@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -26,20 +25,11 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
-/**
- * A simple {@link ViewModel} subclass responsible for handling HTTP requests regarding user
- * credentials.
- * @author Kyler Robison
- */
-public class LoginViewModel extends AndroidViewModel {
-
-    private String mUserEmail;
-
-    private String mUserPassword;
+public class VerifyViewModel extends AndroidViewModel {
 
     private MutableLiveData<JSONObject> mResponse;
 
-    public LoginViewModel(@NonNull Application application) {
+    public VerifyViewModel(@NonNull Application application) {
         super(application);
         mResponse = new MutableLiveData<>();
         mResponse.setValue(new JSONObject());
@@ -50,36 +40,23 @@ public class LoginViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
-    public void setUserEmail(String email) {
-        mUserEmail = email;
-    }
-
-    public String getUserEmail() {
-        return mUserEmail;
-    }
-
-    public void setUserPassword(String password) {
-        mUserPassword = password;
-    }
-
-    public void connect() {
-        String url = "http://10.0.2.2:5000/auth";
+    public void connect(final String email, final String code) {
+        String url = "http://10.0.2.2:5000/verify/" + email;
+        JSONObject body = new JSONObject();
+        try {
+            body.put("verificationCode", code);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
         Request<JSONObject> request = new JsonObjectRequest(
-                Request.Method.GET,
+                Request.Method.PUT,
                 url,
-                null, //no body for this get request
+                body,
                 mResponse::setValue,
                 this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
-                String credentials = mUserEmail + ":" + mUserPassword;
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(),
-                        Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-                return headers;
+                return new HashMap<>();
             }
         };
         request.setRetryPolicy(new DefaultRetryPolicy(

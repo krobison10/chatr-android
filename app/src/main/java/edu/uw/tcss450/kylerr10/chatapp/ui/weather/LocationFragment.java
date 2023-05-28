@@ -1,5 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.location.Address;
 import android.location.Geocoder;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.MainActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLocationBinding;
 
@@ -40,12 +43,15 @@ public class LocationFragment extends DialogFragment {
 
     private MapFragment mMapFragment;
     private List<Address> mAddressList;
+    private UserLocationViewModel mLocationModel;
     private Geocoder mGeocoder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGeocoder = new Geocoder(requireContext(), Locale.US);
+        mLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
+        mLocationModel.connectGet(requireActivity());
     }
 
     @Override
@@ -84,11 +90,44 @@ public class LocationFragment extends DialogFragment {
                 return;
             }
             // TODO: Add a location object, myLocation, with a name alias and latlng object
-            String locationAlias = openCustomLocationNameDialog(marker); // update custom location name with dialog
+            String locationName =
+                    Objects.requireNonNull(binding.mapSearchBar.getText()).toString().isEmpty()
+                            ? "My Location" : binding.mapSearchBar.getText().toString();
+            openCustomLocationNameDialog(marker, locationName); // update custom location name with dialog
 
         });
         binding.currentLocationButton.setOnClickListener(v -> {
             ((MapFragment) binding.mapContainer.getFragment()).panCameraToCurrentLocation();
+        });
+        binding.listLocationButton.setOnClickListener(v -> {
+            mLocationModel.addLocationObserver(getViewLifecycleOwner(), locations -> {
+                Log.d("List", "onViewCreated: ");
+                if (locations != null) {
+                    String[] locationNames = new String[locations.size()];
+                    Double[] locationLatitudes = new Double[locations.size()];
+                    Double[] locationLongitudes = new Double[locations.size()];
+                    for (int i = 0; i < locations.size(); i++) {
+                        locationNames[i] = locations.get(i).getName();
+                        locationLatitudes[i] = locations.get(i).getLatitude();
+                        locationLongitudes[i] = locations.get(i).getLongitude();
+                    }
+                    new MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Saved Locations")
+                            .setItems(locationNames, (dialog, which) -> {
+                                mMapFragment.placeMarker(new LatLng(locationLatitudes[which], locationLongitudes[which]));
+                                // TODO: set forecast location for app
+                                dialog.dismiss();
+                            })
+                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                            .show();
+                } else {
+                    Snackbar.make(
+                        requireView(),
+                        "No saved locations. Add one by clicking the save button.",
+                        BaseTransientBottomBar.LENGTH_SHORT
+                    ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
+                }
+            });
         });
         binding.mapSearchView.getEditText()
                 .setOnEditorActionListener((v, actionId, event) -> {
@@ -123,17 +162,17 @@ public class LocationFragment extends DialogFragment {
     /**
      * Opens a dialog to prompt the user to set a custom location name for the given marker.
      * @param marker The marker for the location to be given a custom name.
-     * @return The custom name the user has chosen for the location.
      */
-    private String openCustomLocationNameDialog(Marker marker) {
+    @SuppressLint("RestrictedApi")
+    private void openCustomLocationNameDialog(Marker marker, String defaultName) {
         EditText locNameField = new EditText(requireContext()); // used for custom name
-        locNameField.setText(marker.getTitle());
+        locNameField.setText(defaultName);
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Save Location")
                 .setMessage("Customize the name for the saved location:")
                 .setView(locNameField.getRootView(),48, 0, 48, 0)
                 .setPositiveButton("Save", (dialog, which) -> {
-                    Log.d("POSITIVE", "clicked ");
+                    saveLocation(marker, locNameField.getText().toString());
                     dialog.dismiss();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
@@ -141,6 +180,37 @@ public class LocationFragment extends DialogFragment {
                     dialog.cancel();
                 })
                 .show();
-        return locNameField.getText().toString();
+    }
+
+    private void saveLocation(Marker marker, String name) {
+        Log.d("SAVE LOCATION", name + ": " + marker.getPosition());
+        mLocationModel.addLocationObserver(getViewLifecycleOwner(), locations -> {
+            Log.d("List", "onViewCreated: ");
+            if (locations != null) {
+                UserLocation duplicate = null;
+                for (UserLocation location : locations) {
+                    if (location.getLatitude() == marker.getPosition().latitude
+                            && location.getLongitude() == marker.getPosition().longitude) {
+                        duplicate = location;
+                        break;
+                    }
+                }
+                if (duplicate == null) {
+                    // TODO: Add location to the database
+                    Snackbar.make(
+                            requireView(),
+                            "Location saved.",
+                            BaseTransientBottomBar.LENGTH_SHORT
+                    ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
+                } else {
+                    // TODO: Update location in the database
+                    Snackbar.make(
+                            requireView(),
+                            String.format("%s renamed to %s.", duplicate.getName(), name),
+                            BaseTransientBottomBar.LENGTH_SHORT
+                    ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
+                }
+            }
+        });
     }
 }

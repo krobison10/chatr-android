@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.auth.login;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -48,6 +51,23 @@ public class LoginFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        if (prefs.contains(getString(R.string.keys_prefs_jwt))) {
+            String token = prefs.getString(getString(R.string.keys_prefs_jwt), "");
+            JWT jwt = new JWT(token);
+            if(!jwt.isExpired(999999)) {
+                String email = jwt.getClaim("email").asString();
+                navigateToSuccess(email, token);
+            }
+        }
     }
 
     @Nullable
@@ -146,9 +166,16 @@ public class LoginFragment extends Fragment {
      * @param jwt the JSON Web Token supplied by the server
      */
     private void navigateToSuccess(final String email, final String jwt) {
-        Navigation.findNavController(getView())
-                .navigate(LoginFragmentDirections
-                        .actionLoginFragmentToHomeActivity(email, jwt));
+        if(mBinding.switchStayLogged.isChecked()) {
+            SharedPreferences prefs =
+                    getActivity().getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+            //Store the credentials in SharedPrefs
+            prefs.edit().putString(getString(R.string.keys_prefs_jwt), jwt).apply();
+        }
+        Navigation.findNavController(getView()).navigate(LoginFragmentDirections
+                .actionLoginFragmentToHomeActivity(email, jwt));
         getActivity().finish();
     }
 
@@ -156,9 +183,9 @@ public class LoginFragment extends Fragment {
      * Helper to abstract the navigation to the verify fragment.
      */
     private void navigateToVerify() {
-        Navigation.findNavController(getView())
-                .navigate(LoginFragmentDirections
-                        .actionLoginFragmentToVerifyEmailFragment());
+        boolean stayLogged = mBinding.switchStayLogged.isChecked();
+        Navigation.findNavController(getView()).navigate(LoginFragmentDirections
+                .actionLoginFragmentToVerifyEmailFragment(stayLogged));
     }
 
     /**

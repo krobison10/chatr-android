@@ -65,6 +65,9 @@
         <action
             android:id="@+id/action_verifyEmailFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <argument
+            android:name="stay_logged"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/registerPasswordFragment"

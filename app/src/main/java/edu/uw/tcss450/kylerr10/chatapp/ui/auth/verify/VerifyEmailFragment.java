@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.auth.verify;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -45,6 +47,11 @@ public class VerifyEmailFragment extends Fragment {
      */
     private boolean loginObserverCreated = false;
 
+    /**
+     * Indicates whether to stay logged in upon successful login
+     */
+    private boolean stayLogged;
+
     private FragmentVerifyEmailBinding mBinding;
 
     private LoginViewModel mLoginViewModel;
@@ -56,6 +63,9 @@ public class VerifyEmailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mLoginViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
         mVerifyViewModel = new ViewModelProvider(getActivity()).get(VerifyViewModel.class);
+
+        VerifyEmailFragmentArgs args = VerifyEmailFragmentArgs.fromBundle(getArguments());
+        stayLogged = args.getStayLogged();
     }
 
     @Override
@@ -178,10 +188,18 @@ public class VerifyEmailFragment extends Fragment {
      * @param jwt the jwt obtained upon login
      */
     private void navigateToSuccess(String email, String jwt) {
-        getActivity().finish();
+        if(stayLogged) {
+            SharedPreferences prefs =
+                    getActivity().getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+            //Store the credentials in SharedPrefs
+            prefs.edit().putString(getString(R.string.keys_prefs_jwt), jwt).apply();
+        }
         Navigation.findNavController(getView()).navigate(
                 VerifyEmailFragmentDirections.actionVerifyEmailFragmentToHomeActivity(email, jwt)
         );
+        getActivity().finish();
     }
 
     /**

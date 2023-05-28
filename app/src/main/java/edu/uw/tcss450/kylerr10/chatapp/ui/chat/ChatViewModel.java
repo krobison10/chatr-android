@@ -4,15 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.auth0.android.jwt.JWT;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,8 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomAdapter;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomMemberAdapter;
 
 /**
  * ViewModel class for managing chat-related data and operations.
@@ -31,25 +30,25 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
  */
 public class ChatViewModel extends AndroidViewModel {
     //List of chat rooms used by the ChatRoomAdapter to display the list of chat rooms in a RecyclerView
-    private List<ChatRoom> mChatRooms;
+    private List<ChatRoom> mChatRooms = new ArrayList<>();
 
     //The ChatRoomAdapter instance used to populate the RecyclerView with chat room data
     private ChatRoomAdapter mAdapter = new ChatRoomAdapter();
 
+    //The ChatRoomAdapter instance used to populate the RecyclerView with chat room data
+    private ChatRoomMemberAdapter mMAdapter = new ChatRoomMemberAdapter();
+
     private final MutableLiveData<JSONObject> mCreatChatResponse;
-
     private final MutableLiveData<JSONObject> mDeleteChatResponse;
-
     private final MutableLiveData<JSONObject> mGetAllChatResponse;
-
-    private final MutableLiveData<JSONObject> mAddUsersToChatResponse;
-
+    private final MutableLiveData<JSONObject> mAddMembersToChatResponse;
+    private final MutableLiveData<JSONObject> mAddUserToChatResponse;
     private final MutableLiveData<JSONObject> mRemoveUserFromChatResponse;
-
+    private final MutableLiveData<JSONObject> mRemoveMemberFromChat;
+    private final MutableLiveData<JSONObject> mGetChatMembers;
     MutableLiveData<List<ChatRoom>> chatRoomsLiveData;
-    private MutableLiveData<String> chatIdLiveData = new MutableLiveData<>();
-
     public String mJwt;
+
 
     /**
      * Constructor for ChatViewModel.
@@ -66,20 +65,31 @@ public class ChatViewModel extends AndroidViewModel {
         mDeleteChatResponse = new MutableLiveData<>();
         mDeleteChatResponse.setValue(new JSONObject());
 
-        mAddUsersToChatResponse = new MutableLiveData<>();
-        mAddUsersToChatResponse.setValue(new JSONObject());
+        mAddMembersToChatResponse = new MutableLiveData<>();
+        mAddMembersToChatResponse.setValue(new JSONObject());
+
+        mGetChatMembers = new MutableLiveData<>();
+        mGetChatMembers.setValue(new JSONObject());
+
+        mAddUserToChatResponse = new MutableLiveData<>();
+        mAddUserToChatResponse.setValue(new JSONObject());
 
         mRemoveUserFromChatResponse = new MutableLiveData<>();
         mRemoveUserFromChatResponse.setValue(new JSONObject());
-    }
 
+        mRemoveMemberFromChat = new MutableLiveData<>();
+        mRemoveMemberFromChat.setValue(new JSONObject());
+
+    }
 
 
     /**
      * Creates a new chat room.
      * @param chatName The name of the chat room to create
      */
-    public void createChatRoom(String chatName, List<String> userEmails) {
+    public void createChatRoom(String chatName, List<String> emails) {
+        Log.d("CreateChatRoom", "Creating chat room: " + chatName);
+
         String url = "http://10.0.2.2:5000/chats";
         JSONObject body = new JSONObject();
         try {
@@ -94,21 +104,23 @@ public class ChatViewModel extends AndroidViewModel {
                 body,
                 response -> {
                     try {
-                        String chatId = response.getString("chatid");
-                        String memberId = response.getString("memberid");
-                        // Notify the observer with the generated chat ID
-                        chatIdLiveData.setValue(chatId);
+                        String chatId = response.getString("chatID");
+                        addUserToChat(chatId);
 
-                        // Iterate over the list of userEmails and add each user to the chat
-                        for (String email : userEmails) {
-                            addUserToChat(chatId, email);
+                        for (String email : emails) {
+                            addMembersToChat(chatId, email);
+                            Log.d("CreateChatRoom", "Added user " + email + " to chat ID: " + chatId);
                         }
 
+                        getChatRoomsLiveData();
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        throw new RuntimeException(e);
                     }
                 },
-                error -> handleError(error, mCreatChatResponse)
+                error -> {
+                    handleError(error, mCreatChatResponse);
+                    error.printStackTrace();
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -117,17 +129,15 @@ public class ChatViewModel extends AndroidViewModel {
                 return headers;
             }
         };
-
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         ));
 
-        Volley.newRequestQueue(getApplication().getApplicationContext())
-                .add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
-
 
     /**
      * Retrieves the list of chat rooms.
@@ -149,15 +159,20 @@ public class ChatViewModel extends AndroidViewModel {
                             int id = chatRoomObj.getInt("id");
                             String name = chatRoomObj.getString("name");
                             chatRooms.add(new ChatRoom(id, name, "Last Message in " + name));
+
                         }
 
+                        // Update the chatRoomsLiveData with the new chat rooms list
                         chatRoomsLiveData.setValue(chatRooms);
+
+                        Log.d("ChatViewModel", "Chat rooms retrieved successfully");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 },
                 error -> {
                     handleError(error, mGetAllChatResponse);
+                    Log.e("ChatViewModel", "Error retrieving chat rooms: " + error.getMessage());
                 }
         ) {
             @Override
@@ -174,16 +189,8 @@ public class ChatViewModel extends AndroidViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         ));
 
-        Volley.newRequestQueue(getApplication().getApplicationContext())
-                .add(request);
-    }
-
-    public MutableLiveData<List<ChatRoom>> getChatRoomsLiveData() {
-        if (chatRoomsLiveData == null) {
-            chatRoomsLiveData = new MutableLiveData<>();
-            getChatRooms();
-        }
-        return chatRoomsLiveData;
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
     /**
@@ -229,22 +236,29 @@ public class ChatViewModel extends AndroidViewModel {
         ));
 
         // Instantiate the RequestQueue and add the request to the queue
-        Volley.newRequestQueue(getApplication().getApplicationContext())
-                .add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
 
-    public void addUserToChat(String chatId, String email) {
-        String url = "http://10.0.2.2:5000/chats/" + chatId + "/" + email;
+    /**
+     * Adds the current user to a chat room identified by the given chat ID.
+     * @param chatId The ID of the chat room.
+     */
+    public void addUserToChat(String chatId) {
+        String url = "http://10.0.2.2:5000/chats/" + chatId;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
                 url,
                 null,
                 response -> {
-                    // Handle the response if needed
-                    // For example, you can check if the user was successfully added to the chat
+                    // User added successfully
+                    Log.d("AddUserToChat", "User added to chat");
                 },
-                error -> handleError(error, mAddUsersToChatResponse)
+                error -> {
+                    // Handle error
+                    handleError(error, mAddUserToChatResponse);
+                }
         ) {
             @Override
             public Map<String, String> getHeaders() {
@@ -260,9 +274,149 @@ public class ChatViewModel extends AndroidViewModel {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         ));
 
-        Volley.newRequestQueue(getApplication().getApplicationContext())
-                .add(request);
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
     }
+
+    /**
+     * Adds members to a chat room identified by the given chat ID.
+     * @param chatId The ID of the chat room
+     * @param email  The email of the member to add
+     */
+    public void addMembersToChat(String chatId, String email) {
+        String url = "http://10.0.2.2:5000/chats/" + chatId + "/" + email;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                null,
+                response -> {
+                    Log.d("AddMembersToChat", "Members added to chat");
+                },
+                error -> handleError(error, mAddMembersToChatResponse)
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", mJwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    /**
+     * Retrieves the members of a chat room identified by the given chat ID.
+     * @param chatId   The ID of the chat room
+     * @param callback The callback interface to handle the retrieval result
+     */
+    public void getChatRoomMembers(String chatId, ChatRoomMembersCallback callback) {
+
+        String url = "http://10.0.2.2:5000/chats/" + chatId;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        int rowCount = response.getInt("rowCount");
+                        JSONArray rows = response.getJSONArray("rows");
+
+                        List<String> memberEmails = new ArrayList<>();
+                        for (int i = 0; i < rows.length(); i++) {
+                            JSONObject row = rows.getJSONObject(i);
+                            String email = row.getString("email");
+                            memberEmails.add(email);
+                        }
+
+                        // Create ChatMember objects from memberEmails
+                        List<ChatMember> members = new ArrayList<>();
+                        for (String email : memberEmails) {
+                            ChatMember member = new ChatMember(email);
+                            members.add(member);
+                        }
+
+                        // Invoke the onSuccess callback with the member list
+                        callback.onSuccess(members);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+
+                    Log.e("GetChatRoomMembers4", "Error getting chat room members: " + error.getMessage());
+
+                    // Invoke the onError callback
+                    callback.onError();
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", mJwt);
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    /**
+     * Deletes a member from a chat room identified by the given chat ID and email.
+     * @param chatId The ID of the chat room
+     * @param email  The email of the member to delete
+     */
+    public void deleteChatMember(String chatId, String email) {
+        String url = "http://10.0.2.2:5000/chats/" + chatId + "/" + email;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                response -> {
+                    Log.d("DeleteChatMember", "Chat member deleted: " + email);
+                    Log.d("DeleteChatMember", "From ChatId: " + chatId);
+                },
+                error -> {
+                    handleError(error, mRemoveMemberFromChat);
+                    Log.e("ChatViewModel", "Error retrieving chat rooms: " + error.getMessage());
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", mJwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        ));
+
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
     /**
      * Handles request error
      * @param error error.
@@ -293,12 +447,37 @@ public class ChatViewModel extends AndroidViewModel {
     }
 
     /**
-     * Sets the JWT (JSON Web Token) for authentication.
+     * Sets the JWT for authentication.
      */
     public void setJWT(String jwt) {
         this.mJwt = jwt;
     }
-    public LiveData<String> getChatIdLiveData() {
-        return chatIdLiveData;
+
+    /**
+     * Gets the JWT for authentication.
+     */
+    public String getJWT() {
+        return mJwt;
     }
+
+    /**
+     * Returns a LiveData object that represents the list of chat rooms.
+     * The chat rooms are updated in the LiveData.
+     * @return The LiveData object containing the list of chat rooms
+     */
+    public MutableLiveData<List<ChatRoom>> getChatRoomsLiveData() {
+        chatRoomsLiveData = new MutableLiveData<>();
+        Log.d("ChatViewModel", "Getting chat rooms...");
+        getChatRooms();
+        return chatRoomsLiveData;
+    }
+
+    /**
+     * Callback interface for retrieving the members of a chat room.
+     */
+    public interface ChatRoomMembersCallback {
+        void onSuccess(List<ChatMember> members);
+        void onError();
+    }
+
 }

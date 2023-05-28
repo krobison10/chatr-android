@@ -1,6 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * Represents a conversation between users.
  *  @author Leyla Ahmed
  */
-public class Conversation {
+public class Conversation implements Serializable {
 
     // Unique ID of the conversation
     private int mConversationId;

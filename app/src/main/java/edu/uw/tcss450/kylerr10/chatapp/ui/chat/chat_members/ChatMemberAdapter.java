@@ -25,10 +25,8 @@ public class ChatMemberAdapter extends RecyclerView.Adapter<ChatMemberAdapter.Ch
      * Interface for defining item click behavior in the adapter.
      */
     public interface OnItemClickListener {
-        /**
-         * Called when a chat member item in member_list RecyclerView is clicked.
-         * @param member The clicked chat member
-         */
+
+        //Called when a chat member item in member_list RecyclerView is clicked
         void onItemClick(ChatMember member);
     }
 
@@ -40,14 +38,6 @@ public class ChatMemberAdapter extends RecyclerView.Adapter<ChatMemberAdapter.Ch
     public ChatMemberAdapter(List<ChatMember> members, OnItemClickListener listener) {
         this.mMembers = members;
         this.mListener = listener;
-    }
-
-    /**
-     * Constructs a ChatMemberAdapter with the provided list of members.
-     * @param members The list of chat members to be displayed
-     */
-    public ChatMemberAdapter(List<ChatMember> members) {
-        this.mMembers = members;
     }
 
     @NonNull
@@ -99,14 +89,5 @@ public class ChatMemberAdapter extends RecyclerView.Adapter<ChatMemberAdapter.Ch
                 }
             });
         }
-    }
-
-    /**
-     * Updates the list of chat members with a new list and notifies the adapter.
-     * @param updatedMembers The updated list of chat members
-     */
-    public void updateMembers(List<ChatMember> updatedMembers) {
-        mMembers = updatedMembers;
-        notifyDataSetChanged();
     }
 }

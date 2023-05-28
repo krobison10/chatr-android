@@ -1,12 +1,13 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
+package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room;
 
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
+
 
 /**
  * A callback class for handling swipe gestures
  * on items in a RecyclerView and deleting the swiped item.
- *
  * @author Leyla Ahmed
  */
 public class ChatRoomDelete extends ItemTouchHelper.SimpleCallback {

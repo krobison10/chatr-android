@@ -1,5 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,9 @@ import java.util.Date;
  */
 public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    //Holds the conversation data for the adapter
+    // Holds the conversation data for the adapter
     private Conversation mConversation;
+    private RecyclerView mRecyclerView;
 
     // View type for the messages sent by the user
     private static final int VIEW_TYPE_SENDER = 0;
@@ -33,7 +35,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mConversation = new Conversation();
     }
 
-
     /**
      * Set the conversation data in the adapter.
      * @param conversation the conversation to set
@@ -43,10 +44,40 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
+    /**
+     * Add a new message to the conversation.
+     * @param message the message to add
+     */
+    public void addMessage(Conversation message) {
+        if (mConversation.getMessages() != null) {
+            mConversation.getMessages().add(message);
+
+            // Notify the adapter that a new item has been inserted
+            notifyItemInserted(mConversation.getMessages().size() - 1);
+
+            // Scroll to the bottom of the message list
+            scrollToBottom();
+
+            // Log the added message
+            Log.d("ConversationAdapter", "Added message: " + message.getContent());
+        }
+    }
+
+    /**
+     * Scroll to the bottom of the message list.
+     */
+    public void scrollToBottom() {
+        if (mRecyclerView != null && mConversation.getMessages() != null && mConversation.getMessages().size() > 0) {
+            mRecyclerView.scrollToPosition(mConversation.getMessages().size() - 1);
+        }
+    }
 
     @Override
     public int getItemCount() {
-        return mConversation.getMessages().size();
+        if (mConversation != null && mConversation.getMessages() != null) {
+            return mConversation.getMessages().size();
+        }
+        return 0;
     }
 
     @Override
@@ -60,7 +91,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             return VIEW_TYPE_RECEIVER;
         }
     }
-
 
     @NonNull
     @Override
@@ -77,7 +107,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Conversation message = mConversation.getMessages().get(position);
@@ -90,22 +119,22 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-
     /**
      * View holder for sender layout.
      */
     private static class SenderViewHolder extends RecyclerView.ViewHolder {
-        //Displays the message content
+        // Displays the message content
         private TextView mMessageTextView;
 
-        //Displays the name of the sender or receiver
+        // Displays the name of the sender or receiver
         private TextView mNameTextView;
 
-        //Displays the timestamp of the message
+        // Displays the timestamp of the message
         private TextView mTimeTextView;
 
         /**
          * Constructor for the ViewHolder.
+         *
          * @param itemView the item view to be held by the ViewHolder.
          */
         SenderViewHolder(View itemView) {
@@ -115,38 +144,37 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mTimeTextView = itemView.findViewById(R.id.sender_chat_time);
         }
 
-
         /**
          * Bind data to the ViewHolder.
+         *
          * @param message the message data to bind.
          */
         void bind(Conversation message) {
-
             mMessageTextView.setText(message.getContent());
             mNameTextView.setText(message.getSenderName());
             mTimeTextView.setText(formatTimestamp(message.getTimestamp()));
+
+            // Log the bound message
+            Log.d("ConversationAdapter", "Bound sender message: " + message.getContent());
         }
-
-
     }
-
 
     /**
      * View holder for receiver layout.
      */
     private static class ReceiverViewHolder extends RecyclerView.ViewHolder {
-        //Displays the message content
+        // Displays the message content
         private TextView mMessageTextView;
 
-        //Displays the name of the sender or receiver
+        // Displays the name of the sender or receiver
         private TextView mNameTextView;
 
-        //Displays the timestamp of the message
+        // Displays the timestamp of the message
         private TextView mTimeTextView;
-
 
         /**
          * Constructor for the ViewHolder.
+         *
          * @param itemView the item view to be held by the ViewHolder
          */
         ReceiverViewHolder(View itemView) {
@@ -154,26 +182,26 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mTimeTextView = itemView.findViewById(R.id.receiver_chat_time);
             mMessageTextView = itemView.findViewById(R.id.receiver_chat_text);
             mNameTextView = itemView.findViewById(R.id.receiver_name);
-
         }
-
 
         /**
          * Bind data to the ViewHolder.
+         *
          * @param message the message data to bind
          */
         void bind(Conversation message) {
-
             mMessageTextView.setText(message.getContent());
             mNameTextView.setText(message.getSenderName());
             mTimeTextView.setText(formatTimestamp(message.getTimestamp()));
+
+            // Log the bound message
+            Log.d("ConversationAdapter", "Bound receiver message: " + message.getContent());
         }
-
     }
-
 
     /**
      * This method formats a given timestamp into a string of the format "h:mm a".
+     *
      * @param timestamp the timestamp to be formatted
      * @return the formatted timestamp string
      */
@@ -182,4 +210,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return mDateFormat.format(new Date(timestamp));
     }
 
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        mRecyclerView = recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        mRecyclerView = null;
+    }
 }

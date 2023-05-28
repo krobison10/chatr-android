@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
+package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +21,6 @@ import java.util.List;
 public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHolder> {
     //List of chat rooms used by the ChatRoomAdapter
     private List<ChatRoom> mChatRooms = new ArrayList<>();
-    //List of selected members for the chat room
-    private static List<ChatMember> mSelectedMembers = new ArrayList<>();
 
     //Listener interface to handle click events on chat rooms
     private OnChatRoomClickListener mListener;
@@ -31,7 +29,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
     private static boolean mIsMemberRecyclerViewVisible = false;
 
     public ChatRoomAdapter() {
-
+        // Required empty public constructor
     }
 
     @NonNull
@@ -64,17 +62,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
 
 
     /**
-     * Constructs a ChatRoomAdapter with the provided list of ChatRooms and selected members.
-     * @param chatRooms The list of ChatRooms to display
-     * @param selectedMembers The list of selected members
-     */
-    public ChatRoomAdapter(List<ChatRoom> chatRooms, List<ChatMember> selectedMembers) {
-        mChatRooms = chatRooms;
-        mSelectedMembers = selectedMembers;
-    }
-
-
-    /**
      * Constructs a ChatRoomAdapter with the provided list of ChatRooms.
      * @param chatRooms The list of ChatRooms to display
      */
@@ -82,9 +69,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         mChatRooms = chatRooms != null ? chatRooms : new ArrayList<>();
     }
 
-    public void setChatRooms(List<ChatRoom> chatRooms) {
-        this.mChatRooms = chatRooms;
-    }
 
     /**
      * Sets the listener for chat room clicks.
@@ -150,6 +134,7 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
         public void bind(final ChatRoom chatRoom, final OnChatRoomClickListener listener) {
             mRoomNameTextView.setText(chatRoom.getRoomName());
             mLastMessageTextView.setText(chatRoom.getLastMessage());
+
             List<ChatMember> selectedMembers = chatRoom.getSelectedMembers();
 
             if (selectedMembers != null && !selectedMembers.isEmpty()) {
@@ -170,27 +155,29 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             });
         }
     }
-
     /**
-     * Removes an item from the adapter's list and notifies the RecyclerView of the change.
-     * @param position The position of the item to remove
+     * Updates the members of a chat room identified by the specified chatRoomId.
+     * @param chatRoomId The ID of the chat room to update
+     * @param members  The list of ChatMember objects representing the new members of the chat room
      */
-    public void removeItem(int position) {
-        if (position >= 0 && position < mChatRooms.size()) {
-            mChatRooms.remove(position);
-            notifyItemRemoved(position);
+    public void updateChatRoomMembers(int chatRoomId, List<ChatMember> members) {
+        for (ChatRoom chatRoom : mChatRooms) {
+            if (chatRoom.getChatId() == chatRoomId) {
+                chatRoom.setSelectedMembers(members);
+                break;
+            }
         }
+        notifyDataSetChanged();
     }
-
     /**
-     * Retrieves the ChatRoom item at the specified position.
-     * @param position The position of the item to retrieve
-     * @return The ChatRoom item at the specified position
+     * Updates the list of chat rooms with the provided chatRooms.
+     * @param chatRooms The list of ChatRoom objects representing the updated chat rooms
      */
-    public ChatRoom getItem(int position) {
-        return mChatRooms.get(position);
+    public void updateChatRooms(List<ChatRoom> chatRooms) {
+        mChatRooms.clear();
+        mChatRooms.addAll(chatRooms);
+        notifyDataSetChanged();
     }
-
 
     /**
      * Retrieves the ID of the ChatRoom at the specified position.
@@ -204,15 +191,6 @@ public class ChatRoomAdapter extends RecyclerView.Adapter<ChatRoomAdapter.ViewHo
             return String.valueOf(chatRoom.getChatId());
         }
         return null;
-    }
-
-    /**
-     * Updates the selected members in the ViewHolder and notifies the adapter of the changes.
-     * @param selectedMembers The new list of selected members
-     */
-    public void updateSelectedMembers(List<ChatMember> selectedMembers) {
-        mSelectedMembers = selectedMembers;
-        notifyDataSetChanged();
     }
 
 }

@@ -1,6 +1,5 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
-import android.app.Activity;
 import android.app.Application;
 import android.location.Location;
 import android.util.Log;
@@ -29,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
 
-import edu.uw.tcss450.kylerr10.chatapp.MainActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 

@@ -89,4 +89,10 @@
     <string name="keys_json_forecast_hourly_temperature">temperature</string>
     <string name="keys_json_forecast_hourly_temperature_unit">temperatureUnit</string>
     <string name="keys_json_forecast_hourly_short_forecast">shortForecast</string>
+    <string name="keys_json_location_list">locations</string>
+    <string name="keys_json_location_primarykey">primarykey</string>
+    <string name="keys_json_location_memberid">memberid</string>
+    <string name="keys_json_location_nickname">nickname</string>
+    <string name="keys_json_location_latitude">lat</string>
+    <string name="keys_json_location_longitude">long</string>
 </resources>

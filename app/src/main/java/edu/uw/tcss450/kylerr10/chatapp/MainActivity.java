@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
 
 /**
  * Main activity of the application.
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback mLocationCallback;
     // The ViewModel that will store the current location
     private LocationViewModel mLocationModel;
+    // The ViewModel that will store the user's saved locations
+    private UserLocationViewModel mUserLocationModel;
     // The ViewModel that will store the forecast data
     private ForecastViewModel mForecastModel;
     /**

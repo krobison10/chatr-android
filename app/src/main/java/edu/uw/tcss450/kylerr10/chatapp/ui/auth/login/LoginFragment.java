@@ -68,36 +68,27 @@ public class LoginFragment extends Fragment {
                     LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
             ));
 
-        //TODO: get rid of this. But set debug to false for now to test login logic.
-        boolean debug = false;
-        if(!debug) {
-            mBinding.buttonLogin.setEnabled(false);
-            mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
+        mBinding.buttonLogin.setEnabled(false);
+        mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
 
-            mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+        mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
-            //Universal handler for change of all input fields
-            TextWatcher textWatcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    //validateInputs() is a side-effecting method call
-                    mBinding.buttonLogin.setEnabled(validateInputs());
-                }
-            };
+        //Universal handler for change of all input fields
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //validateInputs() is a side-effecting method call
+                mBinding.buttonLogin.setEnabled(validateInputs());
+            }
+        };
 
-            mBinding.editEmail.addTextChangedListener(textWatcher);
-            mBinding.editPassword.addTextChangedListener(textWatcher);
+        mBinding.editEmail.addTextChangedListener(textWatcher);
+        mBinding.editPassword.addTextChangedListener(textWatcher);
 
-        } else {
-            mBinding.buttonLogin.setOnClickListener(button ->
-                    Navigation.findNavController(getView()).navigate(
-                            LoginFragmentDirections.actionLoginFragmentToHomeActivity("", "")
-                    ));
-        }
 
         LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
         mBinding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
@@ -144,9 +135,9 @@ public class LoginFragment extends Fragment {
      * Makes an async call to the API for login using the current values of the input fields.
      */
     private void verifyAuthWithServer() {
-        mViewModel.connect(
-                mBinding.editEmail.getText().toString(),
-                mBinding.editPassword.getText().toString());
+        mViewModel.setUserEmail(mBinding.editEmail.getText().toString());
+        mViewModel.setUserPassword(mBinding.editPassword.getText().toString());
+        mViewModel.connect();
     }
 
     /**
@@ -159,6 +150,15 @@ public class LoginFragment extends Fragment {
                 .navigate(LoginFragmentDirections
                         .actionLoginFragmentToHomeActivity(email, jwt));
         getActivity().finish();
+    }
+
+    /**
+     * Helper to abstract the navigation to the verify fragment.
+     */
+    private void navigateToVerify() {
+        Navigation.findNavController(getView())
+                .navigate(LoginFragmentDirections
+                        .actionLoginFragmentToVerifyEmailFragment());
     }
 
     /**
@@ -175,10 +175,13 @@ public class LoginFragment extends Fragment {
         if (response.length() > 0) {
             if (response.has("code")) {
                 try {
-                    String message = response.getJSONObject("data").getString("message");
-                    mBinding.emailLayout.setError("Error: " + message);
-                    //showErrorNotification("Error: " + message.toLowerCase());
-
+                    if(response.getInt("code") == 300) {
+                        navigateToVerify();
+                    }
+                    else {
+                        String message = response.getJSONObject("data").getString("message");
+                        mBinding.emailLayout.setError("Error: " + message);
+                    }
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                     showErrorNotification("An error occurred");

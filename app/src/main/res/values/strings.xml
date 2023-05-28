@@ -13,6 +13,11 @@
     <string name="hint_last_name">Last name</string>
     <string name="hint_username">Username</string>
 
+    <string name="switch_stay_logged">Stay Logged in</string>
+    <string name="keys_shared_prefs">My Auth App Shared Prefs</string>
+    <string name="keys_prefs_jwt">Sharded Prefs JWT</string>
+    <string name="action_log_out">Log Out</string>
+
     <string name="error_first_name">Please enter a valid name</string>
     <string name="error_last_name">Please enter a valid name</string>
     <string name="error_username">Please enter a valid username</string>

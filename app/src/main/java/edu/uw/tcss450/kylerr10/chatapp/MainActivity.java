@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -150,10 +152,25 @@ public class MainActivity extends AppCompatActivity {
                 AboutFragment aboutDialog = new AboutFragment();
                 aboutDialog.show(getSupportFragmentManager(), "about_dialog");
                 return true;
+            case R.id.action_log_out:
+                signOut();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
 
+    /**
+     * Takes steps to sign the user out of the application.
+     */
+    private void signOut() {
+        SharedPreferences prefs =
+                getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+        //End the app completely
+        finishAndRemoveTask();
     }
 
     @Override

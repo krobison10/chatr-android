@@ -23,6 +23,7 @@ import android.widget.EditText;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -38,7 +39,7 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLocationBinding;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LocationFragment extends DialogFragment {
+public class LocationFragment extends Fragment {
 
 
     private MapFragment mMapFragment;
@@ -48,30 +49,19 @@ public class LocationFragment extends DialogFragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        hideNavigationBar();
         mGeocoder = new Geocoder(requireContext(), Locale.US);
         mLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
         mLocationModel.connectGet(requireActivity());
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_location, container, false);
-    }
 
-    /** The system calls this only when creating the layout in a dialog. */
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // The only reason you might override this method when using onCreateView() is
-        // to modify any dialog characteristics. For example, the dialog includes a
-        // title by default, but your custom layout might not need it. So here you can
-        // remove the dialog title, but you must call the superclass to get the Dialog.
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        return dialog;
+        return inflater.inflate(R.layout.fragment_location, container, false);
     }
 
     @Override
@@ -89,11 +79,10 @@ public class LocationFragment extends DialogFragment {
                 ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
                 return;
             }
-            // TODO: Add a location object, myLocation, with a name alias and latlng object
             String locationName =
                     Objects.requireNonNull(binding.mapSearchBar.getText()).toString().isEmpty()
                             ? "My Location" : binding.mapSearchBar.getText().toString();
-            openCustomLocationNameDialog(marker, locationName); // update custom location name with dialog
+            openCustomLocationNameDialog(marker, locationName);
 
         });
         binding.currentLocationButton.setOnClickListener(v -> {
@@ -102,7 +91,7 @@ public class LocationFragment extends DialogFragment {
         binding.listLocationButton.setOnClickListener(v -> {
             mLocationModel.addLocationObserver(getViewLifecycleOwner(), locations -> {
                 Log.d("List", "onViewCreated: ");
-                if (locations != null) {
+                if (locations != null && !locations.isEmpty()) {
                     String[] locationNames = new String[locations.size()];
                     Double[] locationLatitudes = new Double[locations.size()];
                     Double[] locationLongitudes = new Double[locations.size()];
@@ -115,7 +104,6 @@ public class LocationFragment extends DialogFragment {
                             .setTitle("Saved Locations")
                             .setItems(locationNames, (dialog, which) -> {
                                 mMapFragment.placeMarker(new LatLng(locationLatitudes[which], locationLongitudes[which]));
-                                // TODO: set forecast location for app
                                 dialog.dismiss();
                             })
                             .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
@@ -189,28 +177,79 @@ public class LocationFragment extends DialogFragment {
             if (locations != null) {
                 UserLocation duplicate = null;
                 for (UserLocation location : locations) {
-                    if (location.getLatitude() == marker.getPosition().latitude
-                            && location.getLongitude() == marker.getPosition().longitude) {
+                    if (
+                        location.getLatitude() == marker.getPosition().latitude
+                        && location.getLongitude() == marker.getPosition().longitude
+                    ) {
                         duplicate = location;
                         break;
                     }
                 }
                 if (duplicate == null) {
-                    // TODO: Add location to the database
+                    LatLng pos = marker.getPosition();
+                    Log.d("SAVING LOCATION", "SAVING LOCATION");
+                    mLocationModel.connectPost(
+                        requireActivity(),
+                        name,
+                        pos.latitude,
+                        pos.longitude
+                    );
                     Snackbar.make(
-                            requireView(),
-                            "Location saved.",
-                            BaseTransientBottomBar.LENGTH_SHORT
+                        requireView(),
+                        "Location saved.",
+                        BaseTransientBottomBar.LENGTH_SHORT
                     ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
                 } else {
-                    // TODO: Update location in the database
+                    mLocationModel.connectPut(
+                        requireActivity(),
+                        new UserLocation(
+                            duplicate.getPrimaryKey(),
+                            name,
+                            duplicate.getLatitude(),
+                            duplicate.getLongitude()
+                        )
+                    );
                     Snackbar.make(
-                            requireView(),
-                            String.format("%s renamed to %s.", duplicate.getName(), name),
-                            BaseTransientBottomBar.LENGTH_SHORT
+                        requireView(),
+                        duplicate.getName().equals(name)
+                            ? "Location already saved."
+                            : String.format("%s renamed to %s.", duplicate.getName(), name),
+                        BaseTransientBottomBar.LENGTH_SHORT
                     ).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_SLIDE).show();
                 }
             }
+
+            requireActivity().onBackPressed();
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mMapFragment.getMarker() != null) {
+            LatLng position = mMapFragment.getMarker().getPosition();
+            new ViewModelProvider(requireActivity()).get(ForecastViewModel.class).connectGet(
+                    requireActivity(),
+                    position.latitude,
+                    position.longitude
+            );
+        }
+        showNavigationBar();
+    }
+
+    /**
+     * Hides the navigation bar, usually only called when the fragment is created.
+     */
+    private void hideNavigationBar() {
+        if (requireActivity().findViewById(R.id.nav_view) != null)
+            requireActivity().findViewById(R.id.nav_view).setVisibility(View.GONE);
+    }
+
+    /**
+     * Shows the navigation bar, usually only called when the fragment is paused (navigated away from).
+     */
+    private void showNavigationBar() {
+        if (requireActivity().findViewById(R.id.nav_view) != null)
+            requireActivity().findViewById(R.id.nav_view).setVisibility(View.VISIBLE);
     }
 }

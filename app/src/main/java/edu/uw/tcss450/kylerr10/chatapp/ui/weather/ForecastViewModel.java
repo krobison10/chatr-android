@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
@@ -67,7 +68,7 @@ public class ForecastViewModel extends AndroidViewModel {
      * @param error the error that occurred.
      */
     public void handleError(final VolleyError error) {
-        Log.e("CONNECTION ERROR", error.getLocalizedMessage());
+        Log.e("CONNECTION ERROR", "Error connecting to API");
     }
 
     /**
@@ -149,9 +150,9 @@ public class ForecastViewModel extends AndroidViewModel {
      * @param activity the activity that is connecting to the API.
      * @param location the location to get the forecast for.
      */
-    public void connectGet(ViewModelStoreOwner activity, Location location) {
-        String url = "http://10.0.2.2:5000/forecast/"; // TODO: MAKE THIS AN ENV VARIABLE
-                //+ (location == null ? "" : location.getLatitude() + "," + location.getLongitude()); AN IDEA FOR LATER
+    public void connectGet(ViewModelStoreOwner activity, double latitude, double longitude) {
+        String url = "http://10.0.2.2:5000/forecast/" // TODO: MAKE THIS AN ENV VARIABLE
+                + String.format(Locale.US, "%.4f,%.4f", latitude, longitude);
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleResult, this::handleError) {
             @Override

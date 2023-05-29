@@ -54,7 +54,7 @@ public class UserLocationViewModel extends AndroidViewModel {
      * @param error the error that occurred.
      */
     public void handleError(final VolleyError error) {
-        Log.e("CONNECTION ERROR", error.getLocalizedMessage());
+        Log.e("CONNECTION ERROR", "Error connecting to API");
     }
 
     /**
@@ -95,7 +95,6 @@ public class UserLocationViewModel extends AndroidViewModel {
                 Log.e("JSON_PARSE_ERROR", "forecast GET response has invalid format");
             }
         } catch (JSONException e) {
-            e.printStackTrace();
             Log.e("JSON_PARSE_ERROR", e.getMessage());
         }
         mLocationList.setValue(mLocationList.getValue()); // necessary to trigger observers to update
@@ -108,9 +107,76 @@ public class UserLocationViewModel extends AndroidViewModel {
      */
     public void connectGet(ViewModelStoreOwner activity) {
         String url = "http://10.0.2.2:5000/location/"; // TODO: MAKE THIS AN ENV VARIABLE
-        //+ (location == null ? "" : location.getLatitude() + "," + location.getLongitude()); AN IDEA FOR LATER
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleGetResult, this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                UserInfoViewModel model = new ViewModelProvider(activity).get(UserInfoViewModel.class);
+                headers.put("Authorization", model.getJWT().toString()); // JSON request body
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+    }
+
+    public void connectPut(ViewModelStoreOwner activity, UserLocation location) {
+        String url = "http://10.0.2.2:5000/location/"; // TODO: MAKE THIS AN ENV VARIABLE
+        JSONObject body = new JSONObject();
+        try {
+            body.put("primarykey", location.getPrimaryKey());
+            body.put("nickname", location.getName());
+            body.put("lat", location.getLatitude());
+            body.put("lng", location.getLongitude());
+        } catch (JSONException e) {
+            Log.e("Location PUT ERROR", e.getMessage());
+        }
+        Request<JSONObject> request = new JsonObjectRequest(Request.Method.PUT, url, body,
+                null, this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                UserInfoViewModel model = new ViewModelProvider(activity).get(UserInfoViewModel.class);
+                headers.put("Authorization", model.getJWT().toString()); // JSON request body
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+    }
+
+    public void connectPost(ViewModelStoreOwner activity, String nickname, double latitude, double longitude) {
+        String url = "http://10.0.2.2:5000/location/";
+        JSONObject body = new JSONObject();
+        try {
+            body.put("nickname", nickname);
+            body.put("lat", latitude);
+            body.put("lng", longitude);
+        } catch (JSONException e) {
+            Log.e("Location POST ERROR", e.getMessage());
+        }
+        Request<JSONObject> request = new JsonObjectRequest(Request.Method.POST, url, body,
+                null, this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                UserInfoViewModel model = new ViewModelProvider(activity).get(UserInfoViewModel.class);
+                headers.put("Authorization", model.getJWT().toString()); // JSON request body
+                return headers;
+            }
+        };
+        request.setRetryPolicy(new DefaultRetryPolicy(10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
+    }
+
+    public void connectDelete(ViewModelStoreOwner activity) {
+        String url = "http://10.0.2.2:5000/location/";
+        Request<JSONObject> request = new JsonObjectRequest(Request.Method.DELETE, url, null,
+                null, this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();

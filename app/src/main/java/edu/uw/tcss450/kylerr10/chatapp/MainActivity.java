@@ -210,9 +210,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.e("LOCATION", "Necessary permissions not granted.");
         } else {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, Objects.requireNonNull(location -> {
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mLocationModel.setLocation(location);
                     mForecastModel = new ViewModelProvider(MainActivity.this).get(ForecastViewModel.class);
-                    mForecastModel.connectGet(MainActivity.this, location);
+                    mForecastModel.connectGet(MainActivity.this, location.getLatitude(), location.getLongitude());
                 } else {
                     Log.d("LOCATION", "No Location retrieved.");
                 }
@@ -237,8 +238,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest
-                .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
-                .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
-                .build();
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+            .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
+            .build();
     }
 }

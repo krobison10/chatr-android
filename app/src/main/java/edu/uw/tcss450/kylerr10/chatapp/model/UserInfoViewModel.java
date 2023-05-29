@@ -15,6 +15,7 @@ import com.auth0.android.jwt.JWT;
 public class UserInfoViewModel extends AndroidViewModel {
     private JWT mJwt;
 
+
     public UserInfoViewModel(@NonNull Application application) {
         super(application);
     }
@@ -26,6 +27,7 @@ public class UserInfoViewModel extends AndroidViewModel {
     public void setToken(JWT jwt) {
         mJwt = jwt;
     }
+
 
     /**
      * Get the email address that is stored in the payload of the JWT this ViewModel holds.

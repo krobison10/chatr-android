@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.auth.login;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -50,6 +53,23 @@ public class LoginFragment extends Fragment {
         mViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        SharedPreferences prefs =
+                getActivity().getSharedPreferences(
+                        getString(R.string.keys_shared_prefs),
+                        Context.MODE_PRIVATE);
+        if (prefs.contains(getString(R.string.keys_prefs_jwt))) {
+            String token = prefs.getString(getString(R.string.keys_prefs_jwt), "");
+            JWT jwt = new JWT(token);
+            if(!jwt.isExpired(999999)) {
+                String email = jwt.getClaim("email").asString();
+                navigateToSuccess(email, token);
+            }
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -68,36 +88,27 @@ public class LoginFragment extends Fragment {
                     LoginFragmentDirections.actionLoginFragmentToRegisterFragment()
             ));
 
-        //TODO: get rid of this. But set debug to false for now to test login logic.
-        boolean debug = false;
-        if(!debug) {
-            mBinding.buttonLogin.setEnabled(false);
-            mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
+        mBinding.buttonLogin.setEnabled(false);
+        mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
 
-            mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+        mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
-            //Universal handler for change of all input fields
-            TextWatcher textWatcher = new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-                @Override
-                public void afterTextChanged(Editable editable) {
-                    //validateInputs() is a side-effecting method call
-                    mBinding.buttonLogin.setEnabled(validateInputs());
-                }
-            };
+        //Universal handler for change of all input fields
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                //validateInputs() is a side-effecting method call
+                mBinding.buttonLogin.setEnabled(validateInputs());
+            }
+        };
 
-            mBinding.editEmail.addTextChangedListener(textWatcher);
-            mBinding.editPassword.addTextChangedListener(textWatcher);
+        mBinding.editEmail.addTextChangedListener(textWatcher);
+        mBinding.editPassword.addTextChangedListener(textWatcher);
 
-        } else {
-            mBinding.buttonLogin.setOnClickListener(button ->
-                    Navigation.findNavController(getView()).navigate(
-                            LoginFragmentDirections.actionLoginFragmentToHomeActivity("", "")
-                    ));
-        }
 
         LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
         mBinding.editEmail.setText(args.getEmail().equals("default") ? "" : args.getEmail());
@@ -144,9 +155,9 @@ public class LoginFragment extends Fragment {
      * Makes an async call to the API for login using the current values of the input fields.
      */
     private void verifyAuthWithServer() {
-        mViewModel.connect(
-                mBinding.editEmail.getText().toString(),
-                mBinding.editPassword.getText().toString());
+        mViewModel.setUserEmail(mBinding.editEmail.getText().toString());
+        mViewModel.setUserPassword(mBinding.editPassword.getText().toString());
+        mViewModel.connect();
     }
 
     /**
@@ -155,10 +166,26 @@ public class LoginFragment extends Fragment {
      * @param jwt the JSON Web Token supplied by the server
      */
     private void navigateToSuccess(final String email, final String jwt) {
-        Navigation.findNavController(getView())
-                .navigate(LoginFragmentDirections
-                        .actionLoginFragmentToHomeActivity(email, jwt));
+        if(mBinding.switchStayLogged.isChecked()) {
+            SharedPreferences prefs =
+                    getActivity().getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+            //Store the credentials in SharedPrefs
+            prefs.edit().putString(getString(R.string.keys_prefs_jwt), jwt).apply();
+        }
+        Navigation.findNavController(getView()).navigate(LoginFragmentDirections
+                .actionLoginFragmentToHomeActivity(email, jwt));
         getActivity().finish();
+    }
+
+    /**
+     * Helper to abstract the navigation to the verify fragment.
+     */
+    private void navigateToVerify() {
+        boolean stayLogged = mBinding.switchStayLogged.isChecked();
+        Navigation.findNavController(getView()).navigate(LoginFragmentDirections
+                .actionLoginFragmentToVerifyEmailFragment(stayLogged));
     }
 
     /**
@@ -175,10 +202,13 @@ public class LoginFragment extends Fragment {
         if (response.length() > 0) {
             if (response.has("code")) {
                 try {
-                    String message = response.getJSONObject("data").getString("message");
-                    mBinding.emailLayout.setError("Error: " + message);
-                    //showErrorNotification("Error: " + message.toLowerCase());
-
+                    if(response.getInt("code") == 300) {
+                        navigateToVerify();
+                    }
+                    else {
+                        String message = response.getJSONObject("data").getString("message");
+                        mBinding.emailLayout.setError("Error: " + message);
+                    }
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                     showErrorNotification("An error occurred");

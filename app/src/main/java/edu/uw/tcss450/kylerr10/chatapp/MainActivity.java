@@ -31,7 +31,8 @@ import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
-import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutFragment;
+import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
 import java.util.Objects;
 
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeManager.applyTheme(this); // Required to apply user's chosen theme to activity
         super.onCreate(savedInstanceState);
 
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
@@ -152,8 +154,13 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.about:
-                AboutFragment aboutDialog = new AboutFragment();
-                aboutDialog.show(getSupportFragmentManager(), "about_dialog");
+                new AboutDialog(this).show();
+                return true;
+            case R.id.settings:
+                if (findViewById(R.id.settings_root) == null) {
+                    Navigation.findNavController(this, R.id.nav_host_fragment)
+                            .navigate(R.id.navigation_settings);
+                }
                 return true;
             case R.id.action_log_out:
                 signOut();
@@ -174,6 +181,15 @@ public class MainActivity extends AppCompatActivity {
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
         //End the app completely
         finishAndRemoveTask();
+    }
+
+    /**
+     * Allows the title bar back button to navigate up the navigation stack.
+     * @return true if the navigation was successful.
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        return Navigation.findNavController(this, R.id.nav_host_fragment).navigateUp();
     }
 
     @Override

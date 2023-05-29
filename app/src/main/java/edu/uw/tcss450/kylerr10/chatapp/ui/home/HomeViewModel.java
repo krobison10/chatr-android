@@ -61,7 +61,7 @@ public class HomeViewModel extends AndroidViewModel {
                                 String firstName = response.getString("firstName");
                                 String lastName = response.getString("lastName");
                                 String userName = response.getString("username");
-                                String greeting = "Hello, " + userName;
+                                String greeting = "Hello, " + firstName;
 
                                 // Update your UI with the greeting
                                 binding.textGreeting.setText(greeting);
@@ -69,9 +69,11 @@ public class HomeViewModel extends AndroidViewModel {
                                 // Handle error case where success is false
                                 String message = response.getString("Not success");
                                 Log.e("FETCH", "Error: " + message);
+                                binding.textGreeting.setText("Hello");
                             }
                         } catch (JSONException e) {
                             Log.e("FETCH", "Error parsing JSON response: " + e.getMessage());
+                            binding.textGreeting.setText("Hello");
                         }
                     }
                 },
@@ -80,6 +82,7 @@ public class HomeViewModel extends AndroidViewModel {
                     public void onErrorResponse(VolleyError error) {
                         // Handle error case where the network request fails
                         Log.e("FETCH", "Error fetching user data: " + error.getMessage());
+                        binding.textGreeting.setText("Hello");
                     }
                 }) {
             @Override
@@ -98,4 +101,6 @@ public class HomeViewModel extends AndroidViewModel {
         Volley.newRequestQueue(getApplication().getApplicationContext())
                 .add(jsonObjectRequest);
     }
+
+
 }

@@ -2,11 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:title="@string/title_about"
         android:id="@+id/about"
-        android:title="About"
         />
-    <item android:title="Settings" />
+    <item
+        android:title="@string/title_settings"
+        android:id="@+id/settings"
+        />
     <item android:title="Help" />
-    <item android:title="Log out" />
+    <item
+        android:id="@+id/action_log_out"
+        android:title="@string/action_log_out"
+        />
 
 </menu>

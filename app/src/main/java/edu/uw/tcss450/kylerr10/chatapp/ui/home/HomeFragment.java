@@ -1,22 +1,21 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import java.util.ArrayList;
 
-import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentHomeBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyForecast;
@@ -29,10 +28,17 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyForecast;
 public class HomeFragment extends Fragment {
 
     ForecastViewModel mForecastModel;
+    HomeViewModel mHomeViewModel;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mForecastModel = new ViewModelProvider(requireActivity()).get(ForecastViewModel.class);
+        mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
+
+
     }
 
     @Override
@@ -54,6 +60,8 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         FragmentHomeBinding binding = FragmentHomeBinding.bind(requireView());
+        mHomeViewModel.fetchUserData(new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class), binding);
+
         // Set the information for the weather card based on the forecast data from the API
         mForecastModel.addForecastObserver(getViewLifecycleOwner(), forecast -> {
             if (!forecast.getCity().isEmpty() && !forecast.getState().isEmpty()) {
@@ -68,9 +76,10 @@ public class HomeFragment extends Fragment {
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
         });
 
+
         // Create a list of dummy notifications
         ArrayList<Notification> notifications = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
             notifications.add(new Notification());
         }
 
@@ -78,8 +87,5 @@ public class HomeFragment extends Fragment {
                 new NotificationsRecyclerViewAdapter(notifications)
         );
 
-        String email = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getEmail();
-        FragmentHomeBinding.bind(getView()).textGreeting.setText("Hello, " + email);
     }
-
 }

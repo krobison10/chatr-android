@@ -19,6 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentOutgoingRequestsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
@@ -39,6 +42,11 @@ public class OutgoingRequestsFragment extends Fragment {
     private FragmentOutgoingRequestsBinding mBinding;
 
     private ContactsViewModel mContactsViewModel;
+
+    /**
+     * The unfiltered list of requests
+     */
+    private List<Contact> mfullItemsList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +84,30 @@ public class OutgoingRequestsFragment extends Fragment {
                 response -> mContactsViewModel.updateContacts());
 
         mContactsViewModel.addGetOutgoingResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+
+        mContactsViewModel.getSearchText().observe(getViewLifecycleOwner(), this::filterList);
+    }
+
+    private void filterList(String searchText) {
+        if(mfullItemsList == null) return;
+
+        List<Contact> filteredList;
+
+        if(searchText != null) {
+            filteredList = mfullItemsList.stream()
+                    .filter(item -> {
+                        String regex = "(?i)" + Pattern.quote(searchText);
+                        return Pattern.compile(regex).matcher(item.mUsername).find();
+                    })
+                    .collect(Collectors.toList());
+        }
+        else {
+            filteredList = mfullItemsList;
+        }
+
+        mBinding.recyclerViewOutgoingRequests.setAdapter(
+                new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, filteredList)
+        );
     }
 
     /**
@@ -129,9 +161,13 @@ public class OutgoingRequestsFragment extends Fragment {
             contactsList.add(c);
         }
 
+        mfullItemsList = contactsList;
+
         mBinding.recyclerViewOutgoingRequests.setAdapter(
                 new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
+
+        filterList(mContactsViewModel.getSearchText().getValue());
     }
 
     /**

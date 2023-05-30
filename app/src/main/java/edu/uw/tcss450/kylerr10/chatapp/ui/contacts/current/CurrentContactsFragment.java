@@ -19,10 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsRecyclerViewAdapter;
 
 /**
  * Fragment where the user can view their current contacts in a list.
@@ -39,6 +43,11 @@ public class CurrentContactsFragment extends Fragment {
     private FragmentCurrentContactsBinding mBinding;
 
     private ContactsViewModel mContactsViewModel;
+
+    /**
+     * The unfiltered list of contacts
+     */
+    private List<Contact> mfullItemsList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,30 @@ public class CurrentContactsFragment extends Fragment {
                 response -> mContactsViewModel.updateContacts());
 
         mContactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+
+        mContactsViewModel.getSearchText().observe(getViewLifecycleOwner(), this::filterList);
+    }
+
+    private void filterList(String searchText) {
+        if(mfullItemsList == null) return;
+
+        List<Contact> filteredList;
+
+        if(searchText != null) {
+            filteredList = mfullItemsList.stream()
+                    .filter(item -> {
+                        String regex = "(?i)" + Pattern.quote(searchText);
+                        return Pattern.compile(regex).matcher(item.mUsername).find();
+                    })
+                    .collect(Collectors.toList());
+        }
+        else {
+            filteredList = mfullItemsList;
+        }
+
+        mBinding.recyclerViewCurrentContacts.setAdapter(
+                new CurrentContactsRecyclerViewAdapter(mContactsViewModel, filteredList)
+        );
     }
 
     /**
@@ -128,9 +161,13 @@ public class CurrentContactsFragment extends Fragment {
             contactsList.add(c);
         }
 
+        mfullItemsList = contactsList;
+
         mBinding.recyclerViewCurrentContacts.setAdapter(
                 new CurrentContactsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
+
+        filterList(mContactsViewModel.getSearchText().getValue());
     }
 
     /**

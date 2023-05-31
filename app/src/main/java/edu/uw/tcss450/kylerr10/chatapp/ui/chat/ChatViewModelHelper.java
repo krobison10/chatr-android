@@ -1,5 +1,7 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
 
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+
 /**
  * Helper class for managing ChatViewModel related operations.
  * @author Leyla Ahmed
@@ -25,4 +27,26 @@ public class ChatViewModelHelper {
             mViewModel.deleteChatMember(chatId, email);
         }
     }
+    /**
+     * Retrieves the JWT from the ChatViewModel.
+     * @return The JWT string
+     */
+    public static String getJWT() {
+        if (mViewModel != null) {
+            return mViewModel.getJWT();
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the JWT from the ChatViewModel.
+     * @return The JWT string
+     */
+    public static String getEmail() {
+        if (mViewModel != null) {
+            return mViewModel.getEmail();
+        }
+        return null;
+    }
+
 }

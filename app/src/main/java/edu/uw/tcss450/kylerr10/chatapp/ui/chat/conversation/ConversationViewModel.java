@@ -23,6 +23,9 @@ import java.util.Objects;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
 public class ConversationViewModel extends AndroidViewModel {
+
+    private MutableLiveData<List<Conversation>> mMessagesLiveData;
+
     /**
      * A Map of Lists of Chat Messages.
      * The Key represents the Chat ID
@@ -33,8 +36,18 @@ public class ConversationViewModel extends AndroidViewModel {
     public ConversationViewModel(@NonNull Application application) {
         super(application);
         mMessages = new HashMap<>();
+        mMessagesLiveData = new MutableLiveData<>();
     }
 
+    public void receiveMessage(int chatId, Conversation message) {
+        MutableLiveData<List<Conversation>> chatMessagesLiveData = getOrCreateMapEntry(chatId);
+        List<Conversation> currentMessages = chatMessagesLiveData.getValue();
+        if (currentMessages == null) {
+            currentMessages = new ArrayList<>();
+        }
+        currentMessages.add(message);
+        chatMessagesLiveData.setValue(currentMessages);
+    }
     /**
      * Register as an observer to listen to a specific chat room's list of messages.
      * @param chatId the chatid of the chat to observer
@@ -81,7 +94,7 @@ public class ConversationViewModel extends AndroidViewModel {
      * @param jwt the users signed JWT
      */
     public void getFirstMessages(final int chatId, final String jwt) {
-        String url = "http://10.0.2.2:5000/chats/messages/" + chatId;
+        String url = "http://10.0.2.2:5000/messages/" + chatId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -116,24 +129,29 @@ public class ConversationViewModel extends AndroidViewModel {
      * messageId to the web service.
      * Parses the response and adds the ChatMessage object to the List associated with the
      * ChatRoom. Informs observers of the update.
-     *
+     * <p>
      * Subsequent calls to this method receive earlier and earlier messages.
      *
-     * @param chatId the chatroom id to request messages of
-     * @param jwt the users signed JWT
+     * @param chatId        the chatroom id to request messages of
+     * @param jwt           the users signed JWT
      */
-    public void getNextMessages(final int chatId, final String jwt) {
-        String url = "http://10.0.2.2:5000/chats/messages/" +
-                chatId +
-                "/" +
-                mMessages.get(chatId).getValue().get(0).getConversationId();
+    public void getNextMessages(String chatId,String lastMessageId, String jwt) {
+        String url = "http://10.0.2.2:5000/messages/" + chatId + "/"
+                + lastMessageId;
+        Log.d("GETNEXTChat", "URL: " + url);
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
                 null, //no body for this get request
-                this::handelSuccess,
-                this::handleError) {
+                response -> {
+                    Log.d("GETNEXTChat", "Response: " + response.toString());
+                    handelSuccess(response);
+                },
+                error -> {
+                    Log.e("GETNEXTChat", "Volley Error: " + error.toString());
+                    handleError(error);
+                }) {
 
             @Override
             public Map<String, String> getHeaders() {

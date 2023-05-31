@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -21,6 +22,8 @@ import org.json.JSONObject;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLoginBinding;
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
 /**
  * The page where the user can attempt to login to the application.
@@ -28,6 +31,7 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLoginBinding;
  * @author Kyler Robison
  */
 public class LoginFragment extends Fragment {
+    private PushyTokenViewModel mPushyTokenViewModel;
 
     public FragmentLoginBinding mBinding;
 
@@ -48,6 +52,7 @@ public class LoginFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
+        mPushyTokenViewModel = new ViewModelProvider(getActivity()).get(PushyTokenViewModel.class);
     }
 
     @Nullable
@@ -160,6 +165,12 @@ public class LoginFragment extends Fragment {
                         .actionLoginFragmentToHomeActivity(email, jwt));
         getActivity().finish();
     }
+    /**
+     * Helper to abstract the request to send the pushy token to the web service
+     */
+    private void sendPushyToken(String token, String jwt) {
+        mPushyTokenViewModel.sendTokenToWebservice(token, jwt);
+    }
 
     /**
      * An observer on the HTTP Response from the web server. This observer should be
@@ -185,6 +196,31 @@ public class LoginFragment extends Fragment {
                 }
             } else {
                 try {
+                    String token = response.getString("token");
+                    String jwt = response.getString("token");
+                    Log.d("Pushy Token222", token);
+
+// Retrieve the Pushy device token
+                    mPushyTokenViewModel.retrieveToken(new PushyTokenViewModel.PushyTokenCallback() {
+                        @Override
+                        public void onTokenReceived(String token) {
+                            // Handle the retrieved Pushy device token
+                            // You can now use the token to send push notifications from the server-side
+                            Log.d("Pushy Token222", token);
+                            Log.d("Pushy Token222", jwt);
+
+                            // Send the token to the web service along with the JWT
+                            sendPushyToken(token, jwt);
+                        }
+
+                        @Override
+                        public void onTokenError(String errorMessage) {
+                            // Token retrieval failed, handle the error
+                            Log.d("Pushy Token222", "Token retrieval failed: " + errorMessage);
+                        }
+                    });
+
+                    // Navigate to the next screen or perform any required action
                     navigateToSuccess(
                             mBinding.editEmail.getText().toString(),
                             response.getString("token")

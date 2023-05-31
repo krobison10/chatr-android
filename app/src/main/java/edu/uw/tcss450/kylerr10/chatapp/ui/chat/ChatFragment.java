@@ -22,6 +22,7 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomDelete;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationSendViewModel;
 
 
 /**
@@ -40,6 +41,8 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
     //The ViewModel associated with the chat
     private ChatViewModel mViewModel;
 
+    private ConversationSendViewModel mSendViewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +53,9 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         //Access JWT
         UserInfoViewModel model = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class);
         String jwt = model.getJWT().toString();
+        String email = model.getEmail();
         mViewModel.setJWT(jwt);
+        mViewModel.setEmail(email);
 
     }
 

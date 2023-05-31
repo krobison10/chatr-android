@@ -49,6 +49,8 @@ public class ChatViewModel extends AndroidViewModel {
     MutableLiveData<List<ChatRoom>> chatRoomsLiveData;
     public String mJwt;
 
+    public String mEmail;
+
 
     /**
      * Constructor for ChatViewModel.
@@ -470,6 +472,13 @@ public class ChatViewModel extends AndroidViewModel {
         Log.d("ChatViewModel", "Getting chat rooms...");
         getChatRooms();
         return chatRoomsLiveData;
+    }
+
+    public void setEmail(String email) {
+        this.mEmail = email;
+    }
+    public String getEmail() {
+        return mEmail;
     }
 
     /**

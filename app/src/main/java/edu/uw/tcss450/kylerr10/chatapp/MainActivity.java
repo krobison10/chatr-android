@@ -35,7 +35,6 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
-
 /**
  * Main activity of the application.
  *

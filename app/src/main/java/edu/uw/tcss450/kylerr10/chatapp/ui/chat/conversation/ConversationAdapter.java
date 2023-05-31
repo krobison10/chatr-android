@@ -8,8 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -21,18 +26,21 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     // Holds the conversation data for the adapter
     private Conversation mConversation;
     private RecyclerView mRecyclerView;
+    String email = ChatViewModelHelper.getEmail();
 
+    String mEmail = email;
     // View type for the messages sent by the user
-    private static final int VIEW_TYPE_SENDER = 0;
+    public static final int VIEW_TYPE_SENDER = 0;
 
     // View type for the messages received by the user
-    private static final int VIEW_TYPE_RECEIVER = 1;
-
+    public static final int VIEW_TYPE_RECEIVER = 1;
+    static ConversationFragment fragment = new ConversationFragment();
     /**
      * Constructor for the adapter.
      */
     public ConversationAdapter() {
         mConversation = new Conversation();
+        mConversation.setMessages(new ArrayList<>());
     }
 
     /**
@@ -41,26 +49,38 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      */
     public void setConversation(Conversation conversation) {
         this.mConversation = conversation;
+        if (mConversation != null) {
+            mConversation.setMessages(new ArrayList<>()); // Initialize the messages list
+        }
         notifyDataSetChanged();
     }
 
-    /**
-     * Add a new message to the conversation.
-     * @param message the message to add
-     */
+    public void addMessage(Conversation message, String senderName, String receiverName) {
+        // Add the new message at the beginning of the list
+        mConversation.getMessages().add(0, message);
+
+        // Notify the adapter that a new item has been inserted at position 0
+        notifyItemInserted(0);
+
+        // Scroll to the bottom of the message list
+        scrollToBottom();
+
+        // Log the added message
+        Log.d("ConversationAdapter", "Added message: " + message.getContent());
+    }
+
     public void addMessage(Conversation message) {
-        if (mConversation.getMessages() != null) {
-            mConversation.getMessages().add(message);
+        // Add the new message at the beginning of the list
+        mConversation.getMessages().add(0, message);
 
-            // Notify the adapter that a new item has been inserted
-            notifyItemInserted(mConversation.getMessages().size() - 1);
+        // Notify the adapter that a new item has been inserted at position 0
+        notifyItemInserted(0);
 
-            // Scroll to the bottom of the message list
-            scrollToBottom();
+        // Scroll to the bottom of the message list
+        scrollToBottom();
 
-            // Log the added message
-            Log.d("ConversationAdapter", "Added message: " + message.getContent());
-        }
+        // Log the added message
+        Log.d("ConversationAdapter", "Added message: " + message.getContent());
     }
 
     /**
@@ -68,7 +88,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      */
     public void scrollToBottom() {
         if (mRecyclerView != null && mConversation.getMessages() != null && mConversation.getMessages().size() > 0) {
-            mRecyclerView.scrollToPosition(mConversation.getMessages().size() - 1);
+            mRecyclerView.smoothScrollToPosition(mConversation.getMessages().size() - 1);
         }
     }
 
@@ -79,17 +99,13 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         return 0;
     }
-
     @Override
     public int getItemViewType(int position) {
-        Conversation message = mConversation.getMessages().get(position);
-        if (message.isFromSender(1)) {
-            // If the message is sent by the current user, use the sender layout
-            return VIEW_TYPE_SENDER;
-        } else {
-            // If the message is received by the current user, use the receiver layout
-            return VIEW_TYPE_RECEIVER;
+        if (mConversation != null && mConversation.getMessages() != null && position >= 0 && position < mConversation.getMessages().size()) {
+            Conversation message = mConversation.getMessages().get(position);
+            return message.getViewType();
         }
+        return super.getItemViewType(position);
     }
 
     @NonNull
@@ -117,6 +133,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             // If the holder is a receiver view holder, bind the data using the receiver view holder
             ((ReceiverViewHolder) holder).bind(message);
         }
+    }
+
+    /**
+     * Set the list of messages in the conversation and update the adapter.
+     * @param messages The list of Conversation objects representing the messages
+     */
+    public void setMessages(List<Conversation> messages) {
+        mConversation.setMessages(messages);
+        notifyDataSetChanged();
     }
 
     /**
@@ -152,7 +177,7 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void bind(Conversation message) {
             mMessageTextView.setText(message.getContent());
             mNameTextView.setText(message.getSenderName());
-            mTimeTextView.setText(formatTimestamp(message.getTimestamp()));
+            mTimeTextView.setText(fragment.formatTimestamp(message.getTimestamp()));
 
             // Log the bound message
             Log.d("ConversationAdapter", "Bound sender message: " + message.getContent());
@@ -192,22 +217,11 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void bind(Conversation message) {
             mMessageTextView.setText(message.getContent());
             mNameTextView.setText(message.getSenderName());
-            mTimeTextView.setText(formatTimestamp(message.getTimestamp()));
+            mTimeTextView.setText(fragment.formatTimestamp(message.getTimestamp()));
 
             // Log the bound message
             Log.d("ConversationAdapter", "Bound receiver message: " + message.getContent());
         }
-    }
-
-    /**
-     * This method formats a given timestamp into a string of the format "h:mm a".
-     *
-     * @param timestamp the timestamp to be formatted
-     * @return the formatted timestamp string
-     */
-    private static String formatTimestamp(long timestamp) {
-        SimpleDateFormat mDateFormat = new SimpleDateFormat("h:mm a");
-        return mDateFormat.format(new Date(timestamp));
     }
 
     @Override

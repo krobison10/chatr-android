@@ -23,42 +23,64 @@ import java.util.Map;
 import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
 public class ConversationSendViewModel extends AndroidViewModel {
-    private final MutableLiveData<JSONObject> mResponse;
+
+    private final MutableLiveData<JSONObject> mSendMessage;
+    private final MutableLiveData<JSONObject> mGetMessage;
+
+    String jwt = ChatViewModelHelper.getJWT();
+    public String mJwt = jwt;
+
+
     public ConversationSendViewModel(@NonNull Application application) {
         super(application);
-        mResponse = new MutableLiveData<>();
-        mResponse.setValue(new JSONObject());
+        mSendMessage = new MutableLiveData<>();
+        mSendMessage.setValue(new JSONObject());
+
+        mGetMessage = new MutableLiveData<>();
+        mGetMessage.setValue(new JSONObject());
     }
 
     public void addResponseObserver(@NonNull LifecycleOwner owner,
                                     @NonNull Observer<? super JSONObject> observer) {
-        mResponse.observe(owner, observer);
+        mSendMessage.observe(owner, observer);
+    }
+    public void addResponseObserverGetMessage(@NonNull LifecycleOwner owner, @NonNull Observer<? super JSONObject> observer) {
+        mGetMessage.observe(owner, observer);
     }
 
-    public void sendMessage(final String chatId, final String jwt, final String message) {
-        String url =  "http://10.0.2.2:5000/chats/messages";
+    public void sendMessage(String chatId, String jwt, String message) {
+        String url = "http://10.0.2.2:5000/messages";
 
         JSONObject body = new JSONObject();
         try {
             body.put("message", message);
+            Log.d("SENDChat", "message: " + message);
             body.put("chatId", chatId);
+            Log.d("SENDChat", "chatid: " + chatId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Request request = new JsonObjectRequest(
+        JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
-                body, //push token found in the JSONObject body
-                mResponse::setValue, // we get a response but do nothing with it
-                this::handleError) {
-
+                body,
+                response -> {
+                    Log.d("SENDChat", "Success response: " + response.toString());
+                    // Handle the success response here
+                },
+                error -> {
+                    handleError(error, mSendMessage);
+                    Log.e("SENDChat", "Error response: " + error);
+                    // Handle the error response here
+                }
+        ) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                // add headers <key,value>
                 headers.put("Authorization", jwt);
                 Log.d("SENDChat1", "USER JWT: " + jwt);
                 return headers;
@@ -69,25 +91,72 @@ public class ConversationSendViewModel extends AndroidViewModel {
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        //Instantiate the RequestQueue and add the request to the queue
+
+        // Log the request URL and body
+        Log.d("SENDChat", "URL: " + url);
+        Log.d("SENDChat", "Request Body: " + body.toString());
+
+        // Add the request to the request queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    public void getMessage(String chatId, ConversationCallback callback) {
+        String url = "http://10.0.2.2:5000/messages/" + chatId;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    Log.d("GETMessages", "Success response: " + response.toString());
+                    // Pass the response back to the callback
+                    callback.onMessageReceived(response);
+                },
+                error -> {
+                    handleError(error, mGetMessage);
+                    // Pass the error response back to the callback
+                    callback.onMessageReceived(null);
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Authorization", mJwt);
+                Log.d("GETMessages", "USER JWT: " + mJwt);
+                return headers;
+            }
+        };
+
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        // Log the request URL
+        Log.d("GETMessages", "URL: " + url);
+
+        // Add the request to the request queue
         RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
                 .addToRequestQueue(request);
     }
 
 
-
-    private void handleError(final VolleyError error) {
+    private void handleError(final VolleyError error, final MutableLiveData<JSONObject> responseDestination) {
         if (Objects.isNull(error.networkResponse)) {
             Log.e("NETWORK ERROR", error.getMessage());
-        }
-        else {
+        } else {
             String data = new String(error.networkResponse.data, Charset.defaultCharset());
             Log.e("CLIENT ERROR",
                     error.networkResponse.statusCode +
                             " " +
                             data);
         }
+        responseDestination.postValue(null);
     }
 
-
+    // Callback interface for receiving the API response
+    public interface ConversationCallback {
+        void onMessageReceived(JSONObject response);
+    }
 }

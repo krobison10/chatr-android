@@ -26,6 +26,9 @@ public class Forecast implements Serializable {
      */
     private final List<HourlyForecast> mHourlyList;
 
+    private final double mLatitude;
+    private final double mLongitude;
+
     /**
      * Constructs a Forecast object to store the city, state, daily forecast list, and
      * hourly forecast list for a particular location.
@@ -38,12 +41,16 @@ public class Forecast implements Serializable {
             final String mCity,
             final String mState,
             final List<DailyForecast> mDailyList,
-            final List<HourlyForecast> mHourlyList
+            final List<HourlyForecast> mHourlyList,
+            final double mLatitude,
+            final double mLongitude
     ) {
         this.mCity = mCity;
         this.mState = mState;
         this.mDailyList = mDailyList;
         this.mHourlyList = mHourlyList;
+        this.mLatitude = mLatitude;
+        this.mLongitude = mLongitude;
     }
 
     /**
@@ -76,5 +83,19 @@ public class Forecast implements Serializable {
      */
     public List<HourlyForecast> getHourlyList() {
         return mHourlyList;
+    }
+    /**
+     * Returns the latitude of the location.
+     * @return The latitude of the location.
+     */
+    public double getLatitude() {
+        return mLatitude;
+    }
+    /**
+     * Returns the longitude of the location.
+     * @return The longitude of the location.
+     */
+    public double getLongitude() {
+        return mLongitude;
     }
 }

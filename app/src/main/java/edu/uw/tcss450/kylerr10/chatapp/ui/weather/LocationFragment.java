@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -227,6 +228,7 @@ public class LocationFragment extends Fragment {
     public void onPause() {
         super.onPause();
         if (mMapFragment.getMarker() != null) {
+            Log.d("SETLOCATION", mMapFragment.getMarker().getPosition().latitude + ", " + mMapFragment.getMarker().getPosition().longitude);
             LatLng position = mMapFragment.getMarker().getPosition();
             new ViewModelProvider(requireActivity()).get(ForecastViewModel.class).connectGet(
                     requireActivity(),

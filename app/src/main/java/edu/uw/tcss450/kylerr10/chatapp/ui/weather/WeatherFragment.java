@@ -27,11 +27,15 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
 public class WeatherFragment extends Fragment {
 
     private ForecastViewModel mForecastModel;
+    private LocationViewModel mLocationModel;
+    private UserLocationViewModel mUserLocationModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mForecastModel = new ViewModelProvider(requireActivity()).get(ForecastViewModel.class);
+        mLocationModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
+        mUserLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
     }
 
     @Override
@@ -56,6 +60,29 @@ public class WeatherFragment extends Fragment {
         mForecastModel.addForecastObserver(getViewLifecycleOwner(), forecast -> {
             if (!forecast.getCity().isEmpty() && !forecast.getState().isEmpty()) {
                 binding.textCurrentCityState.setText(String.format("%s, %s", forecast.getCity(), forecast.getState()));
+                mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+                    if (location != null) {
+                        // Determine if the location is the devices current location or a marked location
+                        binding.textCurrentLocation.setText(
+                                location.getLatitude() == forecast.getLatitude()
+                                        && location.getLongitude() == forecast.getLongitude()
+                                        ? R.string.title_current_location
+                                        : R.string.title_marked_location
+                        );
+                        // Determine if the current or marked location is a saved location
+                        mUserLocationModel.addLocationObserver(getViewLifecycleOwner(), savedLocations -> {
+                            if (savedLocations != null && savedLocations.size() > 0) {
+                                for (UserLocation savedLocation : savedLocations) {
+                                    if (savedLocation.getLatitude() == forecast.getLatitude()
+                                            && savedLocation.getLongitude() == forecast.getLongitude()) {
+                                        binding.textCurrentLocation.setText(R.string.title_saved_location);
+                                        return;
+                                    }
+                                }
+                            } else Log.e("LOCATIONINFO", "User location is null.");
+                        });
+                    } else Log.e("LOCATIONINFO", "Location is null.");
+                });
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
             if (!forecast.getDailyList().isEmpty()) {
                 binding.recyclerViewWeatherDaily.setAdapter(
@@ -65,6 +92,7 @@ public class WeatherFragment extends Fragment {
             if (!forecast.getHourlyList().isEmpty()) {
                 binding.textCurrentTemperature.setText(forecast.getHourlyList().get(0).getTemperature());
                 binding.textWeatherDescription.setText(forecast.getHourlyList().get(0).getForecast());
+                binding.imageWeathericon.setImageIcon(forecast.getHourlyList().get(0).getForecastIcon(binding.weatherCurrentCard));
                 binding.imageWeathericon.setVisibility(View.VISIBLE);
                 binding.recyclerViewWeatherHourly.setAdapter(
                         new HourlyWeatherCardRecyclerViewAdapter(forecast.getHourlyList())

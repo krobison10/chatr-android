@@ -92,4 +92,6 @@
     <string name="title_clear_locations">Clear saved locations</string>
     <string name="title_change_password">Change password</string>
     <string name="title_location">Location</string>
+    <string name="title_saved_location">Saved Location</string>
+    <string name="title_marked_location">Marked Location</string>
 </resources>

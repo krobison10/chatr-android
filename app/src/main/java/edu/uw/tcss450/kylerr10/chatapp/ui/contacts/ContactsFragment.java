@@ -1,10 +1,14 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.contacts;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,7 +27,7 @@ import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 /**
  * Represents the main root fragment of the contacts page, contains the tab layout.
  *
- * @author Kyler Robison, Betty Abera
+ * @author Kyler Robison
  */
 public class ContactsFragment extends Fragment {
 
@@ -36,6 +40,20 @@ public class ContactsFragment extends Fragment {
 
         JWT jwt = new ViewModelProvider(getActivity()).get(UserInfoViewModel.class).getJWT();
         mViewModel.mJWT = jwt;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FragmentContactsBinding binding = FragmentContactsBinding.bind(getView());
+
+        boolean containsText = binding.searchText.getText().toString().length() != 0;
+        binding.iconSearch.setVisibility(containsText ? View.GONE : View.VISIBLE);
+        binding.btnClear.setVisibility(containsText ? View.VISIBLE : View.GONE);
+
+        binding.overlay.setClickable(!containsText);
+        binding.overlay.setFocusable(!containsText);
+
     }
 
     @Override
@@ -78,23 +96,84 @@ public class ContactsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        FragmentContactsBinding.bind(view).searchViewContacts.setOnQueryTextListener(
-                new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextSubmit(String s) {
-                        mViewModel.setSearchText(s);
-                        return false;
-                    }
+    public void onViewCreated(@NonNull View v, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(v, savedInstanceState);
+        FragmentContactsBinding binding = FragmentContactsBinding.bind(v);
+        binding.searchText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                mViewModel.setSearchText(binding.searchText.getText().toString());
+            }
+        });
 
-                    @Override
-                    public boolean onQueryTextChange(String s) {
-                        mViewModel.setSearchText(s);
-                        return false;
-                    }
+        binding.overlay.setOnClickListener(view -> {
+            binding.searchText.requestFocus();
+            binding.searchText.setFocusableInTouchMode(true);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(binding.searchText, InputMethodManager.SHOW_IMPLICIT);
+
+        });
+
+        binding.searchText.setOnFocusChangeListener((view, focus) -> {
+            if(binding.searchText.getText().toString().length() == 0) {
+                if(focus) { //No text and gaining focus
+                    binding.iconSearch.setVisibility(View.GONE);
+                    binding.overlay.setClickable(false);
+                    binding.overlay.setFocusable(false);
+                    binding.btnClear.setVisibility(View.VISIBLE);
                 }
-        );
+                else { //No text and loosing focus
+                    binding.iconSearch.setVisibility(View.VISIBLE);
+                    binding.overlay.setClickable(true);
+                    binding.overlay.setFocusable(true);
+                    binding.btnClear.setVisibility(View.GONE);
+                }
+            }
+            else {
+                if(focus) { //Text and gaining focus
+                    binding.overlay.setClickable(false);
+                    binding.overlay.setFocusable(false);
+                }
+            }
 
+            if(!focus) { //Close keyboard
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+
+            binding.searchText.setHint(focus ? "Search" : "");
+
+        });
+
+        binding.searchText.setOnEditorActionListener((view, actionId, event) -> {
+            if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+                InputMethodManager imm = (InputMethodManager)
+                        getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                binding.searchText.clearFocus();
+
+                getActivity().findViewById(R.id.navigation_contacts).requestFocus();
+                return true;
+            }
+            return false;
+        });
+
+        binding.btnClear.setOnClickListener(view -> {
+            if(binding.searchText.getText().toString().length() != 0) {
+                binding.searchText.setText("");
+            }
+            else {
+                binding.searchText.clearFocus();
+            }
+
+            if(!binding.searchText.hasFocus()) {
+                binding.searchText.requestFocus();
+                binding.searchText.clearFocus();
+            }
+        });
     }
 }

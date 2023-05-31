@@ -13,12 +13,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.json.JSONObject;
 
-import edu.uw.tcss450.kylerr10.chatapp.model.NewMessageCountViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.Conversation;
-import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationSendViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationViewModel;
@@ -35,7 +32,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private ConversationSendViewModel mSendViewModel;
     private MainPushMessageReceiver mMainPushMessageReceiver;
     private ConversationViewModel mConversationViewModel;
-    private ConversationAdapter mAdapter;
+
     private String chatId;
 
     @Override

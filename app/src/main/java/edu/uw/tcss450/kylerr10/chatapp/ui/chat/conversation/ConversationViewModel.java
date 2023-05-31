@@ -22,8 +22,13 @@ import java.util.Map;
 import java.util.Objects;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
+/**
+ * ViewModel class that manages the list of conversations in a chat.
+ * @author Leyla Ahmed
+ */
 public class ConversationViewModel extends AndroidViewModel {
 
+    // MutableLiveData to hold the list of conversations
     private MutableLiveData<List<Conversation>> mMessagesLiveData;
 
     /**
@@ -33,21 +38,17 @@ public class ConversationViewModel extends AndroidViewModel {
      */
     private Map<Integer, MutableLiveData<List<Conversation>>> mMessages;
 
+    /**
+     * Constructor for ConversationViewModel.
+     * Initializes the MutableLiveData and the Map.
+     * @param application The application context
+     */
     public ConversationViewModel(@NonNull Application application) {
         super(application);
         mMessages = new HashMap<>();
         mMessagesLiveData = new MutableLiveData<>();
     }
 
-    public void receiveMessage(int chatId, Conversation message) {
-        MutableLiveData<List<Conversation>> chatMessagesLiveData = getOrCreateMapEntry(chatId);
-        List<Conversation> currentMessages = chatMessagesLiveData.getValue();
-        if (currentMessages == null) {
-            currentMessages = new ArrayList<>();
-        }
-        currentMessages.add(message);
-        chatMessagesLiveData.setValue(currentMessages);
-    }
     /**
      * Register as an observer to listen to a specific chat room's list of messages.
      * @param chatId the chatid of the chat to observer
@@ -75,6 +76,11 @@ public class ConversationViewModel extends AndroidViewModel {
         return getOrCreateMapEntry(chatId).getValue();
     }
 
+    /**
+     * Gets or creates a MutableLiveData entry for the specified chat ID.
+     * @param chatId The ID of the chat
+     * @return The MutableLiveData for the chat ID
+     */
     private MutableLiveData<List<Conversation>> getOrCreateMapEntry(final int chatId) {
         if(!mMessages.containsKey(chatId)) {
             mMessages.put(chatId, new MutableLiveData<>(new ArrayList<>()));

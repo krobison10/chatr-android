@@ -34,14 +34,13 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/weather_current_card"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:checkable="true"
                     style="@style/Widget.Material3.CardView.Filled"
-                    app:cardCornerRadius="12dp"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginEnd="18dp"
+                    android:checkable="true"
                     app:cardUseCompatPadding="false"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -85,7 +84,7 @@
                             android:textSize="48dp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/text_current_location" />
+                            app:layout_constraintTop_toBottomOf="@+id/text_current_location"/>
 
                         <ImageView
                             android:id="@+id/image_weathericon"
@@ -114,6 +113,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </com.google.android.material.card.MaterialCardView>
+
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/weather_hourly_card"

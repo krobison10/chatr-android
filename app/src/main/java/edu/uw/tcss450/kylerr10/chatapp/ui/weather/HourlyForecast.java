@@ -90,7 +90,7 @@ public class HourlyForecast implements Serializable {
      * @return The short forecast for the hour.
      */
     public String getForecast() {
-        return mShortForecast;
+        return mShortForecast.split(" And ")[0];
     }
 
     /**

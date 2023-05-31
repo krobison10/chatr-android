@@ -24,6 +24,8 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationSendView
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationViewModel;
 
 
+import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+
 /**
  * An activity that displays the conversation between users in a chat room.
  * @author Leyla Ahmed
@@ -38,6 +40,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeManager.applyTheme(this); // Required to apply user's chosen theme to activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
 

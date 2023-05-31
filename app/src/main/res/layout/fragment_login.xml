@@ -63,6 +63,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switch_stay_logged"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:checked="true"
+        android:text="@string/switch_stay_logged"
+        app:layout_constraintEnd_toEndOf="@+id/password_layout"
+        app:layout_constraintStart_toStartOf="@+id/password_layout"
+        app:layout_constraintTop_toBottomOf="@+id/password_layout" />
+
     <Button
         android:id="@+id/button_to_register"
         style="@style/Widget.Material3.Button.TextButton"

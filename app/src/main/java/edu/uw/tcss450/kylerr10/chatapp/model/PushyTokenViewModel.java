@@ -56,53 +56,65 @@ public class PushyTokenViewModel extends AndroidViewModel {
         mResponse.observe(owner, observer);
     }
 
-    public void retrieveToken(PushyTokenCallback callback) {
+    public void retrieveToken() {
         if (!Pushy.isRegistered(getApplication().getApplicationContext())) {
+
             Log.d("PUSH VIEW MODEL", "FETCHING NEW TOKEN");
-            new RegisterForPushNotificationsAsync(callback).execute();
+            new RegisterForPushNotificationsAsync().execute();
+
         } else {
             Log.d("PUSH VIEW MODEL", "USING OLD TOKEN");
-            String deviceToken = Pushy.getDeviceCredentials(getApplication().getApplicationContext()).token;
-            callback.onTokenReceived(deviceToken);
+            mPushyToken.setValue(
+                    Pushy.getDeviceCredentials(getApplication().getApplicationContext()).token);
         }
     }
 
+    /**
+     * This is the method described in the Pushy documentation. Note the Android class
+     * AsyncTask is deprecated as of Android Q. It is fine to use here and for this
+     * quarter. In your future Android development, look for an alternative solution.
+     */
     private class RegisterForPushNotificationsAsync extends AsyncTask<Void, Void, String> {
-        private PushyTokenCallback callback;
-
-        public RegisterForPushNotificationsAsync(PushyTokenCallback callback) {
-            this.callback = callback;
-        }
-
         protected String doInBackground(Void... params) {
             String deviceToken;
             try {
+                // Assign a unique token to this device
                 deviceToken = Pushy.register(getApplication().getApplicationContext());
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
+                // Return exc to onPostExecute
                 return e.getMessage();
             }
+            // Success
             return deviceToken;
         }
 
         @Override
         protected void onPostExecute(String token) {
             if (token.isEmpty()) {
+                // Show error in log - You should add error handling for the user.
                 Log.e("ERROR RETRIEVING PUSHY TOKEN", token);
-                callback.onTokenError("Token retrieval failed");
             } else {
-                callback.onTokenReceived(token);
+                mPushyToken.setValue(token);
             }
         }
     }
 
-    // Update your sendTokenToWebservice method
-    public void sendTokenToWebservice(final String token, final String jwt) {
+    /**
+     * Send this Pushy device token to the web service.
+     * @param jwt
+     * @throws IllegalStateException when this method is called before the token is retrieve
+     */
+    public void sendTokenToWebservice(final String jwt) {
+        if (mPushyToken.getValue().isEmpty()) {
+            throw new IllegalStateException("No pushy token. Do NOT call until token is retrieved");
+        }
 
         String url = "http://10.0.2.2:5000/auth";
 
         JSONObject body = new JSONObject();
         try {
-            body.put("token", token);
+            body.put("token", mPushyToken.getValue());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -123,6 +135,31 @@ public class PushyTokenViewModel extends AndroidViewModel {
             }
         };
 
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        //Instantiate the RequestQueue and add the request to the queue
+        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
+                .addToRequestQueue(request);
+    }
+
+    public void deleteTokenFromWebservice(final String jwt) {
+        String url = "http://10.0.2.2:5000/auth";
+        Request request = new JsonObjectRequest(
+                Request.Method.DELETE,
+                url,
+                null,
+                mResponse::setValue,
+                this::handleError) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // add headers <key,value>
+                headers.put("Authorization", jwt);
+                return headers;
+            }
+        };
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -154,35 +191,4 @@ public class PushyTokenViewModel extends AndroidViewModel {
             }
         }
     }
-
-    public void deleteTokenFromWebservice(final String jwt) {
-        String url = "http://10.0.2.2:5000/auth";
-        Request request = new JsonObjectRequest(
-                Request.Method.DELETE,
-                url,
-                null,
-                mResponse::setValue,
-                this::handleError) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-// add headers <key,value>
-                headers.put("Authorization", jwt);
-                return headers;
-            }
-        };
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                10_000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//Instantiate the RequestQueue and add the request to the queue
-        RequestQueueSingleton.getInstance(getApplication().getApplicationContext())
-                .addToRequestQueue(request);
-    }
-
-    public interface PushyTokenCallback {
-        void onTokenReceived(String token);
-        void onTokenError(String errorMessage);
-    }
-
 }

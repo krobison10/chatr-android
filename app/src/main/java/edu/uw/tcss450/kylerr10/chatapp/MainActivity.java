@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
@@ -175,6 +176,10 @@ public class MainActivity extends AppCompatActivity {
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+
+        new ViewModelProvider(this).get(PushyTokenViewModel.class).deleteTokenFromWebservice(
+                new ViewModelProvider(this).get(UserInfoViewModel.class).getJWT().toString()
+        );
         //End the app completely
         finishAndRemoveTask();
     }

@@ -4,6 +4,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.R;
-import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatRoom;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMemberAdapter;
@@ -31,27 +33,31 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatSelectedMembersA
  * @author Leyla Ahmed
  */
 public class CreateChatDialogue extends DialogFragment {
+
+    //The list of all chat members
     private List<ChatMember> allMembers = new ArrayList<>();
+
+    //The list of chat members after applying a filter
     private List<ChatMember> filteredMembers = new ArrayList<>();
+
+    //The list of currently selected chat members
     private List<ChatMember> selectedMembers = new ArrayList<>();
-    private OnCreateChatRoomListener mListener;
-    private ChatMemberAdapter adapter;
+
+    //The adapter for displaying the selected chat members
     private ChatSelectedMembersAdapter selectedMembersAdapter;
 
+    //The adapter for displaying the chat members
+    private ChatMemberAdapter adapter;
+
+    //The ViewModel associated with the chat
     private ChatViewModel mViewModel;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
-    public interface OnCreateChatRoomListener {
-        void onCreateChatRoom(ChatRoom chatRoom, List<ChatMember> selectedMembers);
-    }
-
-    public void setOnCreateChatRoomListener(OnCreateChatRoomListener listener) {
-        mListener = listener;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,11 +81,10 @@ public class CreateChatDialogue extends DialogFragment {
         selectedMembersAdapter = new ChatSelectedMembersAdapter(selectedMembers);
         selectedMembersList.setAdapter(selectedMembersAdapter);
 
-
         // Create a list of all chat members
-        allMembers.add(new ChatMember(10, "Petra"));
-        allMembers.add(new ChatMember(8, "test2First"));
-        allMembers.add(new ChatMember(5, "Aubree"));
+        allMembers.add(new ChatMember("test1@test.com"));
+        allMembers.add(new ChatMember("test2@test.com"));
+        allMembers.add(new ChatMember("test3@test.com"));
         // Add more members as needed
 
         // Create an empty list for filtered members
@@ -97,7 +102,6 @@ public class CreateChatDialogue extends DialogFragment {
         memberList.setAdapter(adapter);
 
         // Set up search functionality
-// Set up search functionality
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -111,8 +115,7 @@ public class CreateChatDialogue extends DialogFragment {
             }
         });
 
-// Set up search close button listener
-// Set up search close button listener
+        // Set up search close button listener
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -128,7 +131,7 @@ public class CreateChatDialogue extends DialogFragment {
             }
         });
 
-// Set up focus change listener for the SearchView
+        // Set up focus change listener for the SearchView
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -139,6 +142,7 @@ public class CreateChatDialogue extends DialogFragment {
             }
         });
 
+        // OnClickListener for the createButton
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,18 +150,25 @@ public class CreateChatDialogue extends DialogFragment {
                 String chatRoomName = chatRoomNameInput.getText().toString();
                 List<ChatMember> selectedMembers = getSelectedMembers();
 
-                int chatid = 2;
-                ChatRoom chatRoom = new ChatRoom(chatid++, chatRoomName, "Last message in Chat Room " + chatRoomName);
-
-                // Call the listener to add the new chat room to the list
-                if (mListener != null) {
-                    mListener.onCreateChatRoom(chatRoom, selectedMembers);
+                // Extract emails from selected members and add them to the emails list
+                List<String> emails = new ArrayList<>();
+                for (ChatMember member : selectedMembers) {
+                    String email = member.getName();
+                    emails.add(email);
                 }
+
+                // Call the createChatRoom method of ChatViewModel and pass the emails list
+                mViewModel.createChatRoom(chatRoomName, emails);
+
+                // Print statement for debugging
+                Log.d("CreateChatRoom", "Dialog dismissed");
+
                 // Dismiss the dialog
                 dismiss();
             }
         });
 
+        // OnClickListener for the cancelButton
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,6 +177,10 @@ public class CreateChatDialogue extends DialogFragment {
         });
     }
 
+    /**
+     * Filters the members based on the given query and updates the filtered members list.
+     * @param query The search query to filter the members
+     */
     private void filterMembers(String query) {
         filteredMembers.clear();
         for (ChatMember member : allMembers) {
@@ -173,9 +188,13 @@ public class CreateChatDialogue extends DialogFragment {
                 filteredMembers.add(member);
             }
         }
-        adapter.notifyDataSetChanged();  // Add this line
+        adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Selects or deselects a chat member.
+     * @param member The ChatMember object to select or deselect
+     */
     private void selectMember(ChatMember member) {
         if (!member.isSelected()) {
             if (!selectedMembers.contains(member)) {
@@ -189,8 +208,11 @@ public class CreateChatDialogue extends DialogFragment {
         }
     }
 
+    /**
+     * Retrieves the list of currently selected chat members.
+     * @return The list of ChatMember objects representing the selected members
+     */
     private List<ChatMember> getSelectedMembers() {
         return selectedMembers;
     }
-
 }

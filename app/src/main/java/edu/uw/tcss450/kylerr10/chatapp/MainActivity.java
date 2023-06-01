@@ -271,14 +271,10 @@ public class MainActivity extends AppCompatActivity {
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
     private class MainPushMessageReceiver extends BroadcastReceiver {
-        private ContactsViewModel mContactsViewModel =
+        private final ContactsViewModel mContactsViewModel =
                 new ViewModelProvider(MainActivity.this).get(ContactsViewModel.class);
         @Override
         public void onReceive(Context context, Intent intent) {
-//            NavController nc =
-//                    Navigation.findNavController(
-//                            MainActivity.this, R.id.nav_host_fragment);
-//            NavDestination nd = nc.getCurrentDestination();
             if (intent.hasExtra("contact")) {
                 mContactsViewModel.updateContacts();
             }

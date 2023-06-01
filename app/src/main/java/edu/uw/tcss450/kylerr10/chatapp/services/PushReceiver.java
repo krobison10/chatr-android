@@ -105,16 +105,16 @@ public class PushReceiver extends BroadcastReceiver {
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                         .setContentIntent(pendingIntent);
             }
-            else if(typeOfMessage.equals("contact")) {
+            else if(typeOfMessage.equals("contact") && contactEvent.equals("newRequest")) {
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_logo_foreground)
-                        .setContentTitle("Contact Event")
-                        .setContentText(contactEvent)
+                        .setContentTitle("Chatr")
+                        .setContentText("New contact request")
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
             }
             else {
-                builder = null;
+                return;
             }
 
 

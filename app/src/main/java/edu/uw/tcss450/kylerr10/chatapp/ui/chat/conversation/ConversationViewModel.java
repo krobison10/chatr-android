@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
 /**
  * ViewModel class that manages the list of conversations in a chat.
@@ -187,7 +188,8 @@ public class ConversationViewModel extends AndroidViewModel {
      */
     public void addMessage(final int chatId, final Conversation message) {
         List<Conversation> list = getMessageListByChatId(chatId);
-        list.add(message);
+        int insertionIndex = findInsertionIndex(list, message);
+        list.add(insertionIndex, message);
         getOrCreateMapEntry(chatId).setValue(list);
     }
 
@@ -206,5 +208,43 @@ public class ConversationViewModel extends AndroidViewModel {
                             " " +
                             data);
         }
+    }
+
+    /**
+     * Finds the correct insertion index for the new message based on its sender and receiver views.
+     * @param messageList The list of messages
+     * @param newMessage The new message to be inserted
+     * @return The insertion index
+     */
+    private int findInsertionIndex(List<Conversation> messageList, Conversation newMessage) {
+        int index = 0;
+        boolean foundSender = false;
+
+        for (Conversation message : messageList) {
+            if (message.getName().equals(ChatViewModelHelper.getEmail())) {
+                // The existing message is sent by the user
+                if (newMessage.getName().equals(ChatViewModelHelper.getEmail())) {
+                    // The new message is also sent by the user, set view type as sender
+                    newMessage.setViewType(ConversationAdapter.VIEW_TYPE_SENDER);
+                } else {
+                    // The new message is received by the user, set view type as receiver
+                    newMessage.setViewType(ConversationAdapter.VIEW_TYPE_RECEIVER);
+                }
+                foundSender = true;
+            } else {
+                // The existing message is received by the user, set view type as receiver
+                message.setViewType(ConversationAdapter.VIEW_TYPE_RECEIVER);
+
+                if (!foundSender && newMessage.getName().equals(ChatViewModelHelper.getEmail())) {
+                    // The new message is sent by the user and no sender message is found yet, set view type as sender
+                    newMessage.setViewType(ConversationAdapter.VIEW_TYPE_SENDER);
+                    foundSender = true;
+                }
+            }
+
+            index++;
+        }
+
+        return index;
     }
 }

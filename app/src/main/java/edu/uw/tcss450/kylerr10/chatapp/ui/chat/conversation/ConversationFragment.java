@@ -125,9 +125,7 @@ public class ConversationFragment extends Fragment {
             mMessageEditText.setText("");
 
             mAdapter.scrollToBottom();
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault()).format(new Date());
-            Conversation newMessage = new Conversation(messageId, messageText, mEmail, timestamp);
-            mConversationViewModel.addMessage(Integer.parseInt(chatId), newMessage);
+
         }
     }
     /**
@@ -274,16 +272,26 @@ public class ConversationFragment extends Fragment {
      * @return The formatted timestamp in "h:mm a" format
      */
     String formatTimestamp(String timestamp) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        // Define an array of input patterns to handle different timestamp formats
+        String[] inputPatterns = {
+                "yyyy-MM-dd HH:mm:ss.SSSSSS",
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                // Add more patterns as needed for different formats
+        };
+
         SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
 
-        try {
-            Date date = inputFormat.parse(timestamp);
-            String formattedTimestamp = outputFormat.format(date);
-            Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
-            return formattedTimestamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for (String inputPattern : inputPatterns) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+
+            try {
+                Date date = inputFormat.parse(timestamp);
+                String formattedTimestamp = outputFormat.format(date);
+                Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
+                return formattedTimestamp;
+            } catch (ParseException e) {
+                // Ignore and try the next pattern if parsing fails
+            }
         }
 
         return "";

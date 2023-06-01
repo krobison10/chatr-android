@@ -31,12 +31,16 @@ public class Conversation implements Serializable {
     // Timestamp of the message
     private String mTimestamp;
 
+    private String mEmail;
+
+    private int mChatId;
+
 
     /**
      * Constructs a new Conversation object.
      */
     public Conversation() {
-        // Required empty public constructor
+        this.mMessages = new ArrayList<>();
     }
 
     /**
@@ -53,6 +57,7 @@ public class Conversation implements Serializable {
         this.mTimestamp = timestamp;
         mMessages = new ArrayList<>();
     }
+
 
     /**
      * Returns the ID of the conversation.
@@ -91,7 +96,11 @@ public class Conversation implements Serializable {
      * Returns the list of messages in the conversation.
      * @return the list of messages
      */
+    // Getter method for messages
     public List<Conversation> getMessages() {
+        if (mMessages == null) {
+            mMessages = new ArrayList<>();
+        }
         return mMessages;
     }
 
@@ -104,11 +113,11 @@ public class Conversation implements Serializable {
      */
     public static Conversation createFromJsonString(final String cmAsJson) throws JSONException {
         final JSONObject msg = new JSONObject(cmAsJson);
-        int conversationId = msg.getInt("mConversationId");
-        String content = msg.getString("mContent");
-        String senderName = msg.getString("mSenderName");
-        String timestamp = msg.getString("mTimestamp");
-        return new Conversation(conversationId, content, senderName, timestamp);
+        return new Conversation(msg.getInt("messageid"),
+        msg.getString("message"),
+        msg.getString("email"),
+        msg.getString("timestamp"));
+
     }
 
     /**

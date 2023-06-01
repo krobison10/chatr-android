@@ -357,7 +357,7 @@ public class ChatViewModel extends AndroidViewModel {
                 error -> {
                     error.printStackTrace();
 
-                    Log.e("GetChatRoomMembers4", "Error getting chat room members: " + error.getMessage());
+                    Log.e("GetChatRoomMembers", "Error getting chat room members: " + error.getMessage());
 
                     // Invoke the onError callback
                     callback.onError();

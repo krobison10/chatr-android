@@ -67,7 +67,7 @@ public class PushReceiver extends BroadcastReceiver {
             //create an Intent to broadcast a message to other parts of the app.
             Intent i = new Intent(RECEIVED_NEW_MESSAGE);
 
-            if(typeOfMessage.equals("msg")) {
+            if(typeOfMessage.equals("message")) {
                 i.putExtra("chatMessage", message);
                 i.putExtra("chatid", chatId);
             }

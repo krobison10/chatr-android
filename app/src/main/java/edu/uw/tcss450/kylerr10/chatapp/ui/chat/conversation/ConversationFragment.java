@@ -41,20 +41,37 @@ public class ConversationFragment extends Fragment {
 
     // Adapter for displaying messages in the conversation
     private ConversationAdapter mAdapter;
+
+    // EditText for composing messages
     private EditText mMessageEditText;
+
+    // Callback interface for handling conversation events
     private ConversationFragmentCallback mCallback;
 
+    // ViewModel for managing conversation data
     private ConversationViewModel mConversationViewModel;
+
+    // Email of the user
     String email = ChatViewModelHelper.getEmail();
 
+    // Email of the user
     String mEmail = email;
 
     // The conversation object
     private Conversation mConversation;
+
+    // ID of the message
     private int messageId;
+
+    // ViewModel for sending conversation messages
     private ConversationSendViewModel mConversationSendViewModel;
+
+    // ID of the chat
     private String chatId;
+
+    // Flag indicating if messages are currently being loaded
     private boolean isLoadingMessages = false;
+
     // Define a callback interface
     public interface ConversationFragmentCallback {
         void onSendMessage(String message);
@@ -108,12 +125,13 @@ public class ConversationFragment extends Fragment {
             mMessageEditText.setText("");
 
             mAdapter.scrollToBottom();
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS", Locale.getDefault()).format(new Date());
-            Conversation newMessage = new Conversation(messageId, messageText, mEmail, timestamp);
-            mConversationViewModel.addMessage(Integer.parseInt(chatId), newMessage);
+
         }
     }
-
+    /**
+     * Parses messages from the response JSON object.
+     * @param response The response JSON object containing chat messages
+     */
     private void parseMessagesFromResponse(JSONObject response) {
         try {
             String chatId = response.getString("chatId");
@@ -195,7 +213,11 @@ public class ConversationFragment extends Fragment {
         });
 
 
-        // Call getMessage method with appropriate parameters
+        /**
+         * Calls the getMessage method with the appropriate
+         * parameters to retrieve messages for the specified chat.
+         * @param chatId The ID of the chat to retrieve the message for
+         */
         mConversationSendViewModel.getMessage(chatId, new ConversationSendViewModel.ConversationCallback() {
             @Override
             public void onMessageReceived(JSONObject response) {
@@ -203,7 +225,12 @@ public class ConversationFragment extends Fragment {
             }
         });
 
-        // Observe the message list and update the adapter when it changes
+        /**
+         * Observes the message list and updates the adapter when it changes.
+         * @param chatId The ID of the chat to observe
+         * @param owner The LifecycleOwner for observing the message list
+         * @param observer The observer to be notified when the message list changes
+         */
         mConversationViewModel.addMessageObserver(Integer.parseInt(chatId), getViewLifecycleOwner(), new Observer<List<Conversation>>() {
             @Override
             public void onChanged(List<Conversation> messages) {
@@ -216,6 +243,9 @@ public class ConversationFragment extends Fragment {
         });
     }
 
+    /**
+     * Loads the next set of messages in the conversation.
+     */
     private void loadNextMessages() {
         isLoadingMessages = true;
 
@@ -235,29 +265,33 @@ public class ConversationFragment extends Fragment {
             throw new IllegalStateException("Parent activity must implement ConversationFragmentCallback");
         }
     }
-    private void displayMessages(List<Conversation> messages) {
-        // Update the adapter with the new messages
-        mAdapter.setMessages(messages);
 
-        // Scroll to the bottom of the RecyclerView
-        mAdapter.scrollToBottom();
-
-        // Notify the adapter that the data has changed
-        mAdapter.notifyDataSetChanged();
-    }
-
-    // Format the timestamp string to display only the hour and minute
+    /**
+     * Formats the timestamp string to display only the hour and minute.
+     * @param timestamp The timestamp string to format
+     * @return The formatted timestamp in "h:mm a" format
+     */
     String formatTimestamp(String timestamp) {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        // Define an array of input patterns to handle different timestamp formats
+        String[] inputPatterns = {
+                "yyyy-MM-dd HH:mm:ss.SSSSSS",
+                "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+                // Add more patterns as needed for different formats
+        };
+
         SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
 
-        try {
-            Date date = inputFormat.parse(timestamp);
-            String formattedTimestamp = outputFormat.format(date);
-            Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
-            return formattedTimestamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
+        for (String inputPattern : inputPatterns) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+
+            try {
+                Date date = inputFormat.parse(timestamp);
+                String formattedTimestamp = outputFormat.format(date);
+                Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
+                return formattedTimestamp;
+            } catch (ParseException e) {
+                // Ignore and try the next pattern if parsing fails
+            }
         }
 
         return "";

@@ -21,11 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMemberAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatSelectedMembersAdapter;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsFragment;
 
 /**
  * A DialogFragment for creating a new chat room.
@@ -81,6 +83,16 @@ public class CreateChatDialogue extends DialogFragment {
         selectedMembersAdapter = new ChatSelectedMembersAdapter(selectedMembers);
         selectedMembersList.setAdapter(selectedMembersAdapter);
 
+        CurrentContactsFragment currentContactsFragment = new CurrentContactsFragment();
+
+        //ArrayList<Contact> contactsList = currentContactsFragment.contactsList;
+
+        // Add contacts from contactsList to allMembers
+        //for (Contact contact : contactsList) {
+        //    allMembers.add(new ChatMember(contact.mEmail));
+        //}
+
+        System.out.println(allMembers);
         // Create a list of all chat members
         allMembers.add(new ChatMember("test1@test.com"));
         allMembers.add(new ChatMember("test2@test.com"));

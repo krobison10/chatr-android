@@ -5,9 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -25,15 +23,30 @@ import java.util.Objects;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
+/**
+ * ViewModel class that handles sending and receiving messages in a conversation.
+ * @author Leyla Ahmed
+ */
 public class ConversationSendViewModel extends AndroidViewModel {
 
+    // MutableLiveData to hold the send message response
     private final MutableLiveData<JSONObject> mSendMessage;
+
+    // MutableLiveData to hold the get message response
     private final MutableLiveData<JSONObject> mGetMessage;
 
+    // JWT token obtained from ChatViewModelHelper
     String jwt = ChatViewModelHelper.getJWT();
+
+    // JWT token
     public String mJwt = jwt;
 
 
+    /**
+     * Constructor for ConversationSendViewModel.
+     * Initializes the MutableLiveData objects.
+     * @param application The application context
+     */
     public ConversationSendViewModel(@NonNull Application application) {
         super(application);
         mSendMessage = new MutableLiveData<>();
@@ -43,27 +56,26 @@ public class ConversationSendViewModel extends AndroidViewModel {
         mGetMessage.setValue(new JSONObject());
     }
 
-    public void addResponseObserver(@NonNull LifecycleOwner owner,
-                                    @NonNull Observer<? super JSONObject> observer) {
-        mSendMessage.observe(owner, observer);
-    }
-    public void addResponseObserverGetMessage(@NonNull LifecycleOwner owner, @NonNull Observer<? super JSONObject> observer) {
-        mGetMessage.observe(owner, observer);
-    }
-
+    /**
+     * Sends a message in the specified chat.
+     * @param chatId  The ID of the chat to send the message in
+     * @param jwt     The JWT token for authentication
+     * @param message The message to send
+     */
     public void sendMessage(String chatId, String jwt, String message) {
+        // Build the URL for the API endpoint
         String url = "http://10.0.2.2:5000/messages";
 
+        // Create the JSON body for the request
         JSONObject body = new JSONObject();
         try {
             body.put("message", message);
-            Log.d("SENDChat", "message: " + message);
             body.put("chatId", chatId);
-            Log.d("SENDChat", "chatid: " + chatId);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        // Create the JsonObjectRequest for the POST request
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
                 url,
@@ -82,11 +94,11 @@ public class ConversationSendViewModel extends AndroidViewModel {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", jwt);
-                Log.d("SENDChat1", "USER JWT: " + jwt);
                 return headers;
             }
         };
 
+        // Set the retry policy for the request
         request.setRetryPolicy(new DefaultRetryPolicy(
                 10_000,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -101,6 +113,12 @@ public class ConversationSendViewModel extends AndroidViewModel {
                 .addToRequestQueue(request);
     }
 
+    /**
+     * Retrieves messages for the specified chat.
+     * It provides a callback implementation to handle the received message response.
+     * @param chatId   The ID of the chat to retrieve messages for
+     * @param callback The callback to handle the received message response
+     */
     public void getMessage(String chatId, ConversationCallback callback) {
         String url = "http://10.0.2.2:5000/messages/" + chatId;
 
@@ -115,6 +133,7 @@ public class ConversationSendViewModel extends AndroidViewModel {
                 },
                 error -> {
                     handleError(error, mGetMessage);
+                    Log.e("GETMessages", "Error response: " + error);
                     // Pass the error response back to the callback
                     callback.onMessageReceived(null);
                 }
@@ -123,7 +142,6 @@ public class ConversationSendViewModel extends AndroidViewModel {
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Authorization", mJwt);
-                Log.d("GETMessages", "USER JWT: " + mJwt);
                 return headers;
             }
         };
@@ -155,7 +173,9 @@ public class ConversationSendViewModel extends AndroidViewModel {
         responseDestination.postValue(null);
     }
 
-    // Callback interface for receiving the API response
+    /**
+     * Callback interface for receiving the API response.
+     */
     public interface ConversationCallback {
         void onMessageReceived(JSONObject response);
     }

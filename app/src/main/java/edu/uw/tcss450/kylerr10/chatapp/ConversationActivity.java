@@ -13,12 +13,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import org.json.JSONObject;
 
-import edu.uw.tcss450.kylerr10.chatapp.model.NewMessageCountViewModel;
+import org.json.JSONException;
+
 import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.Conversation;
-import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationFragment;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationSendViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationViewModel;
@@ -35,7 +34,7 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     private ConversationSendViewModel mSendViewModel;
     private MainPushMessageReceiver mMainPushMessageReceiver;
     private ConversationViewModel mConversationViewModel;
-    private ConversationAdapter mAdapter;
+
     private String chatId;
 
     @Override
@@ -92,6 +91,9 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     protected void onResume() {
         super.onResume();
+        if (mMainPushMessageReceiver== null) {
+            mMainPushMessageReceiver = new ConversationActivity.MainPushMessageReceiver();
+        }
         Log.d("ConversationActivity", "onResume: Registering PushReceiver");
         IntentFilter intentFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
 
@@ -102,8 +104,11 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d("ConversationActivity", "onPause: Unregistering PushReceiver");
-        unregisterReceiver(mMainPushMessageReceiver);
+        if (mMainPushMessageReceiver != null) {
+            unregisterReceiver(mMainPushMessageReceiver);
+            Log.d("ConversationActivity", "onPause: Unregistering PushReceiver");
+        }
+
     }
 
     public static class MainPushMessageReceiver extends BroadcastReceiver {
@@ -112,6 +117,10 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         private String mJwt;
 
         public static final String RECEIVED_NEW_MESSAGE = "new message from pushy";
+
+        public MainPushMessageReceiver() {
+
+        }
 
         public MainPushMessageReceiver(ConversationViewModel conversationViewModel, String chatId, String jwt) {
             mConversationViewModel = conversationViewModel;
@@ -124,11 +133,20 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
             Log.d("MainPushMessageReceiver", "Received push notification "+context );
             Log.d("MainPushMessageReceiver", "Received push notification "+intent );
 
-            if (intent.hasExtra("chatMessage")) {
+            if (intent.hasExtra("message")) {
+                Log.d("MainPushMessageReceiver", "chatId: " + intent.hasExtra("message"));
                 Log.d("MainPushMessageReceiver", "Received chatMessage extra");
-                Conversation message = (Conversation) intent.getSerializableExtra("chatMessage");
                 int chatId = intent.getIntExtra("chatid", -1);
                 Log.d("MainPushMessageReceiver", "chatId: " + chatId);
+
+                String messageJson = intent.getStringExtra("message");
+                Conversation message = null;
+                try {
+                    message = Conversation.createFromJsonString(messageJson);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.d("MainPushMessageReceiver", "chatId1234567890: " + message);
 
                 // If the received message belongs to the current chat room
                 if (mChatId.equals(String.valueOf(chatId))) {

@@ -8,12 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import edu.uw.tcss450.kylerr10.chatapp.R;
-import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -25,16 +21,19 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     // Holds the conversation data for the adapter
     private Conversation mConversation;
-    private RecyclerView mRecyclerView;
-    String email = ChatViewModelHelper.getEmail();
 
-    String mEmail = email;
+    // Reference to the RecyclerView
+    private RecyclerView mRecyclerView;
+
     // View type for the messages sent by the user
     public static final int VIEW_TYPE_SENDER = 0;
 
     // View type for the messages received by the user
     public static final int VIEW_TYPE_RECEIVER = 1;
+
+    // Create an instance of the ConversationFragment
     static ConversationFragment fragment = new ConversationFragment();
+
     /**
      * Constructor for the adapter.
      */
@@ -42,19 +41,12 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         mConversation = new Conversation();
         mConversation.setMessages(new ArrayList<>());
     }
-
     /**
-     * Set the conversation data in the adapter.
-     * @param conversation the conversation to set
+     * Adds a new message to the conversation.
+     * @param message The message to add
+     * @param senderName The name of the sender
+     * @param receiverName The name of the receiver
      */
-    public void setConversation(Conversation conversation) {
-        this.mConversation = conversation;
-        if (mConversation != null) {
-            mConversation.setMessages(new ArrayList<>()); // Initialize the messages list
-        }
-        notifyDataSetChanged();
-    }
-
     public void addMessage(Conversation message, String senderName, String receiverName) {
         // Add the new message at the beginning of the list
         mConversation.getMessages().add(0, message);
@@ -69,19 +61,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Log.d("ConversationAdapter", "Added message: " + message.getContent());
     }
 
-    public void addMessage(Conversation message) {
-        // Add the new message at the beginning of the list
-        mConversation.getMessages().add(0, message);
-
-        // Notify the adapter that a new item has been inserted at position 0
-        notifyItemInserted(0);
-
-        // Scroll to the bottom of the message list
-        scrollToBottom();
-
-        // Log the added message
-        Log.d("ConversationAdapter", "Added message: " + message.getContent());
-    }
 
     /**
      * Scroll to the bottom of the message list.

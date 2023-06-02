@@ -46,7 +46,7 @@
     <string name="title_weather">Weather</string>
     <string name="title_daily_forecast">Daily Forecast</string>
     <string name="title_hourly_forecast">Hourly Forecast</string>
-    <string name="title_current_location">Current Location</string>
+    <string name="title_current_location">No Location</string>
 
     <!-- Nav Destinations/Fragment names -->
     <string name="nav_weather">Weather</string>
@@ -80,20 +80,6 @@
     <string name="hint_list_locations">List saved locations</string>
     <string name="hint_open_location">Open location search</string>
     <string name="hint_current_location">View current location</string>
-    <string name="keys_json_forecast_state">state</string>
-    <string name="keys_json_forecast_forecast">forecast</string>
-    <string name="keys_json_forecast_daily">forecast</string>
-    <string name="keys_json_forecast_hourly">hourlyForecast</string>
-    <string name="keys_json_forecast_daily_day">day</string>
-    <string name="keys_json_forecast_daily_temperature_high">temperatureHigh</string>
-    <string name="keys_json_forecast_daily_temperature_low">temperatureLow</string>
-    <string name="keys_json_forecast_daily_temperature_unit">temperatureUnit</string>
-    <string name="keys_json_forecast_daily_short_forecast">shortForecast</string>
-    <string name="keys_json_forecast_hourly_time">time</string>
-    <string name="keys_json_forecast_hourly_is_daytime">isDaytime</string>
-    <string name="keys_json_forecast_hourly_temperature">temperature</string>
-    <string name="keys_json_forecast_hourly_temperature_unit">temperatureUnit</string>
-    <string name="keys_json_forecast_hourly_short_forecast">shortForecast</string>
     <string name="title_version">Version </string>
     <string name="title_settings">Settings</string>
     <string name="title_about">About</string>
@@ -105,4 +91,7 @@
     <string name="description_settings_account">Manage your account</string>
     <string name="title_clear_locations">Clear saved locations</string>
     <string name="title_change_password">Change password</string>
+    <string name="title_location">Location</string>
+    <string name="title_saved_location">Saved Location</string>
+    <string name="title_marked_location">Marked Location</string>
 </resources>

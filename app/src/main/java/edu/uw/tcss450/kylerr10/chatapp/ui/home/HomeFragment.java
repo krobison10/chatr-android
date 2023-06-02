@@ -19,6 +19,9 @@ import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyForecast;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocation;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
 
 /**
  * Fragment representing the main page of the Home activity for the app.
@@ -28,6 +31,8 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.weather.HourlyForecast;
 public class HomeFragment extends Fragment {
 
     ForecastViewModel mForecastModel;
+    LocationViewModel mLocationModel;
+    UserLocationViewModel mUserLocationModel;
     HomeViewModel mHomeViewModel;
 
 
@@ -36,6 +41,8 @@ public class HomeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mForecastModel = new ViewModelProvider(requireActivity()).get(ForecastViewModel.class);
         mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        mLocationModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
+        mUserLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
 
 
 
@@ -72,9 +79,35 @@ public class HomeFragment extends Fragment {
                     binding.textTemperatureHigh.setText(currentForecast.getTemperature());
                     binding.imageWeathericon.setImageIcon(currentForecast.getForecastIcon(binding.homeWeatherCard));
                     binding.imageWeathericon.setVisibility(View.VISIBLE);
+                    mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+                        if (location != null) {
+                            // Determine if the location is the devices current location or a marked location
+                            binding.textCurrentLocation.setText(
+                                location.getLatitude() == forecast.getLatitude()
+                                && location.getLongitude() == forecast.getLongitude()
+                                    ? R.string.title_current_location
+                                    : R.string.title_marked_location
+                            );
+                            // Determine if the current or marked location is a saved location
+                            mUserLocationModel.addLocationObserver(getViewLifecycleOwner(), savedLocations -> {
+                                if (savedLocations != null && savedLocations.size() > 0) {
+                                    for (UserLocation savedLocation : savedLocations) {
+                                        if (savedLocation.getLatitude() == forecast.getLatitude()
+                                                && savedLocation.getLongitude() == forecast.getLongitude()) {
+                                            binding.textCurrentLocation.setText(R.string.title_saved_location);
+                                            return;
+                                        }
+                                    }
+                                } else Log.e("LOCATIONINFO", "User location is null.");
+                            });
+                        } else Log.e("LOCATIONINFO", "Location is null.");
+                    });
                 } else Log.e("FORECASTINFO", "Hourly forecast list is empty.");
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
         });
+
+
+
 
 
         // Create a list of dummy notifications

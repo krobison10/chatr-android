@@ -44,6 +44,8 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
+
 /**
  * Main activity of the application.
  *
@@ -68,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback mLocationCallback;
     // The ViewModel that will store the current location
     private LocationViewModel mLocationModel;
+    // The ViewModel that will store the user's saved locations
+    private UserLocationViewModel mUserLocationModel;
     // The ViewModel that will store the forecast data
     private ForecastViewModel mForecastModel;
     /**
@@ -235,9 +239,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.e("LOCATION", "Necessary permissions not granted.");
         } else {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, Objects.requireNonNull(location -> {
@@ -249,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mLocationModel.setLocation(location);
                     mForecastModel = new ViewModelProvider(MainActivity.this).get(ForecastViewModel.class);
-                    mForecastModel.connectGet(MainActivity.this, location);
+                    mForecastModel.connectGet(MainActivity.this, location.getLatitude(), location.getLongitude());
                 } else {
                     Log.d("LOCATION", "No Location retrieved.");
                 }
@@ -262,9 +267,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest
-                .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
-                .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
-                .build();
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+            .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
+            .build();
     }
 
     /**

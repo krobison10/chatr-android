@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -26,6 +27,8 @@ import edu.uw.tcss450.kylerr10.chatapp.MainActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSettingsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
 
 /**
  * A simple {@link Fragment} subclass responsible for displaying the settings page to the user.
@@ -79,7 +82,7 @@ public class SettingsFragment extends Fragment {
                 .setTitle("Clear Saved Locations")
                 .setMessage("Are you sure you want to clear all saved locations? This action cannot be undone.")
                 .setPositiveButton("Clear", (dialog, which) -> {
-                    // TODO: Clear user's saved locations from database
+                    new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class).connectDelete(requireActivity());
                     dialog.dismiss();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {

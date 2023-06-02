@@ -18,7 +18,7 @@ public class LocationViewModel extends ViewModel {
     }
 
     public void addLocationObserver(@NonNull LifecycleOwner owner,
-                    @NonNull Observer<? super Location> observer) {
+                                    @NonNull Observer<? super Location> observer) {
         mLocation.observe(owner, observer);
     }
 

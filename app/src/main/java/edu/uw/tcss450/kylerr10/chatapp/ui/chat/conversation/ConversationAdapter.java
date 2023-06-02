@@ -56,9 +56,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         // Scroll to the bottom of the message list
         scrollToBottom();
-
-        // Log the added message
-        Log.d("ConversationAdapter", "Added message: " + message.getContent());
     }
 
 
@@ -138,7 +135,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Constructor for the ViewHolder.
-         *
          * @param itemView the item view to be held by the ViewHolder.
          */
         SenderViewHolder(View itemView) {
@@ -150,7 +146,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Bind data to the ViewHolder.
-         *
          * @param message the message data to bind.
          */
         void bind(Conversation message) {
@@ -178,7 +173,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Constructor for the ViewHolder.
-         *
          * @param itemView the item view to be held by the ViewHolder
          */
         ReceiverViewHolder(View itemView) {
@@ -190,7 +184,6 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         /**
          * Bind data to the ViewHolder.
-         *
          * @param message the message data to bind
          */
         void bind(Conversation message) {

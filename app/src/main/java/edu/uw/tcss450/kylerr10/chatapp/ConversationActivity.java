@@ -130,14 +130,10 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("MainPushMessageReceiver", "Received push notification "+context );
-            Log.d("MainPushMessageReceiver", "Received push notification "+intent );
 
             if (intent.hasExtra("message")) {
-                Log.d("MainPushMessageReceiver", "chatId: " + intent.hasExtra("message"));
-                Log.d("MainPushMessageReceiver", "Received chatMessage extra");
+
                 int chatId = intent.getIntExtra("chatid", -1);
-                Log.d("MainPushMessageReceiver", "chatId: " + chatId);
 
                 String messageJson = intent.getStringExtra("message");
                 Conversation message = null;
@@ -146,11 +142,10 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
-                Log.d("MainPushMessageReceiver", "chatId1234567890: " + message);
 
                 // If the received message belongs to the current chat room
                 if (mChatId.equals(String.valueOf(chatId))) {
-                    Log.d("MainPushMessageReceiver", "Message belongs to the current chat room");
+
                     mConversationViewModel.addMessage(chatId,message);
                 }
             }

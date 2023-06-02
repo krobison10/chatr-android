@@ -28,7 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
@@ -90,7 +90,7 @@ public class ConversationFragment extends Fragment {
 
         // Retrieve chatId and messageId from the parent activity's intent
         chatId = requireActivity().getIntent().getStringExtra("chatId");
-        Log.d("ConversationFragment_chatid",chatId);
+
 
         // Instantiate the ConversationAdapter
         mAdapter = new ConversationAdapter();
@@ -141,7 +141,6 @@ public class ConversationFragment extends Fragment {
                 JSONObject rowJson = rowsJsonArray.getJSONObject(i);
 
                 messageId = rowJson.getInt("messageid");
-                System.out.println("messageId: " + messageId);
 
                 String email = rowJson.getString("email");
                 String messageText = rowJson.getString("message");
@@ -152,8 +151,6 @@ public class ConversationFragment extends Fragment {
                 message.setContent(messageText);
                 message.setTimestamp(timestamp);
 
-                System.out.println("Email from JSON: " + email);
-                System.out.println("mEmail: " + mEmail);
 
                 // Assign the correct sender and receiver based on the email
                 if (email.equals(mEmail)) {
@@ -272,11 +269,11 @@ public class ConversationFragment extends Fragment {
      * @return The formatted timestamp in "h:mm a" format
      */
     String formatTimestamp(String timestamp) {
-        // Define an array of input patterns to handle different timestamp formats
+
         String[] inputPatterns = {
                 "yyyy-MM-dd HH:mm:ss.SSSSSS",
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-                // Add more patterns as needed for different formats
+
         };
 
         SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
@@ -290,7 +287,7 @@ public class ConversationFragment extends Fragment {
                 Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
                 return formattedTimestamp;
             } catch (ParseException e) {
-                // Ignore and try the next pattern if parsing fails
+
             }
         }
 

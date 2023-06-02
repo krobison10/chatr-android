@@ -45,7 +45,7 @@ public class PushReceiver extends BroadcastReceiver {
         String contactEvent = null;
 
         try {
-            if(typeOfMessage.equals("msg")) {
+            if(typeOfMessage.equals("message")) {
                 message = Conversation.createFromJsonString(intent.getStringExtra("message"));
                 chatId = intent.getIntExtra("chatid", -1);
             }
@@ -94,7 +94,7 @@ public class PushReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder builder;
 
-            if(typeOfMessage.equals("msg")) {
+            if(typeOfMessage.equals("message")) {
                 //research more on notifications the how to display them
                 //https://developer.android.com/guide/topics/ui/notifiers/notifications
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)

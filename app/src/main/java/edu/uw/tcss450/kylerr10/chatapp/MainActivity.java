@@ -1,6 +1,9 @@
 package edu.uw.tcss450.kylerr10.chatapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -30,8 +33,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
 import java.util.Objects;
@@ -72,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
      * Bottom navigation
      */
     private AppBarConfiguration mAppBarConfiguration;
+
+    private MainPushMessageReceiver mPushMessageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +128,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         createLocationRequest();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPushMessageReceiver == null) {
+            mPushMessageReceiver = new MainPushMessageReceiver();
+        }
+        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        registerReceiver(mPushMessageReceiver, iFilter);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mPushMessageReceiver != null){
+            unregisterReceiver(mPushMessageReceiver);
+        }
     }
 
     /**
@@ -179,6 +204,10 @@ public class MainActivity extends AppCompatActivity {
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+
+        new ViewModelProvider(this).get(PushyTokenViewModel.class).deleteTokenFromWebservice(
+                new ViewModelProvider(this).get(UserInfoViewModel.class).getJWT().toString()
+        );
         //End the app completely
         finishAndRemoveTask();
     }
@@ -241,5 +270,19 @@ public class MainActivity extends AppCompatActivity {
             .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
             .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
             .build();
+    }
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class MainPushMessageReceiver extends BroadcastReceiver {
+        private final ContactsViewModel mContactsViewModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsViewModel.class);
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("contact")) {
+                mContactsViewModel.updateContacts();
+            }
+        }
     }
 }

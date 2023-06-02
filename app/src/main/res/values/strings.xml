@@ -46,7 +46,7 @@
     <string name="title_weather">Weather</string>
     <string name="title_daily_forecast">Daily Forecast</string>
     <string name="title_hourly_forecast">Hourly Forecast</string>
-    <string name="title_current_location">Current Location</string>
+    <string name="title_current_location">No Location</string>
 
     <!-- Nav Destinations/Fragment names -->
     <string name="nav_weather">Weather</string>

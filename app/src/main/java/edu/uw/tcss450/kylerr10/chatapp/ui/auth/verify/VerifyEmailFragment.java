@@ -19,14 +19,19 @@ import android.view.ViewGroup;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.auth0.android.jwt.JWT;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentVerifyEmailBinding;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.auth.login.LoginViewModel;
 
 /**
@@ -54,6 +59,10 @@ public class VerifyEmailFragment extends Fragment {
 
     private FragmentVerifyEmailBinding mBinding;
 
+    private UserInfoViewModel mUserInfoViewModel;
+
+    private PushyTokenViewModel mPushyTokenViewModel;
+
     private LoginViewModel mLoginViewModel;
 
     private VerifyViewModel mVerifyViewModel;
@@ -61,15 +70,18 @@ public class VerifyEmailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLoginViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
-        mVerifyViewModel = new ViewModelProvider(getActivity()).get(VerifyViewModel.class);
+        mLoginViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+        mVerifyViewModel = new ViewModelProvider(requireActivity()).get(VerifyViewModel.class);
+        mPushyTokenViewModel = new ViewModelProvider(requireActivity()).get(PushyTokenViewModel.class);
+        mUserInfoViewModel = new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class);
 
+        assert getArguments() != null;
         VerifyEmailFragmentArgs args = VerifyEmailFragmentArgs.fromBundle(getArguments());
         stayLogged = args.getStayLogged();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentVerifyEmailBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
@@ -81,7 +93,7 @@ public class VerifyEmailFragment extends Fragment {
 
         mBinding.buttonVerify.setOnClickListener(button -> mVerifyViewModel.connect(
                 mLoginViewModel.getUserEmail(),
-                mBinding.editCode.getText().toString().trim()
+                Objects.requireNonNull(mBinding.editCode.getText()).toString().trim()
         ));
 
         // Send simple request for sending a code
@@ -91,9 +103,9 @@ public class VerifyEmailFragment extends Fragment {
                     "http://10.0.2.2:5000/verify/" + mLoginViewModel.getUserEmail(),
                     null,
                     response -> {},
-                    error -> showErrorNotification("An error occurred")
+                    error -> showErrorNotification()
             );
-            RequestQueueSingleton.getInstance(getActivity().getApplication().getApplicationContext())
+            RequestQueueSingleton.getInstance(requireActivity().getApplication().getApplicationContext())
                     .addToRequestQueue(request);
         });
 
@@ -112,6 +124,7 @@ public class VerifyEmailFragment extends Fragment {
 
         mVerifyViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeVerifyResponse);
         mLoginViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeLoginResponse);
+        mPushyTokenViewModel.addResponseObserver(getViewLifecycleOwner(), this::observePushyPutResponse);
     }
 
     /**
@@ -132,17 +145,17 @@ public class VerifyEmailFragment extends Fragment {
                     mBinding.codeLayout.setError("Error: " + message);
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
-                    showErrorNotification("An error occurred");
+                    showErrorNotification();
                 }
             } else if (response.has("success")) {
                 sendLoginRequest();
             }
             else {
-                showErrorNotification("An error occurred");
+                showErrorNotification();
             }
         } else {
             Log.d("JSON Response", "No Response");
-            showErrorNotification("An error occurred");
+            showErrorNotification();
         }
     }
 
@@ -168,17 +181,41 @@ public class VerifyEmailFragment extends Fragment {
                 navigateToLogin();
             } else {
                 try {
-                    navigateToSuccess(
-                            mLoginViewModel.getUserEmail(),
-                            response.getString("token")
-                    );
+                    mUserInfoViewModel.setToken(new JWT(response.getString("token")));
+                    sendPushyToken();
                 } catch (JSONException e) {
                     navigateToLogin();
                 }
             }
         } else {
             Log.d("JSON Response", "No Response");
-            showErrorNotification("An error occurred");
+            showErrorNotification();
+        }
+    }
+
+    /**
+     * Helper to abstract the request to send the pushy token to the web service
+     */
+    private void sendPushyToken() {
+        mPushyTokenViewModel.sendTokenToWebservice(mUserInfoViewModel.getJWT().toString());
+    }
+
+    /**
+     * An observer on the HTTP Response from the web server. This observer should be
+     * attached to PushyTokenViewModel.
+     *
+     * @param response the Response from the server
+     */
+    private void observePushyPutResponse(final JSONObject response) {
+        if (response.length() > 0) {
+            if (response.has("code")) {
+                navigateToLogin();
+            } else {
+                navigateToSuccess(
+                        mLoginViewModel.getUserEmail(),
+                        mUserInfoViewModel.getJWT().toString()
+                );
+            }
         }
     }
 
@@ -190,33 +227,31 @@ public class VerifyEmailFragment extends Fragment {
     private void navigateToSuccess(String email, String jwt) {
         if(stayLogged) {
             SharedPreferences prefs =
-                    getActivity().getSharedPreferences(
+                    requireActivity().getSharedPreferences(
                             getString(R.string.keys_shared_prefs),
                             Context.MODE_PRIVATE);
             //Store the credentials in SharedPrefs
             prefs.edit().putString(getString(R.string.keys_prefs_jwt), jwt).apply();
         }
-        Navigation.findNavController(getView()).navigate(
+        Navigation.findNavController(requireView()).navigate(
                 VerifyEmailFragmentDirections.actionVerifyEmailFragmentToHomeActivity(email, jwt)
         );
-        getActivity().finish();
+        requireActivity().finish();
     }
 
     /**
      * Navigates back to the login fragment
      */
     private void navigateToLogin() {
-        Navigation.findNavController(getView()).navigate(
+        Navigation.findNavController(requireView()).navigate(
                 VerifyEmailFragmentDirections.actionVerifyEmailFragmentToLoginFragment()
         );
     }
 
     /**
      * Displays an error notification to the user.
-     *
-     * @param message message to show.
      */
-    private void showErrorNotification(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    private void showErrorNotification() {
+        Snackbar.make(requireView(), "An error occurred", Snackbar.LENGTH_SHORT).show();
     }
 }

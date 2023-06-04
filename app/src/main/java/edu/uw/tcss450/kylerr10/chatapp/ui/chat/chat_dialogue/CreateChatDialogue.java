@@ -4,6 +4,7 @@ package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_dialogue;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.R;
@@ -27,7 +32,9 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMemberAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatSelectedMembersAdapter;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsFragment;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.current.CurrentContactsRecyclerViewAdapter;
 
 /**
  * A DialogFragment for creating a new chat room.
@@ -83,21 +90,31 @@ public class CreateChatDialogue extends DialogFragment {
         selectedMembersAdapter = new ChatSelectedMembersAdapter(selectedMembers);
         selectedMembersList.setAdapter(selectedMembersAdapter);
 
-        CurrentContactsFragment currentContactsFragment = new CurrentContactsFragment();
+        ContactsViewModel contactsViewModel =
+                new ViewModelProvider(requireActivity()).get(ContactsViewModel.class);
 
-        //ArrayList<Contact> contactsList = currentContactsFragment.contactsList;
+        contactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), response -> {
+            if (allMembers.size() == 0) {
+                try {
+                    JSONArray contactsArray = response.getJSONArray("contacts");
+                    for(int i = 0; i < contactsArray.length(); i++) {
+                        JSONObject contactObject = contactsArray.getJSONObject(i);
+                        String email = contactObject.getString("email");
 
-        // Add contacts from contactsList to allMembers
-        //for (Contact contact : contactsList) {
-        //    allMembers.add(new ChatMember(contact.mEmail));
-        //}
+                        //Leyla get access to the username with this
+                        //String username = contactObject.getString("username");
 
-        System.out.println(allMembers);
-        // Create a list of all chat members
-        allMembers.add(new ChatMember("test1@test.com"));
-        allMembers.add(new ChatMember("test2@test.com"));
-        allMembers.add(new ChatMember("test3@test.com"));
-        // Add more members as needed
+                        allMembers.add(new ChatMember(email));
+                    }
+                    filterMembers("");
+                }
+                catch (Exception e) {
+                    Log.e("CHAT", e.getMessage());
+                }
+            }
+        });
+
+        contactsViewModel.connectGetCur();
 
         // Create an empty list for filtered members
         filteredMembers = new ArrayList<>();

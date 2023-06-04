@@ -37,6 +37,7 @@ import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
@@ -80,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
     private MainPushMessageReceiver mPushMessageReceiver;
+
+    private ChatRoomReceiver mChatRoomReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,8 +139,12 @@ public class MainActivity extends AppCompatActivity {
         if (mPushMessageReceiver == null) {
             mPushMessageReceiver = new MainPushMessageReceiver();
         }
+        if (mChatRoomReceiver == null) {
+            mChatRoomReceiver = new ChatRoomReceiver();
+        }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         registerReceiver(mPushMessageReceiver, iFilter);
+        registerReceiver(mChatRoomReceiver, iFilter);
     }
     @Override
     public void onPause() {
@@ -282,6 +289,20 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.hasExtra("contact")) {
                 mContactsViewModel.updateContacts();
+            }
+        }
+    }
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class ChatRoomReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("chat")) {
+                //Handle chat
+                Log.e("CHAT", "Added to room");
+                new ViewModelProvider(MainActivity.this).get(ChatViewModel.class).getChatRooms();
             }
         }
     }

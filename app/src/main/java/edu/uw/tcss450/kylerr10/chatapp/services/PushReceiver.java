@@ -43,6 +43,8 @@ public class PushReceiver extends BroadcastReceiver {
         int chatId = -1;
 
         String contactEvent = null;
+        String chatEvent = null;
+        String chatName = null;
 
         try {
             if(typeOfMessage.equals("message")) {
@@ -51,6 +53,11 @@ public class PushReceiver extends BroadcastReceiver {
             }
             else if(typeOfMessage.equals("contact")) {
                 contactEvent = intent.getStringExtra("action");
+            }
+            else if(typeOfMessage.equals("chat")) {
+                chatEvent = intent.getStringExtra("action");
+                chatName = intent.getStringExtra("name");
+                Log.e("CHAT", "PUSH");
             }
         } catch (JSONException e) {
             //Web service sent us something unexpected...I can't deal with this.
@@ -73,6 +80,10 @@ public class PushReceiver extends BroadcastReceiver {
             }
             else if(typeOfMessage.equals("contact")) {
                 i.putExtra("contact", contactEvent);
+            }
+            else if(typeOfMessage.equals("chat") && chatEvent.equals("newRoom")) {
+                i.putExtra("chat", chatEvent);
+                i.putExtra("name", chatName);
             }
 
             i.putExtras(intent.getExtras());
@@ -111,6 +122,14 @@ public class PushReceiver extends BroadcastReceiver {
                         .setSmallIcon(R.drawable.ic_logo_foreground)
                         .setContentTitle("Chatr")
                         .setContentText("New contact request")
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            }
+            else if(typeOfMessage.equals("chat") && chatEvent.equals("newRoom")) {
+                builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                        .setAutoCancel(true)
+                        .setSmallIcon(R.drawable.ic_logo_foreground)
+                        .setContentTitle("Chatr")
+                        .setContentText("Added to new chat room: " + chatName)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
             }
             else {

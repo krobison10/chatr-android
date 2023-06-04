@@ -142,7 +142,7 @@ public class ConversationViewModel extends AndroidViewModel {
      * @param chatId        the chatroom id to request messages of
      * @param jwt           the users signed JWT
      */
-    public void getNextMessages(String chatId,String lastMessageId, String jwt) {
+    public void getNextMessages(String chatId,String lastMessageId, String jwt, pastConversationCallback callback) {
         String url = "http://10.0.2.2:5000/messages/" + chatId + "/"
                 + lastMessageId;
         Log.d("GETNEXTChat", "URL: " + url);
@@ -153,10 +153,12 @@ public class ConversationViewModel extends AndroidViewModel {
                 null, //no body for this get request
                 response -> {
                     Log.d("GETNEXTChat", "Response: " + response.toString());
+                    callback.onPastMessageReceived(response);
                     handelSuccess(response);
                 },
                 error -> {
                     Log.e("GETNEXTChat", "Volley Error: " + error.toString());
+                    callback.onPastMessageReceived(null);
                     handleError(error);
                 }) {
 
@@ -246,5 +248,11 @@ public class ConversationViewModel extends AndroidViewModel {
         }
 
         return index;
+    }
+    /**
+     * Callback interface for receiving the API response.
+     */
+    public interface pastConversationCallback {
+        void onPastMessageReceived(JSONObject response);
     }
 }

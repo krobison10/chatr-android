@@ -12,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationBarView;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
@@ -25,13 +27,15 @@ import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentWeatherBinding;
 public class WeatherFragment extends Fragment {
 
     private ForecastViewModel mForecastModel;
-    private LocationFragment mLocationFragment;
+    private LocationViewModel mLocationModel;
+    private UserLocationViewModel mUserLocationModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLocationFragment = new LocationFragment();
         mForecastModel = new ViewModelProvider(requireActivity()).get(ForecastViewModel.class);
+        mLocationModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
+        mUserLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
     }
 
     @Override
@@ -56,6 +60,29 @@ public class WeatherFragment extends Fragment {
         mForecastModel.addForecastObserver(getViewLifecycleOwner(), forecast -> {
             if (!forecast.getCity().isEmpty() && !forecast.getState().isEmpty()) {
                 binding.textCurrentCityState.setText(String.format("%s, %s", forecast.getCity(), forecast.getState()));
+                mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
+                    if (location != null) {
+                        // Determine if the location is the devices current location or a marked location
+                        binding.textCurrentLocation.setText(
+                                location.getLatitude() == forecast.getLatitude()
+                                        && location.getLongitude() == forecast.getLongitude()
+                                        ? R.string.title_current_location
+                                        : R.string.title_marked_location
+                        );
+                        // Determine if the current or marked location is a saved location
+                        mUserLocationModel.addLocationObserver(getViewLifecycleOwner(), savedLocations -> {
+                            if (savedLocations != null && savedLocations.size() > 0) {
+                                for (UserLocation savedLocation : savedLocations) {
+                                    if (savedLocation.getLatitude() == forecast.getLatitude()
+                                            && savedLocation.getLongitude() == forecast.getLongitude()) {
+                                        binding.textCurrentLocation.setText(R.string.title_saved_location);
+                                        return;
+                                    }
+                                }
+                            } else Log.e("LOCATIONINFO", "User location is null.");
+                        });
+                    } else Log.e("LOCATIONINFO", "Location is null.");
+                });
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
             if (!forecast.getDailyList().isEmpty()) {
                 binding.recyclerViewWeatherDaily.setAdapter(
@@ -65,6 +92,7 @@ public class WeatherFragment extends Fragment {
             if (!forecast.getHourlyList().isEmpty()) {
                 binding.textCurrentTemperature.setText(forecast.getHourlyList().get(0).getTemperature());
                 binding.textWeatherDescription.setText(forecast.getHourlyList().get(0).getForecast());
+                binding.imageWeathericon.setImageIcon(forecast.getHourlyList().get(0).getForecastIcon(binding.weatherCurrentCard));
                 binding.imageWeathericon.setVisibility(View.VISIBLE);
                 binding.recyclerViewWeatherHourly.setAdapter(
                         new HourlyWeatherCardRecyclerViewAdapter(forecast.getHourlyList())
@@ -72,46 +100,9 @@ public class WeatherFragment extends Fragment {
             } else Log.e("FORECASTINFO", "Hourly forecast list is empty.");
         });
 
-        binding.openLocationButton.setOnClickListener(this::openLocationDialog);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        hideLocationDialog();
-    }
-
-    public void openLocationDialog(View view) {
-        FloatingActionButton button = (FloatingActionButton) view;
-        // The device is smaller, so show the fragment fullscreen
-        showLocationDialog(button);
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                hideLocationDialog();
-                button.show();
-            }
+        binding.openLocationButton.setOnClickListener(v -> {
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment)
+                    .navigate(R.id.navigation_location);
         });
-    }
-
-    private void showLocationDialog(FloatingActionButton button) {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-            .add(R.id.weather_root, mLocationFragment)
-            .setReorderingAllowed(true)
-            .addToBackStack(null)
-            .commit();
-        button.hide();
-    }
-
-    private void hideLocationDialog() {
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-            .remove(mLocationFragment)
-            .setReorderingAllowed(true)
-            .commit();
-        //mLocationFragment.dismiss();
     }
 }

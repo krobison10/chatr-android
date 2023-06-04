@@ -24,11 +24,10 @@
         tools:targetApi="31"
         android:usesCleartextTraffic="true">
 
-        <!-- Add MAPS_API_KEY=Aiza... (where "Aiza..." is the API key) to the local.properties file.
+        <!-- Add MAPS_API_KEY=Aiza... (where "Aiza..." is the API key) to the local.properties file.-->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
--->
         <activity
             android:name=".ConversationActivity"
             android:exported="false" />

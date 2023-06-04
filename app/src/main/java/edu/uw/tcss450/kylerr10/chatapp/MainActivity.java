@@ -37,6 +37,7 @@ import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
@@ -44,6 +45,8 @@ import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
+
 /**
  * Main activity of the application.
  *
@@ -68,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback mLocationCallback;
     // The ViewModel that will store the current location
     private LocationViewModel mLocationModel;
+    // The ViewModel that will store the user's saved locations
+    private UserLocationViewModel mUserLocationModel;
     // The ViewModel that will store the forecast data
     private ForecastViewModel mForecastModel;
     /**
@@ -76,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
     private MainPushMessageReceiver mPushMessageReceiver;
+
+    private ChatRoomReceiver mChatRoomReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,8 +139,12 @@ public class MainActivity extends AppCompatActivity {
         if (mPushMessageReceiver == null) {
             mPushMessageReceiver = new MainPushMessageReceiver();
         }
+        if (mChatRoomReceiver == null) {
+            mChatRoomReceiver = new ChatRoomReceiver();
+        }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         registerReceiver(mPushMessageReceiver, iFilter);
+        registerReceiver(mChatRoomReceiver, iFilter);
     }
     @Override
     public void onPause() {
@@ -235,9 +246,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.e("LOCATION", "Necessary permissions not granted.");
         } else {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, Objects.requireNonNull(location -> {
@@ -249,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mLocationModel.setLocation(location);
                     mForecastModel = new ViewModelProvider(MainActivity.this).get(ForecastViewModel.class);
-                    mForecastModel.connectGet(MainActivity.this, location);
+                    mForecastModel.connectGet(MainActivity.this, location.getLatitude(), location.getLongitude());
                 } else {
                     Log.d("LOCATION", "No Location retrieved.");
                 }
@@ -262,25 +274,35 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest
-                .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
-                .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
-                .build();
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+            .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
+            .build();
     }
 
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
     private class MainPushMessageReceiver extends BroadcastReceiver {
-        private ContactsViewModel mContactsViewModel =
+        private final ContactsViewModel mContactsViewModel =
                 new ViewModelProvider(MainActivity.this).get(ContactsViewModel.class);
         @Override
         public void onReceive(Context context, Intent intent) {
-//            NavController nc =
-//                    Navigation.findNavController(
-//                            MainActivity.this, R.id.nav_host_fragment);
-//            NavDestination nd = nc.getCurrentDestination();
             if (intent.hasExtra("contact")) {
                 mContactsViewModel.updateContacts();
+            }
+        }
+    }
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class ChatRoomReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("chat")) {
+                //Handle chat
+                Log.e("CHAT", "Added to room");
+                new ViewModelProvider(MainActivity.this).get(ChatViewModel.class).getChatRooms();
             }
         }
     }

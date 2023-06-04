@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="keys_json_forecast_city">city</string>
+    <string name="keys_json_forecast_state">state</string>
+    <string name="keys_json_forecast_forecast">forecast</string>
+    <string name="keys_json_forecast_daily">forecast</string>
+    <string name="keys_json_forecast_hourly">hourlyForecast</string>
+    <string name="keys_json_forecast_daily_day">day</string>
+    <string name="keys_json_forecast_daily_temperature_high">temperatureHigh</string>
+    <string name="keys_json_forecast_daily_temperature_low">temperatureLow</string>
+    <string name="keys_json_forecast_daily_temperature_unit">temperatureUnit</string>
+    <string name="keys_json_forecast_daily_short_forecast">shortForecast</string>
+    <string name="keys_json_forecast_hourly_time">time</string>
+    <string name="keys_json_forecast_hourly_is_daytime">isDaytime</string>
+    <string name="keys_json_forecast_hourly_temperature">temperature</string>
+    <string name="keys_json_forecast_hourly_temperature_unit">temperatureUnit</string>
+    <string name="keys_json_forecast_hourly_short_forecast">shortForecast</string>
+    <string name="keys_json_location_list">locations</string>
+    <string name="keys_json_location_primarykey">primarykey</string>
+    <string name="keys_json_location_memberid">memberid</string>
+    <string name="keys_json_location_nickname">nickname</string>
+    <string name="keys_json_location_latitude">lat</string>
+    <string name="keys_json_location_longitude">long</string>
 
 </resources>

@@ -100,6 +100,10 @@ public class CreateChatDialogue extends DialogFragment {
                     for(int i = 0; i < contactsArray.length(); i++) {
                         JSONObject contactObject = contactsArray.getJSONObject(i);
                         String email = contactObject.getString("email");
+
+                        //Leyla get access to the username with this
+                        //String username = contactObject.getString("username");
+
                         allMembers.add(new ChatMember(email));
                     }
                     filterMembers("");

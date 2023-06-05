@@ -1,16 +1,14 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.setting;
 
-import android.app.TaskStackBuilder;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.preference.PreferenceManager;
@@ -21,9 +19,6 @@ import android.view.ViewGroup;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Objects;
-
-import edu.uw.tcss450.kylerr10.chatapp.MainActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentSettingsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
@@ -95,9 +90,9 @@ public class SettingsFragment extends Fragment {
                 .setTitle("Change Password")
                 .setMessage("Are you sure you want to change your password? This will log you out of all devices.")
                 .setPositiveButton("Change", (dialog, which) -> {
-                    // TODO: Navigate to fragment to change user's password
-                    // TODO: Log user out of all devices (expire all tokens)
+                    Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_changePassword);
                     dialog.dismiss();
+                    // TODO: Log user out of all devices (expire all tokens)
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     dialog.cancel();

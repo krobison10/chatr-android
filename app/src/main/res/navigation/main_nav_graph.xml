@@ -29,7 +29,20 @@
         android:id="@+id/navigation_settings"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.setting.SettingsFragment"
         android:label="@string/title_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navigation_settings_to_changePassword"
+            app:destination="@id/changePassword" />
+    </fragment>
+    <fragment
+        android:id="@+id/changePassword"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.setting.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" >
+        <action
+            android:id="@+id/action_ChangePasswordFragment_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_location"
         android:name="edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationFragment"

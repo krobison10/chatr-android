@@ -285,12 +285,9 @@ public class MainActivity extends AppCompatActivity {
                 new ViewModelProvider(MainActivity.this).get(NotificationsViewModel.class);
         @Override
         public void onReceive(Context context, Intent intent) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
             String currentTime = dateFormat.format(new Date());
-
-
 
             if (intent.hasExtra("contact") && intent.getStringExtra("contact").equals("newRequest")) {
                 mContactsViewModel.updateContacts();
@@ -299,7 +296,7 @@ public class MainActivity extends AppCompatActivity {
                         new Notification(
                                 Notification.Type.CONTACT,
                                 "New Contact Request",
-                                "From: ",
+                                "From ",
                                 currentTime)
                 );
             }
@@ -308,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                         new Notification(
                                 Notification.Type.CHAT,
                                 "New Chat Room",
-                                trimString("Now member of: " + intent.getStringExtra("name")),
+                                trimString(intent.getStringExtra("name")),
                                 currentTime)
                 );
 

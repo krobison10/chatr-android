@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -33,14 +34,19 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.home.NotificationsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
@@ -80,9 +86,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private AppBarConfiguration mAppBarConfiguration;
 
-    private MainPushMessageReceiver mPushMessageReceiver;
-
-    private ChatRoomReceiver mChatRoomReceiver;
+    private MainPushReceiver mPushMessageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,14 +141,10 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (mPushMessageReceiver == null) {
-            mPushMessageReceiver = new MainPushMessageReceiver();
-        }
-        if (mChatRoomReceiver == null) {
-            mChatRoomReceiver = new ChatRoomReceiver();
+            mPushMessageReceiver = new MainPushReceiver();
         }
         IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
         registerReceiver(mPushMessageReceiver, iFilter);
-        registerReceiver(mChatRoomReceiver, iFilter);
     }
     @Override
     public void onPause() {
@@ -282,28 +282,61 @@ public class MainActivity extends AppCompatActivity {
     /**
      * A BroadcastReceiver that listens for messages sent from PushReceiver
      */
-    private class MainPushMessageReceiver extends BroadcastReceiver {
+    private class MainPushReceiver extends BroadcastReceiver {
         private final ContactsViewModel mContactsViewModel =
                 new ViewModelProvider(MainActivity.this).get(ContactsViewModel.class);
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra("contact")) {
-                mContactsViewModel.updateContacts();
-            }
-        }
-    }
 
-    /**
-     * A BroadcastReceiver that listens for messages sent from PushReceiver
-     */
-    private class ChatRoomReceiver extends BroadcastReceiver {
+        private final NotificationsViewModel mNotificationsViewModel =
+                new ViewModelProvider(MainActivity.this).get(NotificationsViewModel.class);
         @Override
         public void onReceive(Context context, Intent intent) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            String currentTime = dateFormat.format(new Date());
+
+
+
+            if (intent.hasExtra("contact") && intent.getStringExtra("contact").equals("newRequest")) {
+                mContactsViewModel.updateContacts();
+
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.CONTACT,
+                                "New Contact Request",
+                                "From: ",
+                                currentTime)
+                );
+            }
             if (intent.hasExtra("chat")) {
-                //Handle chat
-                Log.e("CHAT", "Added to room");
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.CHAT,
+                                "New Chat Room",
+                                trimString("Now member of: " + intent.getStringExtra("name")),
+                                currentTime)
+                );
+
                 new ViewModelProvider(MainActivity.this).get(ChatViewModel.class).getChatRooms();
             }
+            if (intent.hasExtra("chatMessage")) {
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.MESSAGE,
+                                intent.getStringExtra("sender"),
+                                trimString(intent.getStringExtra("chatMessage")),
+                                currentTime)
+                );
+            }
+
+        }
+
+        public String trimString(String string) {
+            final int length = 20;
+            if(string.length() > length) {
+                return string.substring(0, length) + "...";
+            }
+            return string;
         }
     }
 }

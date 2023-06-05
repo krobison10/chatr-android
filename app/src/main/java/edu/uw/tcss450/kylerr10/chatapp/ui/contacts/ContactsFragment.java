@@ -22,7 +22,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentContactsBinding;
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.home.NotificationsViewModel;
 
 /**
  * Represents the main root fragment of the contacts page, contains the tab layout.
@@ -54,6 +56,13 @@ public class ContactsFragment extends Fragment {
         binding.overlay.setClickable(!containsText);
         binding.overlay.setFocusable(!containsText);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new ViewModelProvider(requireActivity()).get(NotificationsViewModel.class)
+                .clearNotificationsOfType(Notification.Type.CONTACT);
     }
 
     @Override

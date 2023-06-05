@@ -10,8 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentHomeBinding;
@@ -29,11 +31,13 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
  * @author Kyler Robison
  */
 public class HomeFragment extends Fragment {
-
+    FragmentHomeBinding mBinding;
     ForecastViewModel mForecastModel;
     LocationViewModel mLocationModel;
     UserLocationViewModel mUserLocationModel;
     HomeViewModel mHomeViewModel;
+
+    NotificationsViewModel mNotificationsViewModel;
 
 
     @Override
@@ -43,16 +47,14 @@ public class HomeFragment extends Fragment {
         mHomeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         mLocationModel = new ViewModelProvider(requireActivity()).get(LocationViewModel.class);
         mUserLocationModel = new ViewModelProvider(requireActivity()).get(UserLocationViewModel.class);
-
-
-
+        mNotificationsViewModel = new ViewModelProvider(requireActivity()).get(NotificationsViewModel.class);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        mBinding = FragmentHomeBinding.inflate(inflater);
+        return mBinding.getRoot();
     }
 
     /**
@@ -66,27 +68,76 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        FragmentHomeBinding binding = FragmentHomeBinding.bind(requireView());
-        mHomeViewModel.fetchUserData(new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class), binding);
+        mHomeViewModel.fetchUserData(new ViewModelProvider(requireActivity()).get(UserInfoViewModel.class), mBinding);
 
+        setWeather();
+
+        mNotificationsViewModel.addNotificationsObserver(getViewLifecycleOwner(), notifications -> {
+            mBinding.recyclerViewNotifications.setAdapter(
+                    new NotificationsRecyclerViewAdapter(
+                            notifications,
+                            requireActivity(),
+                            Navigation.findNavController(requireView()))
+            );
+
+            mBinding.labelNoNotifs.setVisibility(notifications.size() == 0 ? View.VISIBLE : View.GONE);
+        });
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                // Perform delete action for the swiped item
+                NotificationsRecyclerViewAdapter adapter = (NotificationsRecyclerViewAdapter)
+                        mBinding.recyclerViewNotifications.getAdapter();
+                if (adapter != null) {
+                    Notification deletedNotification = adapter.getNotificationAtPosition(position);
+                    mNotificationsViewModel.clearNotification(deletedNotification);
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+        itemTouchHelper.attachToRecyclerView(mBinding.recyclerViewNotifications);
+
+
+
+        mBinding.buttonClearallNotifications.setOnClickListener(
+                button -> mNotificationsViewModel.clearAll());
+    }
+
+    /**
+     * Populates the weather card.
+     *
+     * @author Jasper Newkirk
+     */
+    private void setWeather() {
         // Set the information for the weather card based on the forecast data from the API
         mForecastModel.addForecastObserver(getViewLifecycleOwner(), forecast -> {
             if (!forecast.getCity().isEmpty() && !forecast.getState().isEmpty()) {
-                binding.textCitystateWeather.setText(String.format("%s, %s", forecast.getCity(), forecast.getState()));
+                mBinding.textCitystateWeather.setText(String.format("%s, %s", forecast.getCity(), forecast.getState()));
                 if (!forecast.getHourlyList().isEmpty()) {
                     HourlyForecast currentForecast = forecast.getHourlyList().get(0);
-                    binding.textWeatherdescription.setText(currentForecast.getForecast());
-                    binding.textTemperatureHigh.setText(currentForecast.getTemperature());
-                    binding.imageWeathericon.setImageIcon(currentForecast.getForecastIcon(binding.homeWeatherCard));
-                    binding.imageWeathericon.setVisibility(View.VISIBLE);
+                    mBinding.textWeatherdescription.setText(currentForecast.getForecast());
+                    mBinding.textTemperatureHigh.setText(currentForecast.getTemperature());
+                    mBinding.imageWeathericon.setImageIcon(currentForecast.getForecastIcon(mBinding.homeWeatherCard));
+                    mBinding.imageWeathericon.setVisibility(View.VISIBLE);
                     mLocationModel.addLocationObserver(getViewLifecycleOwner(), location -> {
                         if (location != null) {
                             // Determine if the location is the devices current location or a marked location
-                            binding.textCurrentLocation.setText(
-                                location.getLatitude() == forecast.getLatitude()
-                                && location.getLongitude() == forecast.getLongitude()
-                                    ? R.string.title_current_location
-                                    : R.string.title_marked_location
+                            mBinding.textCurrentLocation.setText(
+                                    location.getLatitude() == forecast.getLatitude()
+                                            && location.getLongitude() == forecast.getLongitude()
+                                            ? R.string.title_current_location
+                                            : R.string.title_marked_location
                             );
                             // Determine if the current or marked location is a saved location
                             mUserLocationModel.addLocationObserver(getViewLifecycleOwner(), savedLocations -> {
@@ -94,7 +145,7 @@ public class HomeFragment extends Fragment {
                                     for (UserLocation savedLocation : savedLocations) {
                                         if (savedLocation.getLatitude() == forecast.getLatitude()
                                                 && savedLocation.getLongitude() == forecast.getLongitude()) {
-                                            binding.textCurrentLocation.setText(R.string.title_saved_location);
+                                            mBinding.textCurrentLocation.setText(R.string.title_saved_location);
                                             return;
                                         }
                                     }
@@ -105,20 +156,5 @@ public class HomeFragment extends Fragment {
                 } else Log.e("FORECASTINFO", "Hourly forecast list is empty.");
             } else Log.e("FORECASTINFO", "City/State for forecast is empty.");
         });
-
-
-
-
-
-        // Create a list of dummy notifications
-        ArrayList<Notification> notifications = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            notifications.add(new Notification());
-        }
-
-        binding.recyclerViewNotifications.setAdapter(
-                new NotificationsRecyclerViewAdapter(notifications)
-        );
-
     }
 }

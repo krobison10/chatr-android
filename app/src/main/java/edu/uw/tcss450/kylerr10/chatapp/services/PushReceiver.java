@@ -47,7 +47,7 @@ public class PushReceiver extends BroadcastReceiver {
         String chatName = null;
 
         try {
-            if(typeOfMessage.equals("message")) {
+            if(typeOfMessage.equals("msg")) {
                 message = Conversation.createFromJsonString(intent.getStringExtra("message"));
                 chatId = intent.getIntExtra("chatid", -1);
             }
@@ -74,8 +74,9 @@ public class PushReceiver extends BroadcastReceiver {
             //create an Intent to broadcast a message to other parts of the app.
             Intent i = new Intent(RECEIVED_NEW_MESSAGE);
 
-            if(typeOfMessage.equals("message")) {
-                i.putExtra("chatMessage", message);
+            if(typeOfMessage.equals("msg")) {
+                i.putExtra("sender", message.getSenderName());
+                i.putExtra("chatMessage", message.getContent());
                 i.putExtra("chatid", chatId);
             }
             else if(typeOfMessage.equals("contact")) {
@@ -105,7 +106,7 @@ public class PushReceiver extends BroadcastReceiver {
 
             NotificationCompat.Builder builder;
 
-            if(typeOfMessage.equals("message")) {
+            if(typeOfMessage.equals("msg")) {
                 //research more on notifications the how to display them
                 //https://developer.android.com/guide/topics/ui/notifiers/notifications
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)

@@ -95,6 +95,9 @@ public class PushReceiver extends BroadcastReceiver {
             Log.d("PUSHY", "Message received in background: ");
 
             Intent i = new Intent(context, AuthActivity.class);
+            i.setAction(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_LAUNCHER);
+
             i.putExtras(intent.getExtras());
 
             int flags = PendingIntent.FLAG_UPDATE_CURRENT;
@@ -107,6 +110,7 @@ public class PushReceiver extends BroadcastReceiver {
             NotificationCompat.Builder builder;
 
             if(typeOfMessage.equals("msg")) {
+                i.putExtra("fragmentToOpen", "chatFragment");
                 //research more on notifications the how to display them
                 //https://developer.android.com/guide/topics/ui/notifiers/notifications
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -115,23 +119,30 @@ public class PushReceiver extends BroadcastReceiver {
                         .setContentTitle("Message from: " + message.getSenderName())
                         .setContentText(message.getContent())
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
             }
             else if(typeOfMessage.equals("contact") && contactEvent.equals("newRequest")) {
+                i.putExtra("fragmentToOpen", "contactsFragment");
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_logo_foreground)
                         .setContentTitle("Chatr")
                         .setContentText("New contact request")
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
             }
             else if(typeOfMessage.equals("chat") && chatEvent.equals("newRoom")) {
+                i.putExtra("fragmentToOpen", "chatFragment");
                 builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                         .setAutoCancel(true)
                         .setSmallIcon(R.drawable.ic_logo_foreground)
                         .setContentTitle("Chatr")
                         .setContentText("Added to new chat room: " + chatName)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
             }
             else {
                 return;

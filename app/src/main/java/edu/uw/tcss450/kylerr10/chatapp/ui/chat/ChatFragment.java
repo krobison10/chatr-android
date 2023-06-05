@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ConversationActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
@@ -23,6 +25,7 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomAdapter;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoomDelete;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.conversation.ConversationSendViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.home.NotificationsViewModel;
 
 
 /**
@@ -57,6 +60,15 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
         mViewModel.setJWT(jwt);
         mViewModel.setEmail(email);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new ViewModelProvider(requireActivity()).get(NotificationsViewModel.class)
+                .clearNotificationsOfType(Notification.Type.CHAT);
+        new ViewModelProvider(requireActivity()).get(NotificationsViewModel.class)
+                .clearNotificationsOfType(Notification.Type.MESSAGE);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package edu.uw.tcss450.kylerr10.chatapp.ui.chat;
+package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room;
 
 
 import android.view.LayoutInflater;
@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 import java.util.List;
 import edu.uw.tcss450.kylerr10.chatapp.R;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 
 
@@ -20,17 +22,20 @@ import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 public class ChatRoomMemberAdapter extends RecyclerView.Adapter<ChatRoomMemberAdapter.MemberViewHolder> {
 
     //The list of chat members
-    private List<ChatMember> mMembers;
+    private List<ChatMember> mMembers = new ArrayList<>();
 
+    public ChatRoomMemberAdapter() {
+        // Required empty public constructor
+    }
 
     /**
      * Constructs a ChatRoomMemberAdapter with the provided list of members.
      * @param members The list of chat members to be displayed
      */
     public ChatRoomMemberAdapter(List<ChatMember> members) {
-            this.mMembers = members;
-        }
 
+        this.mMembers = members;
+    }
 
     @NonNull
     @Override
@@ -49,7 +54,6 @@ public class ChatRoomMemberAdapter extends RecyclerView.Adapter<ChatRoomMemberAd
     public int getItemCount() {
         return mMembers.size();
     }
-
 
 
     /**
@@ -83,7 +87,16 @@ public class ChatRoomMemberAdapter extends RecyclerView.Adapter<ChatRoomMemberAd
             removeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    removeMember(getAdapterPosition());
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        ChatMember member = mMembers.get(position);
+                        String email = member.getName();
+                        String chatId = member.getChatId();
+
+                        ChatViewModelHelper.removeMember(chatId, email);
+
+                        removeMember(position);
+                    }
                 }
             });
         }
@@ -97,26 +110,6 @@ public class ChatRoomMemberAdapter extends RecyclerView.Adapter<ChatRoomMemberAd
     public void removeMember(int position) {
         mMembers.remove(position);
         notifyItemRemoved(position);
-    }
-
-
-    /**
-     * Updates the list of chat members with a new list.
-     * @param members The updated list of chat members
-     */
-    public void updateMembers(List<ChatMember> members) {
-        this.mMembers = members;
-        notifyDataSetChanged();
-    }
-
-
-    /**
-     * Sets the list of chat members.
-     * @param members The list of chat members to set
-     */
-    public void setMembers(List<ChatMember> members) {
-        this.mMembers = members;
-        notifyDataSetChanged();
     }
 
 

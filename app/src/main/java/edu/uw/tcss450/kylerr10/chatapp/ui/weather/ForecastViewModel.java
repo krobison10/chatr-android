@@ -1,6 +1,5 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
-import android.app.Activity;
 import android.app.Application;
 import android.location.Location;
 import android.util.Log;
@@ -25,11 +24,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
 
-import edu.uw.tcss450.kylerr10.chatapp.MainActivity;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
@@ -69,7 +68,7 @@ public class ForecastViewModel extends AndroidViewModel {
      * @param error the error that occurred.
      */
     public void handleError(final VolleyError error) {
-        Log.e("CONNECTION ERROR", error.getLocalizedMessage());
+        Log.e("CONNECTION ERROR", "Error connecting to API");
     }
 
     /**
@@ -77,7 +76,7 @@ public class ForecastViewModel extends AndroidViewModel {
      * in the ViewModel.
      * @param result the result of the API call.
      */
-    public void handleResult(final JSONObject result) {
+    public void handleResult(final JSONObject result, double latitude, double longitude) {
         IntFunction<String> getString = getApplication().getResources()::getString;
         try {
             JSONObject root = result;
@@ -89,7 +88,7 @@ public class ForecastViewModel extends AndroidViewModel {
                 String city = root.getString(getString.apply(R.string.keys_json_forecast_city));
                 String state = root.getString(getString.apply(R.string.keys_json_forecast_state));
                 // Initialize mForecast
-                mForecast.setValue(new Forecast(city, state, new ArrayList<>(), new ArrayList<>()));
+                mForecast.setValue(new Forecast(city, state, new ArrayList<>(), new ArrayList<>(), latitude, longitude));
                 JSONArray dailyForecast = root.getJSONArray(getString.apply(R.string.keys_json_forecast_daily));
                 for (int i = 0; i < dailyForecast.length(); i++) {
                     JSONObject current = dailyForecast.getJSONObject(i);
@@ -149,13 +148,14 @@ public class ForecastViewModel extends AndroidViewModel {
     /**
      * Connects to the API to get the forecast data.
      * @param activity the activity that is connecting to the API.
-     * @param location the location to get the forecast for.
+     * @param latitude the latitude to get the forecast for.
+     * @param longitude the longitude to get the forecast for.
      */
-    public void connectGet(ViewModelStoreOwner activity, Location location) {
-        String url = "http://10.0.2.2:5000/forecast/"; // TODO: MAKE THIS AN ENV VARIABLE
-                //+ (location == null ? "" : location.getLatitude() + "," + location.getLongitude()); AN IDEA FOR LATER
+    public void connectGet(ViewModelStoreOwner activity, double latitude, double longitude) {
+        String url = "http://10.0.2.2:5000/forecast/" // TODO: MAKE THIS AN ENV VARIABLE
+                + String.format(Locale.US, "%.4f,%.4f", latitude, longitude);
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
-                this::handleResult, this::handleError) {
+                (r) -> handleResult(r, latitude, longitude), this::handleError) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();

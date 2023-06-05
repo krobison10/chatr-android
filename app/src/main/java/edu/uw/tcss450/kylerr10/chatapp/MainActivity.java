@@ -1,6 +1,9 @@
 package edu.uw.tcss450.kylerr10.chatapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -10,6 +13,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,14 +34,24 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.services.PushReceiver;
 import edu.uw.tcss450.kylerr10.chatapp.ui.ThemeManager;
+import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.home.NotificationsViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.setting.AboutDialog;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.ForecastViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.weather.UserLocationViewModel;
 
 /**
  * Main activity of the application.
@@ -63,12 +77,16 @@ public class MainActivity extends AppCompatActivity {
     private LocationCallback mLocationCallback;
     // The ViewModel that will store the current location
     private LocationViewModel mLocationModel;
+    // The ViewModel that will store the user's saved locations
+    private UserLocationViewModel mUserLocationModel;
     // The ViewModel that will store the forecast data
     private ForecastViewModel mForecastModel;
     /**
      * Bottom navigation
      */
     private AppBarConfiguration mAppBarConfiguration;
+
+    private MainPushReceiver mPushMessageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +135,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         createLocationRequest();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mPushMessageReceiver == null) {
+            mPushMessageReceiver = new MainPushReceiver();
+        }
+        IntentFilter iFilter = new IntentFilter(PushReceiver.RECEIVED_NEW_MESSAGE);
+        registerReceiver(mPushMessageReceiver, iFilter);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mPushMessageReceiver != null){
+            unregisterReceiver(mPushMessageReceiver);
+        }
     }
 
     /**
@@ -176,6 +211,10 @@ public class MainActivity extends AppCompatActivity {
                         getString(R.string.keys_shared_prefs),
                         Context.MODE_PRIVATE);
         prefs.edit().remove(getString(R.string.keys_prefs_jwt)).apply();
+
+        new ViewModelProvider(this).get(PushyTokenViewModel.class).deleteTokenFromWebservice(
+                new ViewModelProvider(this).get(UserInfoViewModel.class).getJWT().toString()
+        );
         //End the app completely
         finishAndRemoveTask();
     }
@@ -207,9 +246,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void requestLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             Log.e("LOCATION", "Necessary permissions not granted.");
         } else {
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, Objects.requireNonNull(location -> {
@@ -221,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mLocationModel.setLocation(location);
                     mForecastModel = new ViewModelProvider(MainActivity.this).get(ForecastViewModel.class);
-                    mForecastModel.connectGet(MainActivity.this, location);
+                    mForecastModel.connectGet(MainActivity.this, location.getLatitude(), location.getLongitude());
                 } else {
                     Log.d("LOCATION", "No Location retrieved.");
                 }
@@ -234,8 +274,69 @@ public class MainActivity extends AppCompatActivity {
      */
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest
-                .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
-                .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
-                .build();
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL_IN_MILLISECONDS)
+            .setMinUpdateIntervalMillis(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS)
+            .build();
+    }
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class MainPushReceiver extends BroadcastReceiver {
+        private final ContactsViewModel mContactsViewModel =
+                new ViewModelProvider(MainActivity.this).get(ContactsViewModel.class);
+
+        private final NotificationsViewModel mNotificationsViewModel =
+                new ViewModelProvider(MainActivity.this).get(NotificationsViewModel.class);
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+            String currentTime = dateFormat.format(new Date());
+
+
+
+            if (intent.hasExtra("contact") && intent.getStringExtra("contact").equals("newRequest")) {
+                mContactsViewModel.updateContacts();
+
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.CONTACT,
+                                "New Contact Request",
+                                "From: ",
+                                currentTime)
+                );
+            }
+            if (intent.hasExtra("chat")) {
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.CHAT,
+                                "New Chat Room",
+                                trimString("Now member of: " + intent.getStringExtra("name")),
+                                currentTime)
+                );
+
+                new ViewModelProvider(MainActivity.this).get(ChatViewModel.class).getChatRooms();
+            }
+            if (intent.hasExtra("chatMessage")) {
+                mNotificationsViewModel.addNotification(
+                        new Notification(
+                                Notification.Type.MESSAGE,
+                                intent.getStringExtra("sender"),
+                                trimString(intent.getStringExtra("chatMessage")),
+                                currentTime)
+                );
+            }
+
+        }
+
+        public String trimString(String string) {
+            final int length = 20;
+            if(string.length() > length) {
+                return string.substring(0, length) + "...";
+            }
+            return string;
+        }
     }
 }

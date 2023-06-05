@@ -1,12 +1,14 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members;
 
+
+
 /**
  * This class Represents a chat member.
  * @author Leyla Ahmed
  */
 public class ChatMember {
-    //The ID of the chat member
-    private int mMemberId;
+    //The Id of the chat room
+    private String chatId;
 
     //The name of the chat member
     private String mName;
@@ -15,23 +17,11 @@ public class ChatMember {
     private boolean mSelected;
 
     /**
-     * Constructs a ChatMember object with the provided ID and name.
-     * @param memberId   The ID of the chat member
+     * Constructs a ChatMember object with the specified name.
      * @param name The name of the chat member
      */
-    public ChatMember(int memberId, String name) {
-        this.mMemberId = memberId;
+    public ChatMember(String name) {
         this.mName = name;
-        this.mSelected = false;
-    }
-
-
-    /**
-     * Returns the ID of the chat member.
-     * @return The ID of the chat member
-     */
-    public int getMemberId() {
-        return mMemberId;
     }
 
 
@@ -61,9 +51,20 @@ public class ChatMember {
         mSelected = selected;
     }
 
-    @Override
-    public String toString() {
-        return mName;
+
+    /**
+     * Sets the chat ID in which the member is present.
+     * @param chatId The chat ID
+     */
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
+    /**
+     * Returns the chat ID in which the member is present.
+     * @return The chat ID
+     */
+    public String getChatId() {
+        return chatId;
+    }
 }

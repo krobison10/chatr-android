@@ -43,4 +43,9 @@
             android:id="@+id/action_ChangePasswordFragment_to_navigation_home"
             app:destination="@id/navigation_home" />
     </fragment>
+    <fragment
+        android:id="@+id/navigation_location"
+        android:name="edu.uw.tcss450.kylerr10.chatapp.ui.weather.LocationFragment"
+        android:label="@string/title_location"
+        tools:layout="@layout/fragment_location" />
 </navigation>

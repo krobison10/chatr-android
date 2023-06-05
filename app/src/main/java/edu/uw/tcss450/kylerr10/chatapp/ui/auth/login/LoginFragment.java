@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -24,6 +25,8 @@ import org.json.JSONObject;
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentLoginBinding;
+import edu.uw.tcss450.kylerr10.chatapp.model.PushyTokenViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
 /**
  * The page where the user can attempt to login to the application.
@@ -45,12 +48,22 @@ public class LoginFragment extends Fragment {
      */
     private boolean loginAttempted = false;
 
+    /**
+     * Indicates whether there is a pushy token to use or not
+     */
+    private boolean hasToken;
+
+    private PushyTokenViewModel mPushyTokenViewModel;
+
+    private UserInfoViewModel mUserInfoViewModel;
+
     private LoginViewModel mViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(getActivity()).get(LoginViewModel.class);
+        mPushyTokenViewModel = new ViewModelProvider(getActivity()).get(PushyTokenViewModel.class);
     }
 
     @Override
@@ -102,12 +115,23 @@ public class LoginFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable editable) {
                 //validateInputs() is a side-effecting method call
-                mBinding.buttonLogin.setEnabled(validateInputs());
+                mBinding.buttonLogin.setEnabled(hasToken && validateInputs());
             }
         };
 
         mBinding.editEmail.addTextChangedListener(textWatcher);
         mBinding.editPassword.addTextChangedListener(textWatcher);
+
+        mPushyTokenViewModel.addTokenObserver(getViewLifecycleOwner(), token -> {
+            if(!token.isEmpty()) {
+                hasToken = true;
+                mBinding.buttonLogin.setEnabled(validateInputs());
+            }
+        });
+
+        mPushyTokenViewModel.addResponseObserver(
+                getViewLifecycleOwner(),
+                this::observePushyPutResponse);
 
 
         LoginFragmentArgs args = LoginFragmentArgs.fromBundle(getArguments());
@@ -158,6 +182,34 @@ public class LoginFragment extends Fragment {
         mViewModel.setUserEmail(mBinding.editEmail.getText().toString());
         mViewModel.setUserPassword(mBinding.editPassword.getText().toString());
         mViewModel.connect();
+    }
+
+    /**
+     * Helper to abstract the request to send the pushy token to the web service
+     */
+    private void sendPushyToken() {
+        mPushyTokenViewModel.sendTokenToWebservice(mUserInfoViewModel.getJWT().toString());
+    }
+
+    /**
+     * An observer on the HTTP Response from the web server. This observer should be
+     * attached to PushyTokenViewModel.
+     *
+     * @param response the Response from the server
+     */
+    private void observePushyPutResponse(final JSONObject response) {
+        if (response.length() > 0) {
+            if (response.has("code")) {
+                //this error cannot be fixed by the user changing credentials...
+                mBinding.editEmail.setError(
+                        "Error Authenticating on Push Token. Please contact support");
+            } else {
+                navigateToSuccess(
+                        mBinding.editEmail.getText().toString(),
+                        mUserInfoViewModel.getJWT().toString()
+                );
+            }
+        }
     }
 
     /**
@@ -215,10 +267,10 @@ public class LoginFragment extends Fragment {
                 }
             } else {
                 try {
-                    navigateToSuccess(
-                            mBinding.editEmail.getText().toString(),
-                            response.getString("token")
-                    );
+                    mUserInfoViewModel = new ViewModelProvider(getActivity())
+                            .get(UserInfoViewModel.class);
+                    mUserInfoViewModel.setToken(new JWT(response.getString("token")));
+                    sendPushyToken();
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
                     showErrorNotification("An error occurred");

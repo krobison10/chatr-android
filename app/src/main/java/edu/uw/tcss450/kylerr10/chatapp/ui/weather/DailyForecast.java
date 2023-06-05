@@ -101,7 +101,7 @@ public class DailyForecast implements Serializable {
         int iconID = R.drawable.ic_sunny_onsecondarycontainer_24dp; // Sunny default
         if (condition.contains("partly sunny") || condition.contains("partly cloudy")) {
             iconID = R.drawable.ic_partlycloudy_onsecondarycontainer_24dp;
-        } else if (condition.contains("rain")) {
+        } else if (condition.contains("rain") || condition.contains("shower") || condition.contains("drizzle")) {
             iconID = R.drawable.ic_rainy_onsecondarycontainer_24dp;
         } else if (condition.contains("snow")) {
             iconID = R.drawable.ic_snowy_onsecondarycontainer_24dp;

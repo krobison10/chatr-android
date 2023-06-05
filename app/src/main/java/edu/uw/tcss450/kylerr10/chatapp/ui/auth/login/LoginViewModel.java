@@ -15,6 +15,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -137,5 +138,23 @@ public class LoginViewModel extends AndroidViewModel {
                 Log.e("JSON PARSE", "JSON Parse Error in handleError");
             }
         }
+    }
+
+    /**
+     * Makes the api call to reset the user's password.
+     * @param email the email of the user.
+     */
+    public void connectPutReset(String email) {
+        String url = "http://10.0.2.2:5000/auth/reset";
+        JSONObject body = new JSONObject();
+        try {
+            body.put("email", email);
+        } catch (JSONException e) {
+            Log.e("Auth Reset PUT ERROR", e.getMessage());
+        }
+        Request<JSONObject> request = new JsonObjectRequest(Request.Method.PUT, url, body, null, this::handleError);
+        request.setRetryPolicy(new DefaultRetryPolicy(10_000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        Volley.newRequestQueue(getApplication().getApplicationContext()).add(request);
     }
 }

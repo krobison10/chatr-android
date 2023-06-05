@@ -107,7 +107,7 @@ public class UserLocationViewModel extends AndroidViewModel {
      * @param activity the activity that is connecting to the API.
      */
     public void connectGet(ViewModelStoreOwner activity) {
-        String url = BuildConfig.BASE_URL + "location/";
+        String url = BuildConfig.BASE_URL + "/location/";
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleGetResult, this::handleError) {
             @Override

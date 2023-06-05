@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
-import edu.uw.tcss450.kylerr10.chatapp.R;
 import me.pushy.sdk.Pushy;
 
 
@@ -110,7 +110,7 @@ public class PushyTokenViewModel extends AndroidViewModel {
             throw new IllegalStateException("No pushy token. Do NOT call until token is retrieved");
         }
 
-        String url = "http://10.0.2.2:5000/auth";
+        String url = BuildConfig.BASE_URL + "/auth";
 
         JSONObject body = new JSONObject();
         try {
@@ -145,7 +145,7 @@ public class PushyTokenViewModel extends AndroidViewModel {
     }
 
     public void deleteTokenFromWebservice(final String jwt) {
-        String url = "http://10.0.2.2:5000/auth";
+        String url = BuildConfig.BASE_URL + "/auth";
         Request request = new JsonObjectRequest(
                 Request.Method.DELETE,
                 url,

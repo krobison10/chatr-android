@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.regex.Pattern;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentRegisterPasswordBinding;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
@@ -99,7 +100,7 @@ public class RegisterPasswordFragment extends Fragment {
     private void handleRegisterSuccess() {
         Request<JSONObject> request = new JsonObjectRequest(
                 Request.Method.POST,
-                "http://10.0.2.2:5000/verify/" + mViewModel.getUserEmail(),
+                BuildConfig.BASE_URL + "/verify/" + mViewModel.getUserEmail(),
                 null,
                 response -> {},
                 error -> showErrorNotification("An error occurred")

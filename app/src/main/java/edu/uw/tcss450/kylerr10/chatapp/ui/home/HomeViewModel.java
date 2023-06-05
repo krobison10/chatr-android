@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentHomeBinding;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
@@ -48,7 +49,7 @@ public class HomeViewModel extends AndroidViewModel {
      * @param binding           The FragmentHomeBinding instance for accessing UI views.
      */
     public void fetchUserData(UserInfoViewModel userInfoViewModel, FragmentHomeBinding binding) {
-        String url = "http://10.0.2.2:5000/user";
+        String url = BuildConfig.BASE_URL + "/user";
         JWT jwtToken = userInfoViewModel.getJWT();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {

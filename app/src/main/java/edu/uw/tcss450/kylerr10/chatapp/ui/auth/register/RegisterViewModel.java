@@ -21,6 +21,8 @@ import org.json.JSONObject;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
+
 /**
  * @author Kyler Robison, Betelhem Bada
  */
@@ -128,7 +130,7 @@ public class RegisterViewModel extends AndroidViewModel {
      * @param password the valid password to be used for the request.
      */
     public void connect(final String password) {
-        String url = "http://10.0.2.2:5000/auth";
+        String url = BuildConfig.BASE_URL + "/auth";
         JSONObject body = new JSONObject();
         try {
             body.put("first", mUserFName);

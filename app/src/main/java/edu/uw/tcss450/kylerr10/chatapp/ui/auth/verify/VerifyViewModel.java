@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
 /**
@@ -52,7 +53,7 @@ public class VerifyViewModel extends AndroidViewModel {
      * @param code the verification code entered by the user.
      */
     public void connect(final String email, final String code) {
-        String url = "http://10.0.2.2:5000/verify/" + email;
+        String url = BuildConfig.BASE_URL + "/verify/" + email;
         JSONObject body = new JSONObject();
         try {
             body.put("verificationCode", code);

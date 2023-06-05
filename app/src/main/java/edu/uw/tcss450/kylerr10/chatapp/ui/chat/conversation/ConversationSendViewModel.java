@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
@@ -64,7 +65,7 @@ public class ConversationSendViewModel extends AndroidViewModel {
      */
     public void sendMessage(String chatId, String jwt, String message) {
         // Build the URL for the API endpoint
-        String url = "http://10.0.2.2:5000/messages";
+        String url = BuildConfig.BASE_URL + "/messages";
 
         // Create the JSON body for the request
         JSONObject body = new JSONObject();
@@ -120,7 +121,7 @@ public class ConversationSendViewModel extends AndroidViewModel {
      * @param callback The callback to handle the received message response
      */
     public void getMessage(String chatId, ConversationCallback callback) {
-        String url = "http://10.0.2.2:5000/messages/" + chatId;
+        String url = BuildConfig.BASE_URL + "/messages/" + chatId;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,

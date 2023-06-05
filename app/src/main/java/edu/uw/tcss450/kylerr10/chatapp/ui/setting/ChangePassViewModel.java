@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
 /**
@@ -61,7 +62,7 @@ public class ChangePassViewModel extends AndroidViewModel {
      * @param newPassword The new password.
      */
     public void changePassword(String email, String oldPassword, String newPassword) {
-        String url = "http://10.0.2.2:5000/changePassword";
+        String url = BuildConfig.BASE_URL + "/changePassword";
         JWT jwtToken = userInfoViewModel.getJWT();
         JSONObject requestBody = new JSONObject();
         try {

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
 /**
@@ -85,7 +86,7 @@ public class LoginViewModel extends AndroidViewModel {
      * Makes the api call to log in the user using the credentials currently stored in this object.
      */
     public void connect() {
-        String url = "http://10.0.2.2:5000/auth";
+        String url = BuildConfig.BASE_URL + "/auth";
         Request<JSONObject> request = new JsonObjectRequest(
                 Request.Method.GET,
                 url,
@@ -145,7 +146,7 @@ public class LoginViewModel extends AndroidViewModel {
      * @param email the email of the user.
      */
     public void connectPutReset(String email) {
-        String url = "http://10.0.2.2:5000/auth/reset";
+        String url = BuildConfig.BASE_URL + "/auth/reset";
         JSONObject body = new JSONObject();
         try {
             body.put("email", email);

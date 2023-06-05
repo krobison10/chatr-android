@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
@@ -106,7 +107,7 @@ public class UserLocationViewModel extends AndroidViewModel {
      * @param activity the activity that is connecting to the API.
      */
     public void connectGet(ViewModelStoreOwner activity) {
-        String url = "http://10.0.2.2:5000/location/"; // TODO: MAKE THIS AN ENV VARIABLE
+        String url = BuildConfig.BASE_URL + "location/";
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
                 this::handleGetResult, this::handleError) {
             @Override
@@ -123,7 +124,7 @@ public class UserLocationViewModel extends AndroidViewModel {
     }
 
     public void connectPut(ViewModelStoreOwner activity, UserLocation location) {
-        String url = "http://10.0.2.2:5000/location/"; // TODO: MAKE THIS AN ENV VARIABLE
+        String url = BuildConfig.BASE_URL + "/location/";
         JSONObject body = new JSONObject();
         try {
             body.put("primarykey", location.getPrimaryKey());
@@ -149,7 +150,7 @@ public class UserLocationViewModel extends AndroidViewModel {
     }
 
     public void connectPost(ViewModelStoreOwner activity, String nickname, double latitude, double longitude) {
-        String url = "http://10.0.2.2:5000/location/";
+        String url = BuildConfig.BASE_URL + "/location/";
         JSONObject body = new JSONObject();
         try {
             body.put("nickname", nickname);
@@ -174,7 +175,7 @@ public class UserLocationViewModel extends AndroidViewModel {
     }
 
     public void connectDelete(ViewModelStoreOwner activity) {
-        String url = "http://10.0.2.2:5000/location/";
+        String url = BuildConfig.BASE_URL + "/location/";
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.DELETE, url, null,
                 null, this::handleError) {
             @Override

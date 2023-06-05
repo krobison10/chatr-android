@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 
 /**
@@ -219,7 +220,7 @@ public class ContactsViewModel extends AndroidViewModel {
      * @param responseDestination the MutableLiveData to store the response in.
      */
     public void connect(String endpoint, int method, MutableLiveData<JSONObject> responseDestination) {
-        String url = "http://10.0.2.2:5000" + endpoint;
+        String url = BuildConfig.BASE_URL + endpoint;
         Request request = new JsonObjectRequest(
                 method,
                 url,

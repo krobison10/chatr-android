@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentVerifyEmailBinding;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
@@ -100,7 +101,7 @@ public class VerifyEmailFragment extends Fragment {
         mBinding.buttonResend.setOnClickListener(button -> {
             Request<JSONObject> request = new JsonObjectRequest(
                     Request.Method.POST,
-                    "http://10.0.2.2:5000/verify/" + mLoginViewModel.getUserEmail(),
+                    BuildConfig.BASE_URL + "/verify/" + mLoginViewModel.getUserEmail(),
                     null,
                     response -> {},
                     error -> showErrorNotification()

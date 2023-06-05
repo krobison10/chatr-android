@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_members.ChatMember;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.chat_room.ChatRoom;
@@ -92,7 +94,7 @@ public class ChatViewModel extends AndroidViewModel {
     public void createChatRoom(String chatName, List<String> emails) {
         Log.d("CreateChatRoom", "Creating chat room: " + chatName);
 
-        String url = "http://10.0.2.2:5000/chats";
+        String url = BuildConfig.BASE_URL + "/chats";
         JSONObject body = new JSONObject();
         try {
             body.put("name", chatName);
@@ -145,7 +147,7 @@ public class ChatViewModel extends AndroidViewModel {
      * Retrieves the list of chat rooms.
      */
     public void getChatRooms() {
-        String url = "http://10.0.2.2:5000/chats";
+        String url = BuildConfig.BASE_URL + "/chats";
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -201,7 +203,7 @@ public class ChatViewModel extends AndroidViewModel {
      */
     public void deleteChatRoom(String chatId, int position) {
 
-        String url = "http://10.0.2.2:5000/chats/" + chatId;
+        String url = BuildConfig.BASE_URL + "/chats/" + chatId;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,
@@ -247,7 +249,7 @@ public class ChatViewModel extends AndroidViewModel {
      * @param chatId The ID of the chat room.
      */
     public void addUserToChat(String chatId) {
-        String url = "http://10.0.2.2:5000/chats/" + chatId;
+        String url = BuildConfig.BASE_URL + "/chats/" + chatId;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
@@ -286,7 +288,7 @@ public class ChatViewModel extends AndroidViewModel {
      * @param email  The email of the member to add
      */
     public void addMembersToChat(String chatId, String email) {
-        String url = "http://10.0.2.2:5000/chats/" + chatId + "/" + email;
+        String url = BuildConfig.BASE_URL + "/chats/" + chatId + "/" + email;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.PUT,
@@ -322,7 +324,7 @@ public class ChatViewModel extends AndroidViewModel {
      */
     public void getChatRoomMembers(String chatId, ChatRoomMembersCallback callback) {
 
-        String url = "http://10.0.2.2:5000/chats/" + chatId;
+        String url = BuildConfig.BASE_URL + "/chats/" + chatId;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -386,7 +388,7 @@ public class ChatViewModel extends AndroidViewModel {
      * @param email  The email of the member to delete
      */
     public void deleteChatMember(String chatId, String email) {
-        String url = "http://10.0.2.2:5000/chats/" + chatId + "/" + email;
+        String url = BuildConfig.BASE_URL + "/chats/" + chatId + "/" + email;
 
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.DELETE,

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.io.RequestQueueSingleton;
 import edu.uw.tcss450.kylerr10.chatapp.ui.chat.ChatViewModelHelper;
 
@@ -101,7 +103,7 @@ public class ConversationViewModel extends AndroidViewModel {
      * @param jwt the users signed JWT
      */
     public void getFirstMessages(final int chatId, final String jwt) {
-        String url = "http://10.0.2.2:5000/messages/" + chatId;
+        String url = BuildConfig.BASE_URL + "/messages/" + chatId;
 
         Request request = new JsonObjectRequest(
                 Request.Method.GET,
@@ -143,7 +145,7 @@ public class ConversationViewModel extends AndroidViewModel {
      * @param jwt           the users signed JWT
      */
     public void getNextMessages(String chatId,String lastMessageId, String jwt, pastConversationCallback callback) {
-        String url = "http://10.0.2.2:5000/messages/" + chatId + "/"
+        String url = BuildConfig.BASE_URL + "/messages/" + chatId + "/"
                 + lastMessageId;
         Log.d("GETNEXTChat", "URL: " + url);
 

@@ -1,7 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.weather;
 
 import android.app.Application;
-import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
 
+import edu.uw.tcss450.kylerr10.chatapp.BuildConfig;
 import edu.uw.tcss450.kylerr10.chatapp.R;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 
@@ -152,7 +152,7 @@ public class ForecastViewModel extends AndroidViewModel {
      * @param longitude the longitude to get the forecast for.
      */
     public void connectGet(ViewModelStoreOwner activity, double latitude, double longitude) {
-        String url = "http://10.0.2.2:5000/forecast/" // TODO: MAKE THIS AN ENV VARIABLE
+        String url = BuildConfig.BASE_URL + "/forecast/"
                 + String.format(Locale.US, "%.4f,%.4f", latitude, longitude);
         Request<JSONObject> request = new JsonObjectRequest(Request.Method.GET, url, null,
                 (r) -> handleResult(r, latitude, longitude), this::handleError) {

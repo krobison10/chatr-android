@@ -77,6 +77,7 @@ public class ContactsViewModel extends AndroidViewModel {
         super(application);
 
         searchText = new MutableLiveData<>();
+        searchText.setValue("");
 
         mGetCurResponse = new MutableLiveData<>();
         mGetCurResponse.setValue(new JSONObject());

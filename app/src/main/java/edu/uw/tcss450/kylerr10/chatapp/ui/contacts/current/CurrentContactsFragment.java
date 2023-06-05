@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsRecyclerViewAdapter;
 
 /**
  * Fragment where the user can view their current contacts in a list.
@@ -107,7 +106,7 @@ public class CurrentContactsFragment extends Fragment {
         }
 
         mBinding.recyclerViewCurrentContacts.setAdapter(
-                new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, filteredList)
+                new CurrentContactsRecyclerViewAdapter(mContactsViewModel, filteredList)
         );
 
         if(filteredList.size() == 0) {

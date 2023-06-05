@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentIncomingRequestsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
-import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsRecyclerViewAdapter;
 
 /**
  * Fragment where the user can view incoming contact requests.
@@ -111,6 +110,13 @@ public class IncomingRequestsFragment extends Fragment {
         mBinding.recyclerViewIncomingRequests.setAdapter(
                 new IncomingRequestsRecyclerViewAdapter(mContactsViewModel, filteredList)
         );
+
+        if(filteredList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -126,25 +132,23 @@ public class IncomingRequestsFragment extends Fragment {
         }
         if (response.length() > 0) {
             if (response.has("code")) {
-                showErrorNotification("An error occurred");
+                showErrorNotification();
             } else {
                 try {
                     processResponse(response);
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
-                    showErrorNotification("An error occurred");
+                    showErrorNotification();
                 }
             }
         } else {
             Log.d("JSON Response", "No Response");
-            showErrorNotification("An error occurred");
+            showErrorNotification();
         }
     }
 
     /**
      * Processes the response JSON, repopulates recyclerview.
-     * @param response
-     * @throws JSONException
      */
     private void processResponse(final JSONObject response) throws JSONException {
         ArrayList<Contact> contactsList = new ArrayList<>();
@@ -169,15 +173,20 @@ public class IncomingRequestsFragment extends Fragment {
                 new IncomingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
 
+        if(contactsList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
+
         filterList(mContactsViewModel.getSearchText().getValue());
     }
 
     /**
      * Displays an error notification to the user.
-     *
-     * @param message message to show.
      */
-    private void showErrorNotification(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    private void showErrorNotification() {
+        Snackbar.make(requireView(), "An error occurred", Snackbar.LENGTH_SHORT).show();
     }
 }

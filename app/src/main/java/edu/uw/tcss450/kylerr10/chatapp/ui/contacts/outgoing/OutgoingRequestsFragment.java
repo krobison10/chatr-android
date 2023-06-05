@@ -108,6 +108,13 @@ public class OutgoingRequestsFragment extends Fragment {
         mBinding.recyclerViewOutgoingRequests.setAdapter(
                 new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, filteredList)
         );
+
+        if(filteredList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -123,18 +130,18 @@ public class OutgoingRequestsFragment extends Fragment {
         }
         if (response.length() > 0) {
             if (response.has("code")) {
-                showErrorNotification("An error occurred");
+                showErrorNotification();
             } else {
                 try {
                     processResponse(response);
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
-                    showErrorNotification("An error occurred");
+                    showErrorNotification();
                 }
             }
         } else {
             Log.d("JSON Response", "No Response");
-            showErrorNotification("An error occurred");
+            showErrorNotification();
         }
     }
 
@@ -167,15 +174,20 @@ public class OutgoingRequestsFragment extends Fragment {
                 new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
 
+        if(contactsList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
+
         filterList(mContactsViewModel.getSearchText().getValue());
     }
 
     /**
      * Displays an error notification to the user.
-     *
-     * @param message message to show.
      */
-    private void showErrorNotification(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    private void showErrorNotification() {
+        Snackbar.make(requireView(), "An error occurred", Snackbar.LENGTH_SHORT).show();
     }
 }

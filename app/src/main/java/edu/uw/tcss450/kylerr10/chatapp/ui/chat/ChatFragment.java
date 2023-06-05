@@ -15,6 +15,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentChatBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Notification;
 import edu.uw.tcss450.kylerr10.chatapp.model.UserInfoViewModel;
 import edu.uw.tcss450.kylerr10.chatapp.ConversationActivity;
@@ -136,6 +137,15 @@ public class ChatFragment extends Fragment implements ChatRoomAdapter.OnChatRoom
                             // Handle error if necessary
                         }
                     });
+                }
+
+                FragmentChatBinding binding = FragmentChatBinding.bind(requireView());
+
+                if(chatRooms.size() == 0) {
+                    binding.labelNoItems.setVisibility(View.VISIBLE);
+                }
+                else {
+                    binding.labelNoItems.setVisibility(View.GONE);
                 }
             }
         });

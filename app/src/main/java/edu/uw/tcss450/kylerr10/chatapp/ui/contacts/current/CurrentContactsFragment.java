@@ -19,10 +19,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import edu.uw.tcss450.kylerr10.chatapp.databinding.FragmentCurrentContactsBinding;
 import edu.uw.tcss450.kylerr10.chatapp.listdata.Contact;
 import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.ContactsViewModel;
+import edu.uw.tcss450.kylerr10.chatapp.ui.contacts.outgoing.OutgoingRequestsRecyclerViewAdapter;
 
 /**
  * Fragment where the user can view their current contacts in a list.
@@ -39,6 +43,11 @@ public class CurrentContactsFragment extends Fragment {
     private FragmentCurrentContactsBinding mBinding;
 
     private ContactsViewModel mContactsViewModel;
+
+    /**
+     * The unfiltered list of contacts
+     */
+    private List<Contact> mFullItemsList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,37 @@ public class CurrentContactsFragment extends Fragment {
                 response -> mContactsViewModel.updateContacts());
 
         mContactsViewModel.addGetCurResponseObserver(getViewLifecycleOwner(), this::observeResponse);
+
+        mContactsViewModel.getSearchText().observe(getViewLifecycleOwner(), this::filterList);
+    }
+
+    private void filterList(String searchText) {
+        if(mFullItemsList == null) return;
+
+        List<Contact> filteredList;
+
+        if(searchText != null) {
+            filteredList = mFullItemsList.stream()
+                    .filter(item -> {
+                        String regex = "(?i)" + Pattern.quote(searchText);
+                        return Pattern.compile(regex).matcher(item.mUsername).find();
+                    })
+                    .collect(Collectors.toList());
+        }
+        else {
+            filteredList = mFullItemsList;
+        }
+
+        mBinding.recyclerViewCurrentContacts.setAdapter(
+                new OutgoingRequestsRecyclerViewAdapter(mContactsViewModel, filteredList)
+        );
+
+        if(filteredList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -91,25 +131,23 @@ public class CurrentContactsFragment extends Fragment {
         }
         if (response.length() > 0) {
             if (response.has("code")) {
-                showErrorNotification("An error occurred");
+                showErrorNotification();
             } else {
                 try {
                     processResponse(response);
                 } catch (JSONException e) {
                     Log.e("JSON Parse Error", e.getMessage());
-                    showErrorNotification("An error occurred");
+                    showErrorNotification();
                 }
             }
         } else {
             Log.d("JSON Response", "No Response");
-            showErrorNotification("An error occurred");
+            showErrorNotification();
         }
     }
 
     /**
      * Processes the response JSON, repopulates recyclerview.
-     * @param response
-     * @throws JSONException
      */
     private void processResponse(final JSONObject response) throws JSONException {
         ArrayList<Contact> contactsList = new ArrayList<>();
@@ -128,17 +166,26 @@ public class CurrentContactsFragment extends Fragment {
             contactsList.add(c);
         }
 
+        mFullItemsList = contactsList;
+
         mBinding.recyclerViewCurrentContacts.setAdapter(
                 new CurrentContactsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
+
+        if(contactsList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
+
+        filterList(mContactsViewModel.getSearchText().getValue());
     }
 
     /**
      * Displays an error notification to the user.
-     *
-     * @param message message to show.
      */
-    private void showErrorNotification(String message) {
-        Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    private void showErrorNotification() {
+        Snackbar.make(requireView(), "An error occurred", Snackbar.LENGTH_SHORT).show();
     }
 }

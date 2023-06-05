@@ -110,8 +110,6 @@ public class AddContactsFragment extends Fragment {
 
     /**
      * Processes the response JSON, repopulates recyclerview.
-     * @param response
-     * @throws JSONException
      */
     private void processResponse(final JSONObject response) throws JSONException {
         ArrayList<Contact> contactsList = new ArrayList<>();
@@ -132,6 +130,13 @@ public class AddContactsFragment extends Fragment {
         mBinding.recyclerViewAddContacts.setAdapter(
                 new AddContactsRecyclerViewAdapter(mContactsViewModel, contactsList)
         );
+
+        if(contactsList.size() == 0) {
+            mBinding.labelNoItems.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.labelNoItems.setVisibility(View.GONE);
+        }
     }
 
     /**

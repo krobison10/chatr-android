@@ -79,10 +79,8 @@ public class LoginFragment extends Fragment {
         if (prefs.contains(getString(R.string.keys_prefs_jwt))) {
             String token = prefs.getString(getString(R.string.keys_prefs_jwt), "");
             JWT jwt = new JWT(token);
-            if(!jwt.isExpired(999999)) {
-                String email = jwt.getClaim("email").asString();
-                navigateToSuccess(email, token);
-            }
+            String email = jwt.getClaim("email").asString();
+            navigateToSuccess(email, token);
         }
     }
 

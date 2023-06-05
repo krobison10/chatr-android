@@ -92,13 +92,8 @@ public class MainActivity extends AppCompatActivity {
         MainActivityArgs args = MainActivityArgs.fromBundle(getIntent().getExtras());
         JWT jwt = new JWT(args.getJwt());
 
-        if(!jwt.isExpired(999999999)) {
-            UserInfoViewModel model = new ViewModelProvider(this).get(UserInfoViewModel.class);
-            model.setToken(jwt);
-        } else {
-            throw new IllegalStateException("JWT is expired!");
-            //TODO: Navigate back to login and show error message
-        }
+        UserInfoViewModel model = new ViewModelProvider(this).get(UserInfoViewModel.class);
+        model.setToken(jwt);
 
         setContentView(R.layout.activity_main);
         setSupportActionBar(findViewById(R.id.app_toolbar));

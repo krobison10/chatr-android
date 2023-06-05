@@ -44,18 +44,13 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     /**
      * Adds a new message to the conversation.
      * @param message The message to add
-     * @param senderName The name of the sender
-     * @param receiverName The name of the receiver
      */
-    public void addMessage(Conversation message, String senderName, String receiverName) {
+    public void addMessage(Conversation message) {
         // Add the new message at the beginning of the list
         mConversation.getMessages().add(0, message);
 
         // Notify the adapter that a new item has been inserted at position 0
         notifyItemInserted(0);
-
-        // Scroll to the bottom of the message list
-        scrollToBottom();
     }
 
 
@@ -68,6 +63,14 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**
+     * Scroll to the top of the message list.
+     */
+    public void scrollToTop() {
+        if (mRecyclerView != null && mConversation.getMessages() != null && mConversation.getMessages().size() > 0) {
+            mRecyclerView.smoothScrollToPosition(0);
+        }
+    }
     @Override
     public int getItemCount() {
         if (mConversation != null && mConversation.getMessages() != null) {
@@ -206,5 +209,15 @@ public class ConversationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
         mRecyclerView = null;
+    }
+
+    /**
+     * Adds a new message to the conversation.
+     * @param message The message to add
+     * @param position The position of message
+     */
+    public void addMessageAtTop(Conversation message, int position) {
+        mConversation.getMessages().add(position, message);
+        notifyItemInserted(position);
     }
 }

@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
@@ -134,7 +135,6 @@ public class ConversationFragment extends Fragment {
      */
     private void parseMessagesFromResponse(JSONObject response) {
         try {
-            String chatId = response.getString("chatId");
             JSONArray rowsJsonArray = response.getJSONArray("rows");
 
             for (int i = 0; i < rowsJsonArray.length(); i++) {
@@ -160,7 +160,7 @@ public class ConversationFragment extends Fragment {
                     message.setSender(1, mEmail);
                     message.setReceiver(2, "Receiver");
                     message.setViewType(mAdapter.VIEW_TYPE_SENDER);
-                    mAdapter.addMessage(message, mEmail, "Receiver");
+                    mAdapter.addMessage(message);
                 } else {
                     System.out.println("Setting sender as 'Receiver'");
                     System.out.println("Setting receiver as 'Sender'");
@@ -168,7 +168,7 @@ public class ConversationFragment extends Fragment {
                     message.setSender(2, email);
                     message.setReceiver(1, "Sender");
                     message.setViewType(mAdapter.VIEW_TYPE_RECEIVER);
-                    mAdapter.addMessage(message, "Receiver", mEmail);
+                    mAdapter.addMessage(message);
                 }
             }
         } catch (JSONException e) {
@@ -185,10 +185,6 @@ public class ConversationFragment extends Fragment {
         mConversationSendViewModel = new ViewModelProvider(this).get(ConversationSendViewModel.class);
         mConversationViewModel = new ViewModelProvider(requireActivity()).get(ConversationViewModel.class);
 
-        // Set up the SwipeRefreshLayout
-        SwipeRefreshLayout swipeContainer = view.findViewById(R.id.swipeContainer);
-        swipeContainer.setRefreshing(true);
-
         mConversationViewModel.getFirstMessages(Integer.parseInt(chatId), mConversationSendViewModel.mJwt);
 
         // Set up the RecyclerView
@@ -196,19 +192,102 @@ public class ConversationFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Attach a scroll listener to the RecyclerView
+// Attach a scroll listener to the RecyclerView
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            private boolean userScrolledUp = false;
+            private int lastLoadedMessageId = 0; // Add a variable to track the last loaded message ID
+
+            private int initialMessagesCount = 15;// Set the initial number of messages to load
+
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 // Check if scrolled to the top
                 if (!recyclerView.canScrollVertically(-1)) {
-                    loadNextMessages();
+                    // User manually scrolled up
+                    userScrolledUp = true;
+                    // Set up the SwipeRefreshLayout
+                    SwipeRefreshLayout swipeContainer = view.findViewById(R.id.swipeContainer);
+                    swipeContainer.setRefreshing(true);
+
+                    List<Conversation> messages = mConversationViewModel.getMessageListByChatId(Integer.parseInt(chatId));
+
+                    if (messages.size() > 0) {
+                        if (messages.size() <= initialMessagesCount) {
+                            lastLoadedMessageId = messages.get(0).getConversationId();
+                        } else {
+                            lastLoadedMessageId = messages.get(0).getConversationId() - initialMessagesCount;
+                        }
+                    }
+
+                    mConversationViewModel.getNextMessages(chatId, String.valueOf(lastLoadedMessageId),
+                            mConversationSendViewModel.mJwt, new ConversationViewModel.pastConversationCallback() {
+                        @Override
+                        public void onPastMessageReceived(JSONObject response) {
+                            parsePastMessagesFromResponse(response);
+
+                            // Update the lastLoadedMessageId with the ID of the first message in the response minus 1
+                            try {
+                                JSONArray messagesArray = response.getJSONArray("rows");
+                                if (messagesArray.length() > 0) {
+                                    lastLoadedMessageId = (messagesArray.getJSONObject(0).getInt("messageid") - 15);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Check if all past messages are displayed
+                            if (messages.size() == mAdapter.getItemCount()) {
+                                // Disable refreshing state of SwipeRefreshLayout
+                                swipeContainer.setRefreshing(false);
+                            }
+
+                            // Reset the flag after loading new messages
+                            userScrolledUp = false;
+                        }
+                    });
+                    swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                        @Override
+                        public void onRefresh() {
+                            // Only load new messages if user hasn't manually scrolled up
+                            if (!userScrolledUp && messages.size() > initialMessagesCount) {
+                                mConversationViewModel.getNextMessages(chatId, String.valueOf(lastLoadedMessageId),
+                                        mConversationSendViewModel.mJwt, new ConversationViewModel.pastConversationCallback() {
+                                            @Override
+                                            public void onPastMessageReceived(JSONObject response) {
+                                                parsePastMessagesFromResponse(response);
+
+                                                // Update the lastLoadedMessageId with the ID of the first message in the response minus 1
+                                                try {
+                                                    JSONArray messagesArray = response.getJSONArray("rows");
+                                                    if (messagesArray.length() > 0) {
+                                                        lastLoadedMessageId = (messagesArray.getJSONObject(0).getInt("messageid") - 15);
+                                                    }
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                // Check if all past messages are displayed
+                                                if (messages.size() == mAdapter.getItemCount()) {
+                                                    // Disable refreshing state of SwipeRefreshLayout
+                                                    swipeContainer.setRefreshing(false);
+                                                }
+
+                                                // Reset the flag after loading new messages
+                                                userScrolledUp = false;
+                                                mAdapter.scrollToTop();
+                                            }
+                                        });
+                            } else {
+                                // Reset the refreshing state of SwipeRefreshLayout
+                                swipeContainer.setRefreshing(false);
+                            }
+                        }
+                    });
                 }
             }
         });
-
 
         /**
          * Calls the getMessage method with the appropriate
@@ -222,6 +301,7 @@ public class ConversationFragment extends Fragment {
             }
         });
 
+
         /**
          * Observes the message list and updates the adapter when it changes.
          * @param chatId The ID of the chat to observe
@@ -233,24 +313,8 @@ public class ConversationFragment extends Fragment {
             public void onChanged(List<Conversation> messages) {
                 mAdapter.setMessages(messages);
                 mAdapter.scrollToBottom();
-
-                // Hide the refreshing state of the SwipeRefreshLayout
-                swipeContainer.setRefreshing(false);
             }
         });
-    }
-
-    /**
-     * Loads the next set of messages in the conversation.
-     */
-    private void loadNextMessages() {
-        isLoadingMessages = true;
-
-        List<Conversation> messages = mConversationViewModel.getMessageListByChatId(Integer.parseInt(chatId));
-        if (!messages.isEmpty()) {
-            int lastMessageId = messages.get(messages.size() - 1).getConversationId();
-            mConversationViewModel.getNextMessages(chatId, String.valueOf(lastMessageId), mConversationSendViewModel.mJwt);
-        }
     }
     @Override
     public void onAttach(@NonNull Context context) {
@@ -269,17 +333,16 @@ public class ConversationFragment extends Fragment {
      * @return The formatted timestamp in "h:mm a" format
      */
     String formatTimestamp(String timestamp) {
-
         String[] inputPatterns = {
                 "yyyy-MM-dd HH:mm:ss.SSSSSS",
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-
         };
 
         SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        for (String inputPattern : inputPatterns) {
-            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        if (timestamp.length() == 26) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPatterns[0]);
 
             try {
                 Date date = inputFormat.parse(timestamp);
@@ -287,10 +350,63 @@ public class ConversationFragment extends Fragment {
                 Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
                 return formattedTimestamp;
             } catch (ParseException e) {
+                // Handle the exception
+            }
+        } else {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPatterns[1]);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+            try {
+                Date date = inputFormat.parse(timestamp);
+                String formattedTimestamp = outputFormat.format(date);
+                Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
+                return formattedTimestamp;
+            } catch (ParseException e) {
+                // Handle the exception
             }
         }
 
         return "";
+    }
+
+    /**
+     * Parses messages from the response JSON object.
+     * @param response The response JSON object containing chat messages
+     */
+    private void parsePastMessagesFromResponse(JSONObject response) {
+        try {
+            JSONArray messagesArray = response.getJSONArray("rows");
+
+            for (int i = messagesArray.length() - 1; i >= 0; i--) {
+                JSONObject messageObject = messagesArray.getJSONObject(i);
+
+                // Parse message details from the JSON object
+                int messageId = messageObject.getInt("messageid");
+                String email = messageObject.getString("email");
+                String messageText = messageObject.getString("message");
+                String timestamp = messageObject.getString("timestamp");
+
+                Conversation message = new Conversation();
+                message.setConversationId(messageId);
+                message.setName(email);
+                message.setContent(messageText);
+                message.setTimestamp(timestamp);
+
+                // Determine the appropriate view type and sender/receiver based on the email
+                if (email.equals(mEmail)) {
+                    message.setSender(1, mEmail);
+                    message.setReceiver(2, "Receiver");
+                    message.setViewType(mAdapter.VIEW_TYPE_SENDER);
+                } else {
+                    message.setSender(2, email);
+                    message.setReceiver(1, "Sender");
+                    message.setViewType(mAdapter.VIEW_TYPE_RECEIVER);
+                }
+
+                mAdapter.addMessage(message); // Add the message to the adapter's message list
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

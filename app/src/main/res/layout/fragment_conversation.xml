@@ -21,18 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/chat_room_members"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="@string/chat_members"
-        android:textColor="?colorOnSurface"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title_chat_room_name" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_of_chat_messages"
         android:layout_width="match_parent"
@@ -40,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@id/send_chat_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chat_room_members" />
+        app:layout_constraintTop_toBottomOf="@+id/title_chat_room_name" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/send_chat_layout"

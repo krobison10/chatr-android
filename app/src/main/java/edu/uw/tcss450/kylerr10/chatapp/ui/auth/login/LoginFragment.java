@@ -1,5 +1,6 @@
 package edu.uw.tcss450.kylerr10.chatapp.ui.auth.login;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.auth0.android.jwt.JWT;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONException;
@@ -76,10 +79,8 @@ public class LoginFragment extends Fragment {
         if (prefs.contains(getString(R.string.keys_prefs_jwt))) {
             String token = prefs.getString(getString(R.string.keys_prefs_jwt), "");
             JWT jwt = new JWT(token);
-            if(!jwt.isExpired(999999)) {
-                String email = jwt.getClaim("email").asString();
-                navigateToSuccess(email, token);
-            }
+            String email = jwt.getClaim("email").asString();
+            navigateToSuccess(email, token);
         }
     }
 
@@ -103,6 +104,7 @@ public class LoginFragment extends Fragment {
 
         mBinding.buttonLogin.setEnabled(false);
         mBinding.buttonLogin.setOnClickListener(this::attemptLogin);
+        mBinding.buttonForgotPassword.setOnClickListener(this::resetPassword);
 
         mViewModel.addResponseObserver(getViewLifecycleOwner(), this::observeResponse);
 
@@ -289,5 +291,28 @@ public class LoginFragment extends Fragment {
      */
     private void showErrorNotification(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void resetPassword(View view) {
+        EditText emailField = new EditText(requireContext());
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Reset Password")
+                .setMessage("Enter the email address associated with your account to receive password recovery instructions.")
+                .setView(emailField.getRootView(),48, 0, 48, 0)
+                .setPositiveButton("Send", (dialog, which) -> {
+                    // CHECK IF EMAIL IS VALID
+                    if (emailField.getText().toString().isEmpty()) {
+                        emailField.setError("Please enter an email address");
+                    } else { // Assume valid, send reset email
+                        mViewModel.connectPutReset(emailField.getText().toString());
+                        Snackbar.make(view, "Password reset email sent to " + emailField.getText(), Snackbar.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.cancel();
+                })
+                .show();
     }
 }

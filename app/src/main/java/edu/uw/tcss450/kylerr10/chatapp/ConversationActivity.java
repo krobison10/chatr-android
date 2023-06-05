@@ -82,9 +82,6 @@ public class ConversationActivity extends AppCompatActivity implements Conversat
         // Check if the required data is available
         if (chatId != null && jwt != null && message != null) {
             mSendViewModel.sendMessage(chatId, jwt, message);
-        } else {
-            // Handle the case when the required data is missing
-            Toast.makeText(this, "Failed to send message. Required data missing.", Toast.LENGTH_SHORT).show();
         }
     }
 

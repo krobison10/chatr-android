@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 
 import edu.uw.tcss450.kylerr10.chatapp.R;
@@ -231,7 +232,6 @@ public class ConversationFragment extends Fragment {
                                 JSONArray messagesArray = response.getJSONArray("rows");
                                 if (messagesArray.length() > 0) {
                                     lastLoadedMessageId = (messagesArray.getJSONObject(0).getInt("messageid") - 15);
-                                    System.out.println(lastLoadedMessageId);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -251,7 +251,7 @@ public class ConversationFragment extends Fragment {
                         @Override
                         public void onRefresh() {
                             // Only load new messages if user hasn't manually scrolled up
-                            if (!userScrolledUp) {
+                            if (!userScrolledUp && messages.size() > initialMessagesCount) {
                                 mConversationViewModel.getNextMessages(chatId, String.valueOf(lastLoadedMessageId),
                                         mConversationSendViewModel.mJwt, new ConversationViewModel.pastConversationCallback() {
                                             @Override
@@ -263,7 +263,6 @@ public class ConversationFragment extends Fragment {
                                                     JSONArray messagesArray = response.getJSONArray("rows");
                                                     if (messagesArray.length() > 0) {
                                                         lastLoadedMessageId = (messagesArray.getJSONObject(0).getInt("messageid") - 15);
-                                                        System.out.println(lastLoadedMessageId);
                                                     }
                                                 } catch (JSONException e) {
                                                     e.printStackTrace();
@@ -334,17 +333,16 @@ public class ConversationFragment extends Fragment {
      * @return The formatted timestamp in "h:mm a" format
      */
     String formatTimestamp(String timestamp) {
-
         String[] inputPatterns = {
                 "yyyy-MM-dd HH:mm:ss.SSSSSS",
                 "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-
         };
 
         SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
+        outputFormat.setTimeZone(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        for (String inputPattern : inputPatterns) {
-            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        if (timestamp.length() == 26) {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPatterns[0]);
 
             try {
                 Date date = inputFormat.parse(timestamp);
@@ -352,7 +350,19 @@ public class ConversationFragment extends Fragment {
                 Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
                 return formattedTimestamp;
             } catch (ParseException e) {
+                // Handle the exception
+            }
+        } else {
+            SimpleDateFormat inputFormat = new SimpleDateFormat(inputPatterns[1]);
+            inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
+            try {
+                Date date = inputFormat.parse(timestamp);
+                String formattedTimestamp = outputFormat.format(date);
+                Log.d("Timestamp", "Original: " + timestamp + ", Formatted: " + formattedTimestamp);
+                return formattedTimestamp;
+            } catch (ParseException e) {
+                // Handle the exception
             }
         }
 

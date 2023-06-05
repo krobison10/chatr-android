@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -103,7 +104,6 @@ public class CreateChatDialogue extends DialogFragment {
 
                         //Leyla get access to the username with this
                         //String username = contactObject.getString("username");
-
                         allMembers.add(new ChatMember(email));
                     }
                     filterMembers("");
@@ -113,6 +113,7 @@ public class CreateChatDialogue extends DialogFragment {
                 }
             }
         });
+
 
         contactsViewModel.connectGetCur();
 
@@ -130,6 +131,7 @@ public class CreateChatDialogue extends DialogFragment {
         memberList.setLayoutManager(new LinearLayoutManager(requireContext()));
         memberList.setAdapter(adapter);
 
+
         // Set up search functionality
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -140,6 +142,7 @@ public class CreateChatDialogue extends DialogFragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 filterMembers(newText);
+                memberList.setVisibility(TextUtils.isEmpty(newText) ? View.GONE : View.VISIBLE);
                 return true;
             }
         });
